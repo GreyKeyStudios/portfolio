@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿import type { Metadata } from "next";
+=======
+import type { Metadata } from "next";
+>>>>>>> origin/main
 import "./globals.css";
 
 export const metadata: Metadata = {
