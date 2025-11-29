@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 ﻿export default function Home() {
-=======
-export default function Home() {
->>>>>>> origin/main
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm">
@@ -14,7 +10,7 @@ export default function Home() {
         </p>
         <div className="mt-8 p-4 bg-gray-100 rounded-lg">
           <h2 className="text-xl font-semibold mb-2">Deployment Status:</h2>
-          <p className="text-green-600">âœ“ Successfully deployed!</p>
+          <p className="text-green-600"> Successfully deployed!</p>
         </div>
       </div>
     </main>
