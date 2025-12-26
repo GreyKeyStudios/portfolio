@@ -39,10 +39,10 @@ jobs:
           echo ""
           echo "Checking for out directory:"
           if [ -d "out" ]; then
-            echo "âœ" out directory found!"
+            echo "SUCCESS: out directory found!"
             ls -la out | head -10
           else
-            echo "âœ— out directory NOT found"
+            echo "ERROR: out directory NOT found"
             echo "Build may have failed or static export not configured correctly"
             echo "Checking next.config.mjs:"
             cat next.config.mjs
