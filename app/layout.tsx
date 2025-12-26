@@ -2,8 +2,8 @@
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cloudflare Pages Test",
-  description: "Test deployment for Cloudflare Pages with GitHub Actions",
+  title: "Portfolio - 3D First Person Experience",
+  description: "Interactive 3D portfolio experience built with Next.js and React Three Fiber",
 };
 
 export default function RootLayout({
