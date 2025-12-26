@@ -39,7 +39,7 @@ jobs:
           echo ""
           echo "Checking for out directory:"
           if [ -d "out" ]; then
-            echo "âœ“ out directory found!"
+            echo "âœ" out directory found!"
             ls -la out | head -10
           else
             echo "âœ— out directory NOT found"
@@ -48,6 +48,12 @@ jobs:
             cat next.config.mjs
             exit 1
           fi
+
+      - name: Remove large GLB files from build output
+        run: |
+          echo "Removing large GLB files (>25MB) from build output..."
+          find out -name "*.glb" -type f -size +25M -exec rm -v {} \; || echo "No large GLB files found or already removed"
+          echo "Large model files will be loaded from GitHub raw URL instead"
 
       - name: Create Cloudflare Pages project (if needed)
         run: |
