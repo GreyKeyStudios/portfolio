@@ -58,7 +58,7 @@ If you need to deploy manually:
 
 ```bash
 npm run build
-npx wrangler pages deploy out --project-name=cf-pages-actions-test
+npx wrangler pages deploy out --project-name=portfolio
 ```
 
 ## Project Structure
