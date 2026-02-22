@@ -5,8 +5,9 @@ import { useEffect, useRef } from "react"
 import { useControls } from "leva"
 import { Box3 } from "three"
 import type * as THREE from "three"
+import { getModelUrl } from "@/lib/model-url"
 
-const SIDEWALK_URL = "https://raw.githubusercontent.com/GreyKeyStudios/portfolio/main/public/models/sidewalk-1.glb"
+const SIDEWALK_URL = getModelUrl("sidewalk-1.glb")
 
 export function SidewalkModel() {
   const groupRef = useRef<THREE.Group>(null)

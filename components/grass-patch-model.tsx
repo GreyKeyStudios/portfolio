@@ -4,9 +4,10 @@ import { useGLTF } from "@react-three/drei"
 import { useEffect, useRef } from "react"
 import { Box3 } from "three"
 import type * as THREE from "three"
+import { getModelUrl } from "@/lib/model-url"
 
-const GRASS_URL = "https://raw.githubusercontent.com/GreyKeyStudios/portfolio/main/public/models/Grass%20Patch.glb"
-const GRASS_ALT_URL = "https://raw.githubusercontent.com/GreyKeyStudios/portfolio/main/public/models/grass-1.glb"
+const GRASS_URL = getModelUrl("Grass Patch.glb")
+const GRASS_ALT_URL = getModelUrl("grass-1.glb")
 
 interface GrassPatchProps {
   position: [number, number, number]
