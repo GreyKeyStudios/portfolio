@@ -6,8 +6,7 @@ import { Box3 } from "three"
 import type * as THREE from "three"
 import { getModelUrl } from "@/lib/model-url"
 
-const GRASS_URL = getModelUrl("Grass Patch.glb")
-const GRASS_ALT_URL = getModelUrl("grass-1.glb")
+const GRASS_URL = getModelUrl("grass-1.glb")
 
 interface GrassPatchProps {
   position: [number, number, number]
@@ -15,17 +14,16 @@ interface GrassPatchProps {
   rotation?: [number, number, number]
 }
 
-function GrassPatchBase({
-  url,
+export function GrassPatch({
   position,
   scale = 1,
   rotation = [0, 0, 0],
-}: GrassPatchProps & { url: string }) {
+}: GrassPatchProps) {
   const groupRef = useRef<THREE.Group>(null)
   const hasAligned = useRef(false)
-  const { scene } = useGLTF(url)
+  const { scene } = useGLTF(GRASS_URL)
 
-  // Auto-ground: drop the model so its lowest point sits on y=position[1]
+  // Auto-ground: drop the model so its lowest point sits flush on the ground
   useEffect(() => {
     if (!groupRef.current || hasAligned.current) return
     const frame = requestAnimationFrame(() => {
@@ -49,16 +47,4 @@ function GrassPatchBase({
   )
 }
 
-/** Primary grass patch — Grass Patch.glb (Danni Bittman / Poly Pizza CC-BY) */
-export function GrassPatch(props: GrassPatchProps) {
-  return <GrassPatchBase url={GRASS_URL} {...props} />
-}
-
-/** Alternate grass patch — grass-1.glb */
-export function GrassPatchAlt(props: GrassPatchProps) {
-  return <GrassPatchBase url={GRASS_ALT_URL} {...props} />
-}
-
-// Preload both for faster initial render
 useGLTF.preload(GRASS_URL)
-useGLTF.preload(GRASS_ALT_URL)
