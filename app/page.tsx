@@ -88,7 +88,7 @@ function Scene() {
 
 // HUD overlay rendered outside the canvas
 function HudOverlay() {
-  const { hudMessage, hudType, clearHud, showHud } = usePlayerStore()
+  const { hudMessage, hudType, clearHud, showHud, nearbyLabel } = usePlayerStore()
   const [enterPrompt, setEnterPrompt] = useState(false)
 
   useEffect(() => {
@@ -106,6 +106,33 @@ function HudOverlay() {
 
   return (
     <>
+      {/* "Press E to interact" proximity hint — shown when near an interactable */}
+      {nearbyLabel && !enterPrompt && (
+        <div
+          className="fixed bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono pointer-events-none"
+          style={{
+            background: 'rgba(0,0,0,0.65)',
+            color: '#becdf6',
+            border: '1px solid #becdf622',
+          }}
+        >
+          <span
+            className="inline-flex items-center justify-center rounded text-xs font-bold"
+            style={{
+              background: 'rgba(190,205,246,0.15)',
+              border: '1px solid #becdf644',
+              color: '#becdf6',
+              minWidth: '1.4rem',
+              height: '1.4rem',
+              padding: '0 4px',
+            }}
+          >
+            E
+          </span>
+          <span style={{ opacity: 0.85 }}>{nearbyLabel}</span>
+        </div>
+      )}
+
       {/* Contextual HUD message */}
       {hudMessage && hudMessage !== '__ENTER_PROMPT__' && (
         <div

@@ -17,6 +17,10 @@ interface PlayerState {
   hudType: 'info' | 'locked' | 'success' | null
   showHud: (message: string, type?: 'info' | 'locked' | 'success', duration?: number) => void
   clearHud: () => void
+
+  // Nearby interactable — drives "Press E" hint
+  nearbyLabel: string | null
+  setNearbyLabel: (label: string | null) => void
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -45,4 +49,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     }, duration)
   },
   clearHud: () => set({ hudMessage: null, hudType: null }),
+
+  nearbyLabel: null,
+  setNearbyLabel: (label) => set({ nearbyLabel: label }),
 }))

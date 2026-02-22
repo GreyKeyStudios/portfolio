@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { registerInteractable, unregisterInteractable } from '@/lib/use-interaction'
 import { usePlayerStore } from '@/lib/player-store'
+import { playSound } from '@/lib/audio'
 
 interface MainTerminalProps {
   position?: [number, number, number]
@@ -33,14 +34,17 @@ export function MainTerminal({ position = [-0.65, 0, -4.40], rotation = [0, 0, 0
     const pos = new THREE.Vector3(px, py, pz)
     registerInteractable({
       id: 'main-terminal',
+      label: 'Terminal',
       position: pos,
       radius: 3.5,
       onNearby: (near) => setIsNear(near),
       onInteract: () => {
         if (frontDoorUnlocked) {
+          playSound('interact')
           showHud('Front door is already unlocked. Head inside!', 'info', 3000)
           return
         }
+        playSound('unlock')
         unlockFrontDoor()
         showHud('>> FRONT DOOR UNLOCKED <<  Head to the front door to enter.', 'success', 5000)
       },

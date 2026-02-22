@@ -5,6 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { registerInteractable, unregisterInteractable } from '@/lib/use-interaction'
 import { usePlayerStore } from '@/lib/player-store'
+import { playSound } from '@/lib/audio'
 
 // Simple confetti particle system
 function Confetti({ active }: { active: boolean }) {
@@ -91,14 +92,17 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
     const pos = new THREE.Vector3(position[0], position[1], position[2])
     registerInteractable({
       id: 'touch-grass',
+      label: 'Touch Grass',
       position: pos,
       radius: 2.5,
       onNearby: (near) => setIsNear(near),
       onInteract: () => {
         if (isEasterEggComplete('touch-grass')) {
+          playSound('interact')
           showHud("You already touched grass. Congrats, you're practically outdoorsy.", 'info', 3000)
           return
         }
+        playSound('confetti')
         setTouched(true)
         setConfettiActive(false)
         setTimeout(() => setConfettiActive(true), 50)

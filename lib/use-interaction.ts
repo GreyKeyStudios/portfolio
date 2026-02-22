@@ -1,9 +1,11 @@
-import { useRef, useCallback } from 'react'
+import { useRef } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { usePlayerStore } from './player-store'
 
 export interface Interactable {
   id: string
+  label?: string  // Human-readable name shown in "Press E to interact" hint
   position: THREE.Vector3Like
   radius: number // proximity trigger distance
   onInteract: () => void
@@ -42,6 +44,7 @@ const _target = new THREE.Vector3()
 export function useProximitySystem() {
   const { camera } = useThree()
   const prevNear = useRef<string | null>(null)
+  const setNearbyLabel = usePlayerStore((s) => s.setNearbyLabel)
 
   useFrame(() => {
     camera.getWorldPosition(_pos)
@@ -67,6 +70,10 @@ export function useProximitySystem() {
       }
       nearestId = closest
       prevNear.current = closest
+
+      // Update HUD nearby label for "Press E" hint
+      const label = closest ? (interactables.get(closest)?.label ?? null) : null
+      setNearbyLabel(label)
     }
   })
 }
