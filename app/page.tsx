@@ -14,7 +14,7 @@ import { YardGround } from "@/components/yard-ground"
 import { CurbAndSidewalk } from "@/components/curb-and-sidewalk"
 import { PerimeterFence } from "@/components/perimeter-fence"
 import { StreetLamp } from "@/components/street-lamp"
-import { YardGrass } from "@/components/yard-grass"
+import { YardBushes } from "@/components/yard-bushes"
 import { MplsSkyline } from "@/components/mpls-skyline"
 import { NeighborStreet } from "@/components/neighbor-street"
 import { MainTerminal } from "@/components/main-terminal"
@@ -70,8 +70,8 @@ function Scene() {
       {/* Willow — behind house, viewer's left */}
       <WillowTreeModel position={[-8, 0, 10]} />
 
-      {/* Grass patches — procedural bushes replaced, real bush GLBs coming */}
-      <YardGrass />
+      {/* Bushes — procedural, will swap for GLB assets later */}
+      <YardBushes />
 
       {/* Lamps — X confirmed via leva, Z matches fence at -16 */}
       <StreetLamp position={[2.15, 0, -16]} />
