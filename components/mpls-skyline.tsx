@@ -73,10 +73,8 @@ export function MplsSkyline() {
 
   return (
     <group>
-      {/* Backlight — blue glow behind the skyline */}
+      {/* Backlight — single blue glow behind the skyline (reduced from 3 for perf) */}
       <pointLight position={[0, 10, Z + 5]} color="#4e7cf6" intensity={3} distance={60} decay={1.5} />
-      <pointLight position={[-12, 6, Z + 5]} color="#86a4f6" intensity={1.5} distance={40} decay={2} />
-      <pointLight position={[12, 6, Z + 5]} color="#becdf6" intensity={1.5} distance={40} decay={2} />
 
       {BUILDINGS.map((b) => {
         const windows = buildingWindows(b, Z)

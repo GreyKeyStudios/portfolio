@@ -11,7 +11,7 @@ import { WillowTreeModel } from "@/components/willow-tree-model"
 import { CameraJoystick } from "@/components/camera-joystick"
 import { ActionButton } from "@/components/action-button"
 import { YardGround } from "@/components/yard-ground"
-import { SidewalkModel } from "@/components/sidewalk-model"
+import { CurbAndSidewalk } from "@/components/curb-and-sidewalk"
 import { PerimeterFence } from "@/components/perimeter-fence"
 import { StreetLamp } from "@/components/street-lamp"
 import { YardGrass } from "@/components/yard-grass"
@@ -49,8 +49,8 @@ function Scene() {
       {/* Ground layers */}
       <YardGround />
 
-      {/* Hardscape — sidewalk GLB, tune with Leva panel */}
-      <SidewalkModel />
+      {/* Hardscape — procedural curb + sidewalk */}
+      <CurbAndSidewalk />
 
       {/* Fence — gaps match path positions */}
       <PerimeterFence />

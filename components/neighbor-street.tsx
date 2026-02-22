@@ -100,14 +100,7 @@ function NeighborHouseMesh({ h }: { h: NeighborHouse }) {
         </mesh>
       )}
 
-      {/* Warm point light from house windows */}
-      <pointLight
-        position={[0, h.height * 0.6, h.depth / 2 + 1]}
-        color={h.windowColor}
-        intensity={0.6}
-        distance={8}
-        decay={2}
-      />
+      {/* point light removed — ambient + moonlight sufficient, saves 3 lights */}
     </group>
   )
 }
