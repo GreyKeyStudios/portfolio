@@ -5,6 +5,8 @@ import type React from "react"
 import { useRef } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
+import { resolveCollision } from "@/lib/collision"
+import { COLLIDERS } from "@/lib/colliders"
 
 interface MobileFPSControlsProps {
   joystickRef: React.MutableRefObject<{ x: number; y: number }>
@@ -51,6 +53,11 @@ export function MobileFPSControls({ joystickRef, cameraRotationRef }: MobileFPSC
     // Smooth movement with damping
     velocity.current.lerp(direction, 0.15)
     camera.position.addScaledVector(velocity.current, delta)
+
+    // Collision resolution — push player out of any AABB colliders
+    const resolved = resolveCollision(camera.position.x, camera.position.z, COLLIDERS)
+    camera.position.x = resolved.x
+    camera.position.z = resolved.z
 
     // Keep camera at eye level
     camera.position.y = 1.7
