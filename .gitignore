@@ -35,3 +35,4 @@ next-env.d.ts
 # Windows Zone Identifier files
 *Zone.Identifier
 
+public/models/grass-1.glb
