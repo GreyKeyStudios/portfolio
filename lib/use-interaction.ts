@@ -38,8 +38,15 @@ export function getNearestInteractable(): string | null {
 
 const _pos = new THREE.Vector3()
 const _target = new THREE.Vector3()
+const _forward = new THREE.Vector3()
+const _toTarget = new THREE.Vector3()
 
-// Hook used once at the Scene level to drive proximity checks each frame
+// Minimum dot product between camera forward and direction-to-interactable.
+// cos(50°) ≈ 0.64 — player must be looking within a ~50° cone to trigger.
+const LOOK_DOT_THRESHOLD = 0.64
+
+// Hook used once at the Scene level to drive proximity checks each frame.
+// Requires player to be within radius AND looking at the interactable.
 // onNearbyChange is called with the label of the nearest interactable (or null)
 export function useProximitySystem(onNearbyChange?: (label: string | null) => void) {
   const { camera } = useThree()
@@ -47,16 +54,25 @@ export function useProximitySystem(onNearbyChange?: (label: string | null) => vo
 
   useFrame(() => {
     camera.getWorldPosition(_pos)
+    camera.getWorldDirection(_forward) // camera's current look direction
+
     let closest: string | null = null
     let closestDist = Infinity
 
     interactables.forEach((item, id) => {
       _target.set(item.position.x, item.position.y, item.position.z)
       const dist = _pos.distanceTo(_target)
-      if (dist < item.radius && dist < closestDist) {
-        closestDist = dist
-        closest = id
-      }
+
+      // Must be within proximity radius
+      if (dist >= item.radius || dist >= closestDist) return
+
+      // Must be looking at it — dot product of forward vs direction-to-target
+      _toTarget.subVectors(_target, _pos).normalize()
+      const dot = _forward.dot(_toTarget)
+      if (dot < LOOK_DOT_THRESHOLD) return
+
+      closestDist = dist
+      closest = id
     })
 
     // Fire onNearby callbacks for entries/exits

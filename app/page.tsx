@@ -63,8 +63,8 @@ function Scene() {
       {/* House front face is at Z≈-4.47 (measured). Door sits just in front at Z≈-4.0 */}
       <FrontDoor position={[0.72, 1.0, -4.0]} />
 
-      {/* Main terminal — moved forward (toward street) from Z -4.4 which was inside house */}
-      <MainTerminal position={[-0.65, 0, -8.0]} rotation={[0, Math.PI, 0]} />
+      {/* Main terminal — Z -5.5, close to door. Look-to-interact disambiguates door vs terminal */}
+      <MainTerminal position={[-0.65, 0, -5.5]} rotation={[0, Math.PI, 0]} />
 
       {/* Touch Grass — Easter egg step 1 */}
       <TouchGrass position={[-6, 0, 5]} />

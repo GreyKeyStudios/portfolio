@@ -15,12 +15,21 @@ interface MainTerminalProps {
 export function MainTerminal({ position = [-0.65, 0, -4.40], rotation = [0, 0, 0] }: MainTerminalProps) {
   const [isNear, setIsNear] = useState(false)
   const [screenGlow, setScreenGlow] = useState(0.8)
-  const { unlockFrontDoor, frontDoorUnlocked, showHud, completedEasterEggs } = usePlayerStore()
+  const { unlockFrontDoor, frontDoorUnlocked, showHud } = usePlayerStore()
   const glowRef = useRef(0.8)
   const dirRef = useRef(1)
 
   const [px, py, pz] = position
   const [rx, ry, rz] = rotation
+
+  // Stable refs so onInteract closure never goes stale — avoids re-registering
+  // every time frontDoorUnlocked changes (which caused the door to mis-fire).
+  const frontDoorUnlockedRef = useRef(frontDoorUnlocked)
+  const unlockFrontDoorRef = useRef(unlockFrontDoor)
+  const showHudRef = useRef(showHud)
+  useEffect(() => { frontDoorUnlockedRef.current = frontDoorUnlocked }, [frontDoorUnlocked])
+  useEffect(() => { unlockFrontDoorRef.current = unlockFrontDoor }, [unlockFrontDoor])
+  useEffect(() => { showHudRef.current = showHud }, [showHud])
 
   // Idle screen pulse animation
   useFrame((_, delta) => {
@@ -30,27 +39,28 @@ export function MainTerminal({ position = [-0.65, 0, -4.40], rotation = [0, 0, 0
     setScreenGlow(glowRef.current)
   })
 
+  // Only re-register when position changes — stable closure via refs above
   useEffect(() => {
     const pos = new THREE.Vector3(px, py, pz)
     registerInteractable({
       id: 'main-terminal',
       label: 'Terminal',
       position: pos,
-      radius: 3.5,
+      radius: 2.5,
       onNearby: (near) => setIsNear(near),
       onInteract: () => {
-        if (frontDoorUnlocked) {
+        if (frontDoorUnlockedRef.current) {
           playSound('interact')
-          showHud('Front door is already unlocked. Head inside!', 'info', 3000)
+          showHudRef.current('Front door is already unlocked. Head inside!', 'info', 3000)
           return
         }
         playSound('unlock')
-        unlockFrontDoor()
-        showHud('>> FRONT DOOR UNLOCKED <<  Head to the front door to enter.', 'success', 5000)
+        unlockFrontDoorRef.current()
+        showHudRef.current('>> FRONT DOOR UNLOCKED <<  Head to the front door to enter.', 'success', 5000)
       },
     })
     return () => unregisterInteractable('main-terminal')
-  }, [px, py, pz, frontDoorUnlocked, unlockFrontDoor, showHud, completedEasterEggs])
+  }, [px, py, pz])
 
   return (
     <group position={[px, py, pz]} rotation={[rx, ry, rz]}>
