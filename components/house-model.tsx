@@ -56,6 +56,19 @@ export function HouseModel({ position = [0, 0, 0] }: { position?: [number, numbe
         if (box.min.y === Infinity) return
         houseRef.current.position.y = position[1] + (-box.min.y)
         hasAligned.current = true
+
+        // ── COLLIDER CALIBRATION LOG (temporary) ──────────────────────────
+        // After Y-align, measure real world-space bounds so we can hardcode
+        // accurate AABB colliders in lib/colliders.ts. Remove once confirmed.
+        const worldBox = new Box3().setFromObject(houseRef.current)
+        console.log('[house] world-space bounds after Y-align:', {
+          minX: worldBox.min.x.toFixed(3),
+          maxX: worldBox.max.x.toFixed(3),
+          minZ: worldBox.min.z.toFixed(3),
+          maxZ: worldBox.max.z.toFixed(3),
+          minY: worldBox.min.y.toFixed(3),
+          maxY: worldBox.max.y.toFixed(3),
+        })
       })
     })
 
