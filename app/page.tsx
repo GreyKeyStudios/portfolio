@@ -36,7 +36,8 @@ function CameraInit() {
 }
 
 function ProximityManager() {
-  useProximitySystem()
+  const setNearbyLabel = usePlayerStore((s) => s.setNearbyLabel)
+  useProximitySystem(setNearbyLabel)
   return null
 }
 

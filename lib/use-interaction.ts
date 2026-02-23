@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { usePlayerStore } from './player-store'
 
 export interface Interactable {
   id: string
@@ -41,10 +40,10 @@ const _pos = new THREE.Vector3()
 const _target = new THREE.Vector3()
 
 // Hook used once at the Scene level to drive proximity checks each frame
-export function useProximitySystem() {
+// onNearbyChange is called with the label of the nearest interactable (or null)
+export function useProximitySystem(onNearbyChange?: (label: string | null) => void) {
   const { camera } = useThree()
   const prevNear = useRef<string | null>(null)
-  const setNearbyLabel = usePlayerStore((s) => s.setNearbyLabel)
 
   useFrame(() => {
     camera.getWorldPosition(_pos)
@@ -71,9 +70,9 @@ export function useProximitySystem() {
       nearestId = closest
       prevNear.current = closest
 
-      // Update HUD nearby label for "Press E" hint
+      // Notify caller so HUD can show "Press E" hint
       const label = closest ? (interactables.get(closest)?.label ?? null) : null
-      setNearbyLabel(label)
+      onNearbyChange?.(label)
     }
   })
 }
