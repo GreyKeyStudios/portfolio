@@ -48,33 +48,51 @@ export function HouseModel({ position = [0, 0, 0] }: { position?: [number, numbe
   useEffect(() => {
     if (!houseRef.current || hasAligned.current) return
 
+    // Try to align + measure. Retries with increasing delay until geometry is ready.
+    let timer: ReturnType<typeof setTimeout>
+
+    function tryAlign(attempt: number) {
+      if (!houseRef.current) return
+      const box = new Box3().setFromObject(houseRef.current)
+
+      if (box.min.y === Infinity || box.min.y === box.max.y) {
+        // Geometry not ready yet — retry up to 10 times
+        if (attempt < 10) {
+          timer = setTimeout(() => tryAlign(attempt + 1), 200)
+        } else {
+          console.warn('[house] bbox never resolved after 10 attempts')
+        }
+        return
+      }
+
+      houseRef.current.position.y = position[1] + (-box.min.y)
+      hasAligned.current = true
+
+      // ── COLLIDER CALIBRATION LOG — paste these into lib/colliders.ts ──────
+      const worldBox = new Box3().setFromObject(houseRef.current)
+      console.log('%c[house] COLLIDER BOUNDS — paste into lib/colliders.ts:', 'color:#00ff88;font-weight:bold')
+      console.log(`  minX: ${worldBox.min.x.toFixed(3)},  maxX: ${worldBox.max.x.toFixed(3)}`)
+      console.log(`  minZ: ${worldBox.min.z.toFixed(3)},  maxZ: ${worldBox.max.z.toFixed(3)}`)
+      console.log(`  minY: ${worldBox.min.y.toFixed(3)},  maxY: ${worldBox.max.y.toFixed(3)}`)
+      console.log('  Full object:', {
+        minX: worldBox.min.x.toFixed(3),
+        maxX: worldBox.max.x.toFixed(3),
+        minZ: worldBox.min.z.toFixed(3),
+        maxZ: worldBox.max.z.toFixed(3),
+      })
+      // ─────────────────────────────────────────────────────────────────────
+    }
+
+    // Start after 2 rAFs (original approach) then fall back to polling
     let f1: number, f2: number
     f1 = requestAnimationFrame(() => {
-      f2 = requestAnimationFrame(() => {
-        if (!houseRef.current) return
-        const box = new Box3().setFromObject(houseRef.current)
-        if (box.min.y === Infinity) return
-        houseRef.current.position.y = position[1] + (-box.min.y)
-        hasAligned.current = true
-
-        // ── COLLIDER CALIBRATION LOG (temporary) ──────────────────────────
-        // After Y-align, measure real world-space bounds so we can hardcode
-        // accurate AABB colliders in lib/colliders.ts. Remove once confirmed.
-        const worldBox = new Box3().setFromObject(houseRef.current)
-        console.log('[house] world-space bounds after Y-align:', {
-          minX: worldBox.min.x.toFixed(3),
-          maxX: worldBox.max.x.toFixed(3),
-          minZ: worldBox.min.z.toFixed(3),
-          maxZ: worldBox.max.z.toFixed(3),
-          minY: worldBox.min.y.toFixed(3),
-          maxY: worldBox.max.y.toFixed(3),
-        })
-      })
+      f2 = requestAnimationFrame(() => tryAlign(0))
     })
 
     return () => {
       cancelAnimationFrame(f1)
       cancelAnimationFrame(f2)
+      clearTimeout(timer)
     }
   }, [scene]) // position intentionally excluded — only align once on mount
 
