@@ -19,9 +19,10 @@ import type { AABB } from './collision'
  */
 export const COLLIDERS: AABB[] = [
   // ── House — single solid box, entire footprint ───────────────────────────
-  // UPDATE with real values from "[house] world-space bounds" console log.
-  // Current values are estimates — replace after first dev run.
-  { label: 'house', minX: -5.5, maxX: 5.5, minZ: -9.0, maxZ: -2.0 },
+  // Measured from console: minX -4.735, maxX 6.172, minZ -4.471, maxZ 4.539
+  // Added 0.1 buffer on all sides so wall feels solid, not paper-thin.
+  // Front door interaction zone (proximity) handles entry — no gap needed here.
+  { label: 'house', minX: -4.835, maxX: 6.272, minZ: -4.571, maxZ: 4.639 },
 
   // ── All others disabled — re-enable one at a time after house is solid ────
   // { label: 'terminal',      minX: -1.0,  maxX:  0.0,  minZ: -4.75, maxZ: -4.05 },
