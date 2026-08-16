@@ -1,34 +1,40 @@
 "use client"
 
 import type React from "react"
-
 import { useRef, useEffect } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
-import * as THREE from "three"
-import { resolveCollision } from "@/lib/collision"
-import { getActiveColliders, getWorldBounds, resolveEyeY } from "@/lib/use-player-vertical"
 import { usePlayerStore } from "@/lib/player-store"
+import { stepPlayer } from "@/lib/player-movement"
 
 interface MobileFPSControlsProps {
+  /** -1..1 per axis, from the movement stick. */
   joystickRef: React.MutableRefObject<{ x: number; y: number }>
+  /** Yaw/pitch in radians, driven by drag-to-look. */
   cameraRotationRef: React.MutableRefObject<{ x: number; y: number }>
+  /** 0..1 — how far the stick is pushed, used to blend walk into run. */
+  magnitudeRef?: React.MutableRefObject<number>
 }
 
-export function MobileFPSControls({ joystickRef, cameraRotationRef }: MobileFPSControlsProps) {
-  const { camera } = useThree()
-  const velocity = useRef(new THREE.Vector3())
-  const initialized = useRef(false)
+const WALK = 2
+const RUN = 4.5
 
-  // Terminal / Home Office / enter-house-prompt overlays — this control scheme
-  // previously never checked terminalOpen at all, so opening the terminal on
-  // mobile didn't pause movement. See fps-controls.tsx for the enterPromptOpen note.
+export function MobileFPSControls({ joystickRef, cameraRotationRef, magnitudeRef }: MobileFPSControlsProps) {
+  const { camera } = useThree()
+  const teleported = useRef(false)
+
   const terminalOpen = usePlayerStore((s) => s.terminalOpen)
   const homeOfficeOpen = usePlayerStore((s) => s.homeOfficeOpen)
   const enterPromptOpen = usePlayerStore((s) => s.enterPromptOpen)
   const pausedRef = useRef(false)
-  useEffect(() => { pausedRef.current = terminalOpen || homeOfficeOpen || enterPromptOpen }, [terminalOpen, homeOfficeOpen, enterPromptOpen])
+  useEffect(() => {
+    pausedRef.current = terminalOpen || homeOfficeOpen || enterPromptOpen
+  }, [terminalOpen, homeOfficeOpen, enterPromptOpen])
 
-  // Teleport handling — same pattern as fps-controls.tsx
+  useEffect(() => {
+    camera.rotation.order = "YXZ"
+  }, [camera])
+
+  // Teleports land on the next frame rather than waiting on a stale ref read.
   useEffect(() => {
     return usePlayerStore.subscribe((state, prevState) => {
       const req = state.teleportRequest
@@ -38,66 +44,54 @@ export function MobileFPSControls({ joystickRef, cameraRotationRef }: MobileFPSC
         cameraRotationRef.current.y = req.yaw
         cameraRotationRef.current.x = 0
       }
-      velocity.current.set(0, 0, 0)
+      // A teleport is a legitimate discontinuity; without this the step-height
+      // guard sees the storey change and puts the player straight back.
+      teleported.current = true
       usePlayerStore.getState().clearTeleportRequest()
     })
   }, [camera, cameraRotationRef])
 
-  useFrame((state, delta) => {
-    if (!initialized.current) {
-      camera.position.set(0, 1.7, -25)
-      camera.rotation.order = "YXZ"
-      // Initialize rotation to match the ref values (Y = Math.PI to look forward, X = 0 for level view)
-      camera.rotation.set(cameraRotationRef.current.x, cameraRotationRef.current.y, 0)
-      initialized.current = true
-    }
-
-    camera.rotation.order = "YXZ"
+  useFrame((_state, delta) => {
     camera.rotation.y = cameraRotationRef.current.y
     camera.rotation.x = cameraRotationRef.current.x
 
-    if (pausedRef.current) return   // paused while terminal/home-office overlay is open
-
-    // Calculate movement direction based on camera
-    const forward = new THREE.Vector3()
-    camera.getWorldDirection(forward)
-    forward.y = 0
-    forward.normalize()
-
-    const right = new THREE.Vector3()
-    right.crossVectors(camera.up, forward).normalize()
-
-    const speed = 2
-    const direction = new THREE.Vector3(0, 0, 0)
-
-    if (joystickRef.current.y !== 0) {
-      direction.addScaledVector(forward, -joystickRef.current.y * speed)
-    }
-    if (joystickRef.current.x !== 0) {
-      direction.addScaledVector(right, -joystickRef.current.x * speed)
+    if (pausedRef.current) {
+      teleported.current = false
+      return
     }
 
-    // Smooth movement with damping
-    velocity.current.lerp(direction, 0.15)
-    camera.position.addScaledVector(velocity.current, delta)
+    const mag = magnitudeRef?.current ?? Math.hypot(joystickRef.current.x, joystickRef.current.y)
 
-    const location = usePlayerStore.getState().currentLocation
+    const justTeleported = teleported.current
+    teleported.current = false
 
-    // Collision resolution — push player out of any AABB colliders on the active floor
-    const resolved = resolveCollision(camera.position.x, camera.position.z, getActiveColliders(location))
-    camera.position.x = resolved.x
-    camera.position.z = resolved.z
+    const { crossedTo } = stepPlayer(
+      camera,
+      usePlayerStore.getState().currentLocation,
+      {
+        // Stick Y is screen-space (down is positive), so forward is negated.
+        forward: -joystickRef.current.y,
+        strafe: joystickRef.current.x,
+        // Push past ~85% to run. No sprint button on a phone — there is no
+        // spare thumb, and a stick already carries the intent.
+        speed: mag > 0.85 ? RUN : WALK,
+      },
+      delta,
+      justTeleported
+    )
 
-    // Eye height follows the active floor, same stair interpolation as desktop controls
-    const { y, crossedTo } = resolveEyeY(location, camera.position.x, camera.position.z)
-    camera.position.y = y
-    if (crossedTo && crossedTo !== location) {
-      usePlayerStore.getState().setCurrentLocation(crossedTo)
+    if (crossedTo) usePlayerStore.getState().setCurrentLocation(crossedTo)
+
+    // TEMP DEBUG — mirrors the readout in fps-controls.tsx so the touch scheme
+    // can be verified the same way. Remove alongside that one.
+    ;(window as any).__pos = {
+      x: +camera.position.x.toFixed(3),
+      y: +camera.position.y.toFixed(3),
+      z: +camera.position.z.toFixed(3),
+      location: usePlayerStore.getState().currentLocation,
+      crossedTo,
     }
-
-    const bounds = getWorldBounds(location)
-    camera.position.x = Math.max(bounds.minX, Math.min(bounds.maxX, camera.position.x))
-    camera.position.z = Math.max(bounds.minZ, Math.min(bounds.maxZ, camera.position.z))
+    ;(window as any).__frame = { mobile: true, paused: pausedRef.current, mag }
   })
 
   return null

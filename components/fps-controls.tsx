@@ -4,13 +4,12 @@ import { useRef, useEffect, useState } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import { PointerLockControls } from "@react-three/drei"
 import * as THREE from "three"
-import { moveWithCollision } from "@/lib/collision"
-import { getActiveColliders, getWorldBounds, resolveEyeY } from "@/lib/use-player-vertical"
+import { stepPlayer } from "@/lib/player-movement"
 import { usePlayerStore } from "@/lib/player-store"
 
 export function FPSControls() {
   const { camera, gl } = useThree()
-  const controlsRef = useRef<any>()
+  const controlsRef = useRef<any>(null)
   const [isLocked, setIsLocked] = useState(false)
   const velocity = useRef(new THREE.Vector3())
   const direction = useRef(new THREE.Vector3())
@@ -180,70 +179,27 @@ export function FPSControls() {
 
     right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize()
 
-    // Capture where we started before applying movement — moveWithCollision
-    // needs the actual path (from -> to), not just the destination, so it can
-    // catch walls crossed mid-frame instead of only ones we happen to land in.
-    const prevX = controlsObject.position.x
-    const prevZ = controlsObject.position.z
-
-    controlsObject.position.addScaledVector(forward, velocity.current.z * delta)
-    controlsObject.position.addScaledVector(right, velocity.current.x * delta)
-
     const location = usePlayerStore.getState().currentLocation
-
-    const resolved = moveWithCollision(
-      prevX,
-      prevZ,
-      controlsObject.position.x,
-      controlsObject.position.z,
-      getActiveColliders(location)
-    )
-    // Eye height follows the active floor, interpolating smoothly across any stair
-    // underfoot. Flips currentLocation once the player has fully crossed onto a
-    // different floor.
-    const prevY = controlsObject.position.y
-    const step = resolveEyeY(location, resolved.x, resolved.z, prevY)
-    let crossedTo = step.crossedTo
-
-    // Step-height limit. Walking a stair changes Y by only a few centimetres
-    // per frame, so anything larger means this move would teleport the player
-    // vertically — stepping off the middle of a flight onto a flat floor, or
-    // in off a doorway onto a tread well above where they stand. Refusing the
-    // horizontal move is what a solid surface would do anyway, and it lets
-    // doorways stay comfortably wide instead of being narrowed to the point of
-    // being unwalkable just to geometrically forbid those spots.
-    const MAX_STEP = 0.35
     const justTeleported = teleported.current
     teleported.current = false
-    if (!justTeleported && prevY !== 0 && Math.abs(step.y - prevY) > MAX_STEP) {
-      // Refuse the ENTIRE transition, not just its horizontal half.
-      //
-      // Reverting x/z alone used to leave `step.y` and `crossedTo` applied
-      // regardless, which is the actual "warping" bug: the move was judged
-      // illegal, yet the player still dropped a whole storey and had the
-      // active collider set swapped under them mid-frame. Re-resolving at
-      // (prevX, prevZ) didn't help either — the stale `location` means that
-      // lookup can report the same far-away floor and the same crossing.
-      //
-      // Holding y at prevY is safe because a legitimate stair changes it by
-      // only a few cm per frame, so nothing real is ever refused here.
-      controlsObject.position.x = prevX
-      controlsObject.position.z = prevZ
-      controlsObject.position.y = prevY
-      crossedTo = null
-    } else {
-      controlsObject.position.x = resolved.x
-      controlsObject.position.z = resolved.z
-      controlsObject.position.y = step.y
-    }
 
-    if (crossedTo && crossedTo !== location) {
-      usePlayerStore.getState().setCurrentLocation(crossedTo)
-    }
+    // Physics lives in lib/player-movement.ts, shared with the touch controls.
+    // This used to be a second copy of that loop; the mobile one drifted and
+    // ended up missing swept collision, the step-height guard and the stacked
+    // -run disambiguation. A control scheme's job is input, not physics.
+    const { crossedTo } = stepPlayer(
+      controlsObject,
+      location,
+      {
+        forward: direction.current.z,
+        strafe: direction.current.x,
+        speed,
+      },
+      delta,
+      justTeleported
+    )
 
-    const bounds = getWorldBounds(location)
-    controlsObject.position.x = Math.max(bounds.minX, Math.min(bounds.maxX, controlsObject.position.x))
-    controlsObject.position.z = Math.max(bounds.minZ, Math.min(bounds.maxZ, controlsObject.position.z))
+    if (crossedTo) usePlayerStore.getState().setCurrentLocation(crossedTo)
 
     // TEMP DEBUG — renderer cost readout for the culling work. Remove with
     // the position block below.
@@ -268,7 +224,9 @@ export function FPSControls() {
 
   return (
     <>
-      <PointerLockControls ref={controlsRef} args={[camera, gl.domElement]} selector={null} />
+      {/* No `args` — drei binds the default camera and canvas itself, and
+          fiber 9.7 dropped the prop from the typed surface. */}
+      <PointerLockControls ref={controlsRef} selector={null} />
       {!isLocked && (
         <mesh position={[0, 1.7, -5]} onClick={() => controlsRef.current?.lock()}>
           <planeGeometry args={[0.1, 0.1]} />

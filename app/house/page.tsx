@@ -6,11 +6,9 @@ import type * as THREE from "three"
 import { Environment, Sky, Stars } from "@react-three/drei"
 import { FPSControls } from "@/components/fps-controls"
 import { MobileFPSControls } from "@/components/mobile-fps-controls"
-import { VirtualJoystick } from "@/components/virtual-joystick"
 import { HouseModel } from "@/components/house-model"
 import { WillowTreeModel } from "@/components/willow-tree-model"
-import { CameraJoystick } from "@/components/camera-joystick"
-import { ActionButton } from "@/components/action-button"
+import { TouchControls, clampPitch, LOOK_SENSITIVITY } from "@/components/touch-controls"
 import { YardGround } from "@/components/yard-ground"
 import { CurbAndSidewalk } from "@/components/curb-and-sidewalk"
 import { PerimeterFence } from "@/components/perimeter-fence"
@@ -567,7 +565,11 @@ export default function StackHouse() {
   // The Canvas mounts immediately and streams underneath the credits — that is
   // the entire point of the boot sequence. Do NOT gate the Canvas on this.
   const [booted, setBooted] = useState(false)
+  // Drives the interact button's lit state, so it only reads as live when
+  // something is actually in range.
+  const nearbyLabel = usePlayerStore((st) => st.nearbyLabel)
   const joystickRef = useRef({ x: 0, y: 0 })
+  const joystickMagnitude = useRef(0)
   const cameraRotationRef = useRef({ x: 0, y: Math.PI })
 
   useEffect(() => {
@@ -592,23 +594,16 @@ export default function StackHouse() {
     ;(window as any).__store = usePlayerStore
   }, [])
 
-  const handleJoystickMove = useCallback((x: number, y: number) => {
+  const handleTouchMove = useCallback((x: number, y: number, magnitude: number) => {
     joystickRef.current = { x, y }
+    joystickMagnitude.current = magnitude
   }, [])
 
-  const handleCameraMove = useCallback((deltaX: number, deltaY: number) => {
-    cameraRotationRef.current.y -= deltaX * 0.002
-    cameraRotationRef.current.x -= deltaY * 0.002
-    // Clamp vertical rotation to prevent flipping
-    cameraRotationRef.current.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, cameraRotationRef.current.x))
-  }, [])
-
-  const handleCameraJoystick = useCallback((x: number, y: number) => {
-    // Update camera rotation based on joystick input
-    cameraRotationRef.current.y -= x * 0.01
-    cameraRotationRef.current.x -= y * 0.01
-    // Clamp vertical rotation
-    cameraRotationRef.current.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, cameraRotationRef.current.x))
+  // Drag-to-look. Pitch is clamped just short of vertical so the camera can
+  // never flip, which is disorienting and hard to recover from on a phone.
+  const handleLook = useCallback((dx: number, dy: number) => {
+    cameraRotationRef.current.y -= dx * LOOK_SENSITIVITY
+    cameraRotationRef.current.x = clampPitch(cameraRotationRef.current.x - dy * LOOK_SENSITIVITY)
   }, [])
 
   // Desktop E key — interact (gated: no-op while terminal, home office, or the enter-house prompt is open)
@@ -660,7 +655,11 @@ export default function StackHouse() {
           <Scene />
 
           {isMobile ? (
-            <MobileFPSControls joystickRef={joystickRef} cameraRotationRef={cameraRotationRef} />
+            <MobileFPSControls
+              joystickRef={joystickRef}
+              cameraRotationRef={cameraRotationRef}
+              magnitudeRef={joystickMagnitude}
+            />
           ) : (
             <FPSControls />
           )}
@@ -678,7 +677,9 @@ export default function StackHouse() {
       <div className="absolute top-4 left-4" style={{ color: "#becdf6", opacity: booted ? 1 : 0, transition: "opacity 600ms ease" }}>
         <h1 className="text-2xl font-bold mb-1 tracking-wide">The Stack House</h1>
         <p className="text-xs opacity-60">
-          {isMobile ? "Left stick: Move • Right stick: Look • A: Interact" : "Click to lock cursor • WASD to move • Shift to sprint • E to interact"}
+          {isMobile
+            ? "Left: move (push to run) • Right: drag to look • USE to interact"
+            : "Click to lock cursor • WASD to move • Shift to sprint • E to interact"}
         </p>
       </div>
 
@@ -686,20 +687,13 @@ export default function StackHouse() {
       <TerminalUI />
       <HomeOfficeUI />
 
-      {isMobile && (
-        <>
-          {/* Movement joystick - left side */}
-          <VirtualJoystick onMove={handleJoystickMove} />
-
-          {/* Camera joystick - right side */}
-          <CameraJoystick onMove={handleCameraJoystick} />
-
-          {/* Action buttons - Xbox style layout */}
-          <div className="fixed bottom-32 right-32 w-24 h-24">
-            <ActionButton label="A" position="bottom" onPress={handleInteract} />
-            <ActionButton label="B" position="right" onPress={handleJump} />
-          </div>
-        </>
+      {isMobile && booted && (
+        <TouchControls
+          onMove={handleTouchMove}
+          onLook={handleLook}
+          onInteract={handleInteract}
+          nearbyLabel={nearbyLabel}
+        />
       )}
     </div>
   )
