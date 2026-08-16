@@ -36,9 +36,22 @@ from mathutils import Vector
 
 # --- look ------------------------------------------------------------------
 WINDOW_COLOR = (1.0, 0.78, 0.42)   # warm sodium, against the scene's cool navy
-EMISSION_STRENGTH = 4.5
-BODY_DARKEN = 0.18                 # unlit massing, so silhouette still reads
-MOON = 0.60                        # faint top light; keeps roofs from going flat black
+EMISSION_STRENGTH = 5.0
+
+# THE SOURCE TEXTURE IS THE DETAIL. Do not throw it away.
+#
+# This was 0.18 — an 82% crush that took the model's facades, window grids and
+# per-tower colour variation down to near-black, after which the procedural
+# windows were the ONLY thing left. The result was worse than the stock photo it
+# replaced: the photo had flaws, but it had detail. Trading real detail for
+# generated noise is a bad trade at any density.
+#
+# Night is a COLOUR SHIFT, not an absence of information. Keep the albedo
+# readable and push it cool; the moon and the ambient fill do the rest.
+BODY_DARKEN = 0.55
+NIGHT_TINT = (0.68, 0.80, 1.10)    # cool moonlight cast, applied with the darken
+MOON = 1.30                        # lifts facades enough to read their own texture
+AMBIENT = 0.09                     # sky fill, so unlit faces are dark but not void
 
 # A first pass at 220/0.62 lit ~6.5% of the plate in an even scatter and read as
 # television static rather than a city. Two things were wrong: the lights were
@@ -62,9 +75,13 @@ MOON = 0.60                        # faint top light; keeps roofs from going fla
 # fixed it in one step. The percentage is a useful sanity check for "is the
 # whole city on or off", nothing more.
 #
-# WINDOW_DENSITY is a threshold on uniform white noise, so 0.88 lights ~12% of
+# WINDOW_DENSITY is a threshold on uniform white noise, so 0.93 lights ~7% of
 # cells; the cluster field then darkens roughly half of those again.
-WINDOW_DENSITY = 0.90              # threshold: higher = fewer lit windows
+#
+# Deliberately sparse now that BODY_DARKEN no longer erases the source texture.
+# The model already HAS window grids and facade detail — these are accent lights
+# scattered over that, not a replacement for it.
+WINDOW_DENSITY = 0.93              # threshold: higher = fewer lit windows
 WINDOW_SCALE = 175.0               # grid cells per object-space unit
 CLUSTER_SCALE = 11.0
 CLUSTER_BIAS = 0.38                # below this the whole region stays dark
@@ -123,6 +140,15 @@ def main():
         cam.location = ctr + Vector((-back, 0.0, size.z * 0.10))
         cam.rotation_euler = (math.radians(90), 0.0, math.radians(-90))
 
+    # Sky fill. Without it the moon-facing side reads and everything else is a
+    # void, which is another way of losing the model's detail.
+    world = bpy.data.worlds.new("night")
+    sc.world = world
+    world.use_nodes = True
+    bg = world.node_tree.nodes["Background"]
+    bg.inputs[0].default_value = (0.24, 0.32, 0.52, 1.0)
+    bg.inputs[1].default_value = AMBIENT
+
     sun_d = bpy.data.lights.new("moon", "SUN")
     sun_d.energy = MOON
     sun_d.color = (0.62, 0.72, 1.0)
@@ -167,11 +193,13 @@ def night_material(obj):
         if bsdf is None:
             continue
 
-        # Knock the daylight albedo down; it stands in for unlit massing only.
+        # Shift the daylight albedo toward night WITHOUT erasing it — the model's
+        # own facades, window grids and per-tower colour are the detail we came
+        # for. Darken moderately and push cool, rather than crushing to black.
         dark = nt.nodes.new("ShaderNodeMixRGB")
         dark.blend_type = "MULTIPLY"
         dark.inputs[0].default_value = 1.0
-        dark.inputs[2].default_value = (BODY_DARKEN,) * 3 + (1.0,)
+        dark.inputs[2].default_value = tuple(BODY_DARKEN * c for c in NIGHT_TINT) + (1.0,)
         src_link = next((l for l in nt.links if l.to_socket is bsdf.inputs["Base Color"]), None)
         if src_link:
             nt.links.new(src_link.from_socket, dark.inputs[1])

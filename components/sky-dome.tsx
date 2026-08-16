@@ -33,15 +33,24 @@ import * as THREE from "three"
  * brand navy. SKY_ZENITH is near the brand black, which keeps the Stars
  * readable overhead — against the old dusk sky most of them were invisible.
  */
+/**
+ * Sampled from the photo, not chosen. scripts/build-skyline-plate.py prints
+ * these on every run — they are the colours the plate's cut edge hands over to
+ * at each height, converted from image rows to elevation for the plate's
+ * current HEIGHT and DEPTH.
+ *
+ * The direction matters and I had it backwards once: the photo is the better
+ * looking half of this pairing, so the dome matches IT. Grading the photo cool
+ * to meet a navy dome threw away the dusk that made it worth using.
+ */
 const STOPS: [number, string][] = [
-  // Horizon. A shade above the plate's band so there is a faint city glow
-  // sitting under the skyline rather than a flat wall of one colour.
-  [0.0, "#4b5c84"],
-  // Matches the plate's sky where its alpha ramp finishes and the art goes
-  // fully opaque — measured at #42557f by scripts/build-skyline-plate.py. This
-  // is the stop that has to be right; it is where the two skies meet.
-  [0.17, "#42557f"],
-  [0.45, "#1a2952"],
+  // Below the skyline's base — the warm haze the photo has at its waterline.
+  [0.0, "#7a7c93"],
+  [0.09, "#72758e"],
+  [0.17, "#334b7d"],
+  [0.24, "#1e3564"],
+  // Top of the plate. Also, near enough, the logo's navy.
+  [0.29, "#152a53"],
   [1.0, "#05070f"],
 ]
 
