@@ -36,7 +36,7 @@ from mathutils import Vector
 
 # --- look ------------------------------------------------------------------
 WINDOW_COLOR = (1.0, 0.78, 0.42)   # warm sodium, against the scene's cool navy
-EMISSION_STRENGTH = 7.0
+EMISSION_STRENGTH = 4.5
 BODY_DARKEN = 0.18                 # unlit massing, so silhouette still reads
 MOON = 0.60                        # faint top light; keeps roofs from going flat black
 
@@ -64,8 +64,8 @@ MOON = 0.60                        # faint top light; keeps roofs from going fla
 #
 # WINDOW_DENSITY is a threshold on uniform white noise, so 0.88 lights ~12% of
 # cells; the cluster field then darkens roughly half of those again.
-WINDOW_DENSITY = 0.88              # threshold: higher = fewer lit windows
-WINDOW_SCALE = 340.0               # grid cells per object-space unit
+WINDOW_DENSITY = 0.90              # threshold: higher = fewer lit windows
+WINDOW_SCALE = 175.0               # grid cells per object-space unit
 CLUSTER_SCALE = 11.0
 CLUSTER_BIAS = 0.38                # below this the whole region stays dark
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { useTexture } from "@react-three/drei"
+import { useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import { useEffect, useMemo } from "react"
 
@@ -61,12 +62,20 @@ const TEX = "/textures/skyline.png"
  * horizontal arc — near identical to what the old photo plate actually
  * covered, since most of that canvas was transparent padding.
  */
-const HEIGHT = 20
+/**
+ * HEIGHT was 20, which put the towers at a technically-correct ~10 degrees —
+ * realistic for a downtown a few miles off, and too small to read. At that size
+ * the whole city spanned ~280px of a 628px view, each building was ~15px wide,
+ * and the window grid went sub-pixel and turned to speckle. Being right about
+ * the angle is worth nothing if the detail cannot survive it.
+ */
+const HEIGHT = 30
 const DEPTH = -120
 const BASE_Y = -2
 
 export function SkylinePlate() {
   const map = useTexture(TEX)
+  const maxAnisotropy = useThree((s) => s.gl.capabilities.getMaxAnisotropy())
 
   // Derived, not declared — see the note above.
   const width = useMemo(() => {
@@ -81,7 +90,10 @@ export function SkylinePlate() {
     // bleeding in at the extremes under anisotropic filtering.
     map.wrapS = THREE.ClampToEdgeWrapping
     map.wrapT = THREE.ClampToEdgeWrapping
-    map.anisotropy = 4
+    // Max the GPU offers, not a guess. This texture is minified hard — ~1800px
+    // of skyline across ~300px of screen — and anisotropy is what stops that
+    // becoming speckle.
+    map.anisotropy = maxAnisotropy
     map.needsUpdate = true
   }, [map])
 
