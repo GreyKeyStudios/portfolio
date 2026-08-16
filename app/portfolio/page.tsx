@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-
-const GOLD = "#c9a961"
+import { ACCENT, TEXT, alpha } from "@/lib/brand"
 
 /**
  * PLACEHOLDER. The recruiter-friendly side, pending design.
@@ -17,8 +16,8 @@ export default function Portfolio() {
     <main
       style={{
         minHeight: "100dvh",
-        background: "radial-gradient(120% 90% at 50% 0%, #14141a 0%, #08080a 60%)",
-        color: "#e8e4dc",
+        background: "radial-gradient(120% 90% at 50% 0%, #0e1424 0%, #000000 62%)",
+        color: TEXT,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -30,7 +29,7 @@ export default function Portfolio() {
       }}
     >
       <div style={{ fontSize: 11, letterSpacing: "0.42em", opacity: 0.45 }}>A PORTFOLIO BY</div>
-      <h1 style={{ fontSize: "clamp(26px, 5vw, 46px)", letterSpacing: "0.16em", fontWeight: 300, color: GOLD, margin: 0 }}>
+      <h1 style={{ fontSize: "clamp(26px, 5vw, 46px)", letterSpacing: "0.16em", fontWeight: 300, color: TEXT, margin: 0 }}>
         MICHAEL WALTON
       </h1>
 
@@ -44,12 +43,12 @@ export default function Portfolio() {
           href="/house"
           style={{
             padding: "13px 26px",
-            border: `1px solid ${GOLD}88`,
-            color: GOLD,
+            border: `1px solid ${ACCENT}88`,
+            color: ACCENT,
             textDecoration: "none",
             fontSize: 11,
             letterSpacing: "0.24em",
-            background: "rgba(201,169,97,0.05)",
+            background: alpha(ACCENT, 0.06),
           }}
         >
           ENTER THE STACK HOUSE
@@ -58,8 +57,8 @@ export default function Portfolio() {
           href="/"
           style={{
             padding: "13px 26px",
-            border: "1px solid #ffffff1a",
-            color: "#e8e4dc",
+            border: `1px solid ${alpha(TEXT, 0.1)}`,
+            color: TEXT,
             textDecoration: "none",
             fontSize: 11,
             letterSpacing: "0.24em",

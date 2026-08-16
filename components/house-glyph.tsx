@@ -1,6 +1,6 @@
 "use client"
 
-import { GOLD } from "@/components/loading-screen"
+import { ACCENT, ACCENT_SOFT } from "@/lib/brand"
 
 /**
  * The Stack House as an architectural line drawing that resolves as assets load.
@@ -47,7 +47,7 @@ export function HouseGlyph({ progress, size = 190 }: Props) {
       height={size * 0.82}
       viewBox="0 0 200 164"
       fill="none"
-      stroke={GOLD}
+      stroke={ACCENT}
       strokeWidth={1.4}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -82,7 +82,9 @@ export function HouseGlyph({ progress, size = 190 }: Props) {
             width={12}
             height={10}
             rx={1}
-            fill={GOLD}
+            // A step lighter than the outline so a lit window reads as light
+            // coming out of the building rather than as more line work.
+            fill={ACCENT_SOFT}
             stroke="none"
             style={{
               opacity: lit ? 0.95 : 0.07,

@@ -12,7 +12,12 @@ export function getActiveColliders(location: FloorId): AABB[] {
 
 export function getWorldBounds(location: FloorId): { minX: number; maxX: number; minZ: number; maxZ: number } {
   if (location === 'yard') {
-    return { minX: -25, maxX: 25, minZ: -40, maxZ: 15 }
+    // Constrained to the dressed area. At -25..25 / -40..15 you could walk
+    // well past the fence line and the opposing sidewalk onto bare ground,
+    // where the skyline plate no longer covers the view and you see empty sky
+    // either side of it. These bounds keep you inside the built street: the
+    // fence runs to x=+-15.1 and the far curb sits at z=-33.3.
+    return { minX: -16, maxX: 16, minZ: -34, maxZ: 14 }
   }
   // Generous interior play area around X0 — individual room walls (interior-colliders.ts)
   // do the real containment; this is just a backstop against falling through the world.

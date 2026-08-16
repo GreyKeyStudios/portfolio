@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useProgress } from "@react-three/drei"
-import { LoadingScreen, GOLD } from "@/components/loading-screen"
+import { LoadingScreen } from "@/components/loading-screen"
+import { ACCENT, INK, TEXT } from "@/lib/brand"
 
 /**
  * Opening credits, played over a Canvas that is already streaming behind them.
@@ -20,13 +21,17 @@ import { LoadingScreen, GOLD } from "@/components/loading-screen"
 
 interface Card {
   eyebrow?: string
-  title: string
+  title?: string
   sub?: string
+  /** Renders the studio lockup instead of typeset text. */
+  logo?: boolean
   ms: number
 }
 
+// Card one is the studio ident, which is what an opening credit actually is —
+// so it shows the real logo rather than a typeset imitation of it.
 const CARDS: Card[] = [
-  { title: "GREY KEY", sub: "S T U D I O S", ms: 2600 },
+  { logo: true, ms: 2600 },
   { eyebrow: "A PORTFOLIO BY", title: "MICHAEL WALTON", ms: 2600 },
   { eyebrow: "THE", title: "STACK HOUSE", sub: "INTERACTIVE PORTFOLIO", ms: 2800 },
 ]
@@ -103,8 +108,8 @@ export function BootSequence({ onDone }: { onDone: () => void }) {
         position: "fixed",
         inset: 0,
         zIndex: 50,
-        background: "#08080a",
-        color: "#e8e4dc",
+        background: INK,
+        color: TEXT,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -112,14 +117,34 @@ export function BootSequence({ onDone }: { onDone: () => void }) {
       }}
     >
       <div key={cardIndex} style={{ textAlign: "center", animation: "bootFade 700ms ease both" }}>
-        {card.eyebrow && (
-          <div style={{ fontSize: 11, letterSpacing: "0.42em", opacity: 0.5, marginBottom: 18 }}>{card.eyebrow}</div>
-        )}
-        <div style={{ fontSize: "clamp(28px, 5.5vw, 56px)", letterSpacing: "0.16em", fontWeight: 300, color: GOLD }}>
-          {card.title}
-        </div>
-        {card.sub && (
-          <div style={{ fontSize: 12, letterSpacing: "0.38em", opacity: 0.55, marginTop: 16 }}>{card.sub}</div>
+        {card.logo ? (
+          <img
+            src="/brand/greykey-lockup.svg"
+            alt="Grey Key Studios — Minneapolis"
+            width={340}
+            height={255}
+            style={{ width: "min(340px, 68vw)", height: "auto", display: "block" }}
+          />
+        ) : (
+          <>
+            {card.eyebrow && (
+              <div style={{ fontSize: 11, letterSpacing: "0.42em", opacity: 0.5, marginBottom: 18 }}>
+                {card.eyebrow}
+              </div>
+            )}
+            {/* Title in paper, subtitle in accent — the same division the master
+                logo uses, where the wordmark is white and "Minneapolis" is blue.
+                An accent-coloured TITLE was the old gold treatment and it
+                inverts the lockup. */}
+            <div
+              style={{ fontSize: "clamp(28px, 5.5vw, 56px)", letterSpacing: "0.16em", fontWeight: 300, color: TEXT }}
+            >
+              {card.title}
+            </div>
+            {card.sub && (
+              <div style={{ fontSize: 12, letterSpacing: "0.38em", marginTop: 16, color: ACCENT }}>{card.sub}</div>
+            )}
+          </>
         )}
       </div>
 
@@ -133,7 +158,7 @@ export function BootSequence({ onDone }: { onDone: () => void }) {
           right: 32,
           background: "none",
           border: "none",
-          color: "#e8e4dc",
+          color: TEXT,
           opacity: 0.35,
           fontSize: 10,
           letterSpacing: "0.3em",

@@ -3,7 +3,9 @@
 import { Suspense, useEffect, useState, useCallback, useRef } from "react"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import type * as THREE from "three"
-import { Environment, Sky, Stars } from "@react-three/drei"
+import { Environment, Stars } from "@react-three/drei"
+import { SkyDome } from "@/components/sky-dome"
+import { INK, TEXT, alpha } from "@/lib/brand"
 import { FPSControls } from "@/components/fps-controls"
 import { MobileFPSControls } from "@/components/mobile-fps-controls"
 import { HouseModel } from "@/components/house-model"
@@ -192,17 +194,9 @@ function YardSky() {
 
   return (
     <group visible={isYard}>
-      {/* Night/dusk atmosphere */}
-      <Sky
-        distance={450000}
-        sunPosition={[-2, 0.1, -5]}
-        inclination={0.52}
-        azimuth={0.25}
-        turbidity={12}
-        rayleigh={0.5}
-        mieCoefficient={0.005}
-        mieDirectionalG={0.8}
-      />
+      {/* Night sky, painted from the skyline art's own palette rather than
+          modelled. See components/sky-dome.tsx for why <Sky> had to go. */}
+      <SkyDome />
       <Stars radius={120} depth={60} count={4000} factor={4} fade speed={0.5} />
     </group>
   )
@@ -646,7 +640,11 @@ export default function StackHouse() {
         <Suspense fallback={null}>
           <CameraInit />
 
-          <fog attach="fog" args={["#0d1530", 30, 90]} />
+          {/* Fog colour is a darkened brand navy, not an arbitrary blue: the
+              yard's far ground has to recede into the base of the skyline
+              plate, and anything lighter makes the ground glow against the
+              city silhouette instead of disappearing behind it. */}
+          <fog attach="fog" args={["#152341", 30, 90]} />
 
           <YardSky />
 
@@ -701,11 +699,11 @@ export default function StackHouse() {
             padding: "8px 14px",
             fontSize: 10,
             letterSpacing: "0.22em",
-            color: "rgba(232,228,220,0.55)",
+            color: alpha(TEXT, 0.55),
             textDecoration: "none",
-            border: "1px solid rgba(232,228,220,0.16)",
+            border: `1px solid ${alpha(TEXT, 0.16)}`,
             borderRadius: 2,
-            background: "rgba(8,8,10,0.55)",
+            background: alpha(INK, 0.55),
             fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
           }}
         >

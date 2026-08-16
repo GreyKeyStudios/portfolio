@@ -2,6 +2,7 @@
 
 import { useProgress } from "@react-three/drei"
 import { HouseGlyph } from "@/components/house-glyph"
+import { ACCENT, INK, TEXT, alpha } from "@/lib/brand"
 
 /**
  * Reusable loading overlay.
@@ -16,8 +17,6 @@ import { HouseGlyph } from "@/components/house-glyph"
  *   <LoadingScreen />                       — follows drei's asset queue
  *   <LoadingScreen progress={n} />          — you own the number
  */
-
-export const GOLD = "#c9a961"
 
 const STAGES = [
   "PREPARING ENVIRONMENT",
@@ -57,9 +56,9 @@ export function LoadingScreen({
         position: "fixed",
         inset: 0,
         zIndex: 50,
-        background: overlay ? "rgba(8,8,10,0.82)" : "#08080a",
+        background: overlay ? alpha(INK, 0.82) : INK,
         backdropFilter: overlay ? "blur(6px)" : undefined,
-        color: "#e8e4dc",
+        color: TEXT,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -80,11 +79,11 @@ export function LoadingScreen({
         <div style={{ width: "100%" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
           <span style={{ fontSize: 11, letterSpacing: "0.32em", opacity: 0.6 }}>{label}</span>
-          <span style={{ fontSize: 11, letterSpacing: "0.1em", color: GOLD }}>{Math.round(pct)}%</span>
+          <span style={{ fontSize: 11, letterSpacing: "0.1em", color: ACCENT }}>{Math.round(pct)}%</span>
         </div>
 
-        <div style={{ height: 2, background: "#ffffff14", overflow: "hidden" }}>
-          <div style={{ height: "100%", width: `${pct}%`, background: GOLD, transition: "width 240ms ease" }} />
+        <div style={{ height: 2, background: alpha(TEXT, 0.08), overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${pct}%`, background: ACCENT, transition: "width 240ms ease" }} />
         </div>
 
         <div style={{ marginTop: 18, fontSize: 10, letterSpacing: "0.26em", opacity: 0.4, minHeight: 14 }}>

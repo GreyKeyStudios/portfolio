@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useEffect } from "react"
 import { useGLTF, useTexture } from "@react-three/drei"
-
-const GOLD = "#c9a961"
+import { ACCENT, ACCENT_FAINT, TEXT, alpha } from "@/lib/brand"
 
 /**
  * The gate. Two doors: a recruiter-friendly portfolio, and the house.
@@ -41,8 +40,10 @@ export default function Gate() {
     <main
       style={{
         minHeight: "100dvh",
-        background: "radial-gradient(120% 90% at 50% 0%, #14141a 0%, #08080a 60%)",
-        color: "#e8e4dc",
+        // Black ground with the faintest lift of brand navy at the top, so the
+        // gate reads as the logo's own black rather than a generic dark page.
+        background: "radial-gradient(120% 90% at 50% 0%, #0e1424 0%, #000000 62%)",
+        color: TEXT,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -52,11 +53,19 @@ export default function Gate() {
         fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
       }}
     >
+      {/* The real lockup, not a typeset approximation of it. Copied from
+          logo-files/basic/transparent.svg — the variant with no background
+          rect, so it sits on the gate's own black. The drawn cube happens to
+          be exactly the right mark for this project: the whole site is a box
+          you walk into. */}
       <header style={{ textAlign: "center" }}>
-        <div style={{ fontSize: "clamp(26px, 4.6vw, 44px)", letterSpacing: "0.2em", fontWeight: 300, color: GOLD }}>
-          GREY KEY
-        </div>
-        <div style={{ fontSize: 11, letterSpacing: "0.52em", opacity: 0.5, marginTop: 12 }}>S T U D I O S</div>
+        <img
+          src="/brand/greykey-lockup.svg"
+          alt="Grey Key Studios — Minneapolis"
+          width={300}
+          height={225}
+          style={{ width: "min(300px, 62vw)", height: "auto", display: "block" }}
+        />
       </header>
 
       <div
@@ -73,13 +82,13 @@ export default function Gate() {
           href="/portfolio"
           title="STANDARD PORTFOLIO"
           sub="Clean. Simple. Professional."
-          accent="#7d848f"
+          accent={ACCENT_FAINT}
         />
         <GateCard
           href="/house"
           title="ENTER THE STACK HOUSE"
           sub="An Interactive Experience"
-          accent={GOLD}
+          accent={ACCENT}
           primary
           onIntent={warmCache}
         />
@@ -118,8 +127,8 @@ function GateCard({
         padding: "34px 26px",
         textDecoration: "none",
         color: "inherit",
-        border: `1px solid ${primary ? accent + "88" : "#ffffff1a"}`,
-        background: primary ? "rgba(201,169,97,0.05)" : "rgba(255,255,255,0.02)",
+        border: `1px solid ${primary ? accent + "88" : alpha(TEXT, 0.1)}`,
+        background: primary ? alpha(ACCENT, 0.06) : alpha(TEXT, 0.02),
         transition: "border-color 220ms ease, background 220ms ease, transform 220ms ease",
         textAlign: "center",
       }}
@@ -128,11 +137,11 @@ function GateCard({
         e.currentTarget.style.transform = "translateY(-2px)"
       }}
       onMouseOut={(e) => {
-        e.currentTarget.style.borderColor = primary ? accent + "88" : "#ffffff1a"
+        e.currentTarget.style.borderColor = primary ? accent + "88" : alpha(TEXT, 0.1)
         e.currentTarget.style.transform = "none"
       }}
     >
-      <div style={{ fontSize: 13, letterSpacing: "0.22em", color: primary ? accent : "#e8e4dc" }}>{title}</div>
+      <div style={{ fontSize: 13, letterSpacing: "0.22em", color: primary ? accent : TEXT }}>{title}</div>
       <div style={{ fontSize: 11, opacity: 0.45, marginTop: 12, letterSpacing: "0.06em" }}>{sub}</div>
     </Link>
   )
