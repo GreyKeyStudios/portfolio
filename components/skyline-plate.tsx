@@ -75,9 +75,10 @@ const TEX = "/textures/skyline.png"
  */
 const HEIGHT = 38
 const DEPTH = -120
-// Base sits BELOW the dome horizon (eye level, y=1.7) so the plate's bottom
-// edge is never visible against sky - it meets dark ground instead.
-const BASE_Y = -5
+// Sunk far enough that the city's base is below the yard's ground line rather
+// than hanging above it. The gap measured about 5 degrees from the street,
+// which at 92 units out is ~8 world units.
+const BASE_Y = -13
 
 export function SkylinePlate() {
   const map = useTexture(TEX)
