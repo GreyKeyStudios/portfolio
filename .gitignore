@@ -38,3 +38,18 @@ next-env.d.ts
 # Oversized / rejected grass asset — Poly Pizza download, 131MB, looks bad
 public/models/Grass Patch.glb
 public/models/grass-1.glb
+
+# transpiled layout data for scripts/build-interior.cjs
+.interior-build/
+
+# Heavy source/experiment assets that nothing imports. Deleted 2026-08-16 —
+# 156MB of Meshy/Poly Pizza downloads (groundlight-1/2, walllamp) plus a few
+# strays. Listed so they cannot creep back into a deploy: the browser never
+# fetched them, but they were 88% of public/models and would upload on every
+# push. Check for a code reference before un-ignoring anything here.
+public/models/groundlight-*.glb
+public/models/walllamp.glb
+public/models/Plan.glb
+public/models/Basketball court.glb
+public/models/Dingus the cat.glb
+public/models/Foreign object in the ring.glb

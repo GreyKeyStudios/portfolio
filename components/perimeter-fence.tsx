@@ -1,116 +1,130 @@
 "use client"
 
-import { useMemo, useRef, useEffect } from "react"
-import { InstancedMesh, Object3D } from "three"
+import { useGLTF } from "@react-three/drei"
+import { useEffect, useMemo, useRef } from "react"
+import { Box3, InstancedMesh, Mesh, Object3D, Vector3 } from "three"
+import type * as THREE from "three"
+import { getModelUrl } from "@/lib/model-url"
 
-const POST_COLOR = "#1e2a4a"
-const RAIL_COLOR = "#1e2a4a"
+const FENCE_URL = getModelUrl("fence-section.glb")
 
-// Confirmed via leva: walkway X=0.9 (door), driveway X=4.0 (garage)
-const WALKWAY_CENTER = 0.9   // gap: X=-0.6 to X=2.4
-const WALKWAY_HALF = 1.5
+// ── Yard boundary ──────────────────────────────────────────────────────────
+// Front line faces the street; back line encloses the backyard behind the house.
+// House footprint spans Z=-4.57 to Z=4.64, so BACK_Z leaves ~9 units of backyard.
+export const FENCE_FRONT_Z = -16
+export const FENCE_BACK_Z = 14
+export const FENCE_LEFT_X = -15
+export const FENCE_RIGHT_X = 15
 
-const DRIVEWAY_CENTER = 4.0  // gap: X=1.5 to X=6.5
-const DRIVEWAY_HALF = 2.5
+// ── Openings in the front line ─────────────────────────────────────────────
+// Confirmed via leva: walkway centers on X=0.9 (front door), driveway on X=4.0
+// (garage). The run between them is the short section separating the two.
+export const WALKWAY_GAP: [number, number] = [0.15, 1.65]
+export const DRIVEWAY_GAP: [number, number] = [2.5, 5.5]
 
-// Confirmed via leva: fence front line at Z=-16
-const FENCE_Z = -16
+// The generated section is 1.8 units tall, which would sit above the player's
+// 1.7 eye height and wall off the house from the street. Scale to a front-yard
+// height instead.
+const TARGET_HEIGHT = 1.15
 
-interface PostPosition {
-  x: number
-  z: number
-  tall?: boolean
+interface Run {
+  axis: "x" | "z"
+  at: number
+  from: number
+  to: number
 }
 
-interface RailSegment {
+const RUNS: Run[] = [
+  { axis: "x", at: FENCE_FRONT_Z, from: FENCE_LEFT_X, to: WALKWAY_GAP[0] },
+  { axis: "x", at: FENCE_FRONT_Z, from: WALKWAY_GAP[1], to: DRIVEWAY_GAP[0] },
+  { axis: "x", at: FENCE_FRONT_Z, from: DRIVEWAY_GAP[1], to: FENCE_RIGHT_X },
+  { axis: "x", at: FENCE_BACK_Z, from: FENCE_LEFT_X, to: FENCE_RIGHT_X },
+  { axis: "z", at: FENCE_LEFT_X, from: FENCE_FRONT_Z, to: FENCE_BACK_Z },
+  { axis: "z", at: FENCE_RIGHT_X, from: FENCE_FRONT_Z, to: FENCE_BACK_Z },
+]
+
+interface Placement {
   x: number
   z: number
   angle: number
-}
-
-function FencePosts({ posts }: { posts: PostPosition[] }) {
-  return (
-    <>
-      {posts.map((p, i) => (
-        <mesh key={i} position={[p.x, p.tall ? 0.7 : 0.6, p.z]}>
-          <boxGeometry args={p.tall ? [0.15, 1.4, 0.15] : [0.12, 1.2, 0.12]} />
-          <meshStandardMaterial color={POST_COLOR} roughness={0.7} />
-        </mesh>
-      ))}
-    </>
-  )
-}
-
-function FenceRails({ segments }: { segments: RailSegment[] }) {
-  const meshRef = useRef<InstancedMesh>(null)
-  const dummy = useMemo(() => new Object3D(), [])
-  const count = segments.length * 2
-
-  useEffect(() => {
-    if (!meshRef.current) return
-    let idx = 0
-    for (const seg of segments) {
-      dummy.position.set(seg.x, 0.35, seg.z)
-      dummy.rotation.set(0, seg.angle, 0)
-      dummy.updateMatrix()
-      meshRef.current.setMatrixAt(idx++, dummy.matrix)
-
-      dummy.position.set(seg.x, 0.85, seg.z)
-      dummy.rotation.set(0, seg.angle, 0)
-      dummy.updateMatrix()
-      meshRef.current.setMatrixAt(idx++, dummy.matrix)
-    }
-    meshRef.current.instanceMatrix.needsUpdate = true
-  }, [segments, dummy])
-
-  return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <boxGeometry args={[1.5, 0.06, 0.06]} />
-      <meshStandardMaterial color={RAIL_COLOR} roughness={0.7} />
-    </instancedMesh>
-  )
+  scaleAlong: number
 }
 
 export function PerimeterFence() {
-  const { posts, rails } = useMemo(() => {
-    const posts: PostPosition[] = []
-    const rails: RailSegment[] = []
-    const SPACING = 1.5
+  const { scene } = useGLTF(FENCE_URL)
+  const meshRef = useRef<InstancedMesh>(null)
 
-    function inGap(x: number) {
-      const inW = x > (WALKWAY_CENTER - WALKWAY_HALF) && x < (WALKWAY_CENTER + WALKWAY_HALF)
-      const inD = x > (DRIVEWAY_CENTER - DRIVEWAY_HALF) && x < (DRIVEWAY_CENTER + DRIVEWAY_HALF)
-      return inW || inD
+  const { geometry, material, sectionW, uniformScale } = useMemo(() => {
+    let found: Mesh | null = null
+    scene.traverse((c) => {
+      if (!found && (c as Mesh).isMesh) found = c as Mesh
+    })
+    const size = new Box3().setFromObject(scene).getSize(new Vector3())
+    const s = TARGET_HEIGHT / (size.y || 1.8)
+
+    let mat = found ? (found.material as THREE.MeshStandardMaterial).clone() : null
+    if (mat) {
+      // Preview mesh ships untextured; read it as dark painted iron so the fence
+      // sits in the night palette as a silhouette.
+      mat.color.setHex(0x1a2238)
+      mat.roughness = 0.65
+      mat.metalness = 0.5
     }
 
-    for (let x = -15; x <= 15; x += SPACING) {
-      if (inGap(x)) continue
-      const nearGate =
-        Math.abs(x - (WALKWAY_CENTER - WALKWAY_HALF)) < SPACING ||
-        Math.abs(x - (WALKWAY_CENTER + WALKWAY_HALF)) < SPACING ||
-        Math.abs(x - (DRIVEWAY_CENTER - DRIVEWAY_HALF)) < SPACING ||
-        Math.abs(x - (DRIVEWAY_CENTER + DRIVEWAY_HALF)) < SPACING
-      posts.push({ x, z: FENCE_Z, tall: nearGate })
-      rails.push({ x, z: FENCE_Z, angle: 0 })
+    return {
+      geometry: found?.geometry ?? null,
+      material: mat,
+      sectionW: (size.x || 2.188) * s,
+      uniformScale: s,
     }
+  }, [scene])
 
-    for (let z = FENCE_Z; z <= -1; z += SPACING) {
-      posts.push({ x: -15, z })
-      rails.push({ x: -15, z, angle: Math.PI / 2 })
+  // Each run is divided into whole sections, then stretched slightly along its
+  // own axis so the ends land flush on the run bounds instead of overshooting.
+  const placements = useMemo<Placement[]>(() => {
+    if (!sectionW) return []
+    const out: Placement[] = []
+    for (const run of RUNS) {
+      const span = run.to - run.from
+      if (span <= 0) continue
+      const n = Math.max(1, Math.round(span / sectionW))
+      const step = span / n
+      for (let i = 0; i < n; i++) {
+        const mid = run.from + step * (i + 0.5)
+        out.push({
+          x: run.axis === "x" ? mid : run.at,
+          z: run.axis === "x" ? run.at : mid,
+          angle: run.axis === "x" ? 0 : Math.PI / 2,
+          scaleAlong: step / sectionW,
+        })
+      }
     }
+    return out
+  }, [sectionW])
 
-    for (let z = FENCE_Z; z <= -1; z += SPACING) {
-      posts.push({ x: 15, z })
-      rails.push({ x: 15, z, angle: Math.PI / 2 })
-    }
+  useEffect(() => {
+    if (!meshRef.current) return
+    const dummy = new Object3D()
+    placements.forEach((p, i) => {
+      dummy.position.set(p.x, 0, p.z)
+      dummy.rotation.set(0, p.angle, 0)
+      dummy.scale.set(uniformScale * p.scaleAlong, uniformScale, uniformScale)
+      dummy.updateMatrix()
+      meshRef.current!.setMatrixAt(i, dummy.matrix)
+    })
+    meshRef.current.instanceMatrix.needsUpdate = true
+  }, [placements, uniformScale])
 
-    return { posts, rails }
-  }, [])
+  if (!geometry || !material || placements.length === 0) return null
 
   return (
-    <group>
-      <FencePosts posts={posts} />
-      <FenceRails segments={rails} />
-    </group>
+    <instancedMesh
+      ref={meshRef}
+      args={[geometry, material, placements.length]}
+      castShadow
+      receiveShadow
+    />
   )
 }
+
+useGLTF.preload(FENCE_URL)

@@ -1,56 +1,55 @@
 "use client"
 
+import { useGLTF } from "@react-three/drei"
+import { useEffect, useMemo } from "react"
+import type * as THREE from "three"
+import { getModelUrl } from "@/lib/model-url"
+
+const LAMP_URL = getModelUrl("lamppost.glb")
+
+// Model is 4.0 units tall with its origin at the base, so it drops straight onto
+// the ground with no bbox alignment. Lantern head sits just under the top.
+const LANTERN_Y = 3.7
+
+const GLOW_COLOR = "#becdf6"
+
 interface StreetLampProps {
   position: [number, number, number]
   rotation?: [number, number, number]
 }
 
 export function StreetLamp({ position, rotation = [0, 0, 0] }: StreetLampProps) {
-  const ironColor = "#1e2a4a"
-  const lampColor = "#0d1530"
-  const glowColor = "#becdf6"
+  const { scene } = useGLTF(LAMP_URL)
+
+  // Each lamp needs its own object graph, but geometry/materials stay shared.
+  const model = useMemo(() => scene.clone(), [scene])
+
+  useEffect(() => {
+    model.traverse((child) => {
+      const mesh = child as THREE.Mesh
+      if (!mesh.isMesh) return
+      mesh.castShadow = true
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+      mats.forEach((mat) => {
+        const std = mat as THREE.MeshStandardMaterial
+        // Meshy bakes an emission map for the lantern glass; lift it so the
+        // lantern reads as lit against the night scene.
+        if (std.emissiveMap) {
+          std.emissive.set(GLOW_COLOR)
+          std.emissiveIntensity = 2.2
+        }
+      })
+    })
+  }, [model])
 
   return (
     <group position={position} rotation={rotation}>
-      {/* Base plate */}
-      <mesh position={[0, 0.05, 0]}>
-        <boxGeometry args={[0.4, 0.1, 0.4]} />
-        <meshStandardMaterial color="#3a3a3a" roughness={0.8} />
-      </mesh>
+      <primitive object={model} />
 
-      {/* Pole — tapered cylinder */}
-      <mesh position={[0, 2.1, 0]}>
-        <cylinderGeometry args={[0.06, 0.08, 4, 8]} />
-        <meshStandardMaterial color={ironColor} roughness={0.6} metalness={0.4} />
-      </mesh>
-
-      {/* Horizontal arm extending toward street */}
-      <mesh position={[0, 4.2, -0.4]}>
-        <boxGeometry args={[0.06, 0.06, 0.8]} />
-        <meshStandardMaterial color={ironColor} roughness={0.6} metalness={0.4} />
-      </mesh>
-
-      {/* Lamp housing */}
-      <mesh position={[0, 4.05, -0.8]}>
-        <boxGeometry args={[0.35, 0.2, 0.35]} />
-        <meshStandardMaterial color={lampColor} roughness={0.5} />
-      </mesh>
-
-      {/* Lamp glass — emissive glow */}
-      <mesh position={[0, 3.95, -0.8]}>
-        <sphereGeometry args={[0.12, 8, 8]} />
-        <meshStandardMaterial
-          color={glowColor}
-          emissive={glowColor}
-          emissiveIntensity={1.5}
-          roughness={0.1}
-        />
-      </mesh>
-
-      {/* Point light from lamp — cool blue periwinkle */}
+      {/* Cast light from the lantern head — matches the scene's cool palette */}
       <pointLight
-        position={[0, 3.9, -0.8]}
-        color={glowColor}
+        position={[0, LANTERN_Y, 0]}
+        color={GLOW_COLOR}
         intensity={1.5}
         distance={12}
         decay={2}
@@ -58,3 +57,5 @@ export function StreetLamp({ position, rotation = [0, 0, 0] }: StreetLampProps) 
     </group>
   )
 }
+
+useGLTF.preload(LAMP_URL)

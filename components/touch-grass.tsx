@@ -26,7 +26,6 @@ function Confetti({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Reset particles
       particles.current.forEach((p) => {
         p.y = 0
         p.vy = Math.random() * 4 + 2
@@ -47,7 +46,7 @@ function Confetti({ active }: { active: boolean }) {
       p.y += p.vy * delta
       p.x += p.vx * delta
       p.z += p.vz * delta
-      p.vy -= 4 * delta // gravity
+      p.vy -= 4 * delta
       p.life -= delta * 0.4
       child.position.set(p.x, p.y, p.z)
       child.scale.setScalar(Math.max(0, p.life))
@@ -76,20 +75,41 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
   const [isNear, setIsNear] = useState(false)
   const [touched, setTouched] = useState(false)
   const [confettiActive, setConfettiActive] = useState(false)
-  const [glowPulse, setGlowPulse] = useState(0.6)
+
+  // Imperative glow — no setState in useFrame to avoid 60fps re-renders
   const glowRef = useRef(0.6)
   const dirRef = useRef(1)
-  const { completeEasterEgg, isEasterEggComplete, showHud } = usePlayerStore()
+  const touchedRef = useRef(touched)
+  const moundMatRef = useRef<THREE.MeshStandardMaterial>(null)
+  const bladeMatRefs = useRef<(THREE.MeshStandardMaterial | null)[]>([])
 
+  useEffect(() => { touchedRef.current = touched }, [touched])
+
+  // Stable store refs — prevents re-registration every render (same pattern as front-door.tsx)
+  const { completeEasterEgg, isEasterEggComplete, showHud } = usePlayerStore()
+  const completeEasterEggRef = useRef(completeEasterEgg)
+  const isEasterEggCompleteRef = useRef(isEasterEggComplete)
+  const showHudRef = useRef(showHud)
+  useEffect(() => { completeEasterEggRef.current = completeEasterEgg }, [completeEasterEgg])
+  useEffect(() => { isEasterEggCompleteRef.current = isEasterEggComplete }, [isEasterEggComplete])
+  useEffect(() => { showHudRef.current = showHud }, [showHud])
+
+  const [px, py, pz] = position
+
+  // Drive glow imperatively via material refs
   useFrame((_, delta) => {
-    glowRef.current += dirRef.current * delta * (touched ? 0.8 : 0.3)
-    if (glowRef.current > (touched ? 2.5 : 1.0)) dirRef.current = -1
-    if (glowRef.current < (touched ? 1.0 : 0.3)) dirRef.current = 1
-    setGlowPulse(glowRef.current)
+    const t = touchedRef.current
+    glowRef.current += dirRef.current * delta * (t ? 0.8 : 0.3)
+    if (glowRef.current > (t ? 2.5 : 1.0)) dirRef.current = -1
+    if (glowRef.current < (t ? 1.0 : 0.3)) dirRef.current = 1
+    const g = glowRef.current
+    if (moundMatRef.current) moundMatRef.current.emissiveIntensity = g * 0.3
+    bladeMatRefs.current.forEach((m) => { if (m) m.emissiveIntensity = g * 0.5 })
   })
 
+  // Only re-register when position changes — stable closure via refs above
   useEffect(() => {
-    const pos = new THREE.Vector3(position[0], position[1], position[2])
+    const pos = new THREE.Vector3(px, py, pz)
     registerInteractable({
       id: 'touch-grass',
       label: 'Touch Grass',
@@ -97,23 +117,26 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
       radius: 2.5,
       onNearby: (near) => setIsNear(near),
       onInteract: () => {
-        if (isEasterEggComplete('touch-grass')) {
+        if (isEasterEggCompleteRef.current('touch-grass')) {
           playSound('interact')
-          showHud("You already touched grass. Congrats, you're practically outdoorsy.", 'info', 3000)
+          showHudRef.current("You already touched grass. Congrats, you're practically outdoorsy.", 'info', 3000)
           return
         }
         playSound('confetti')
         setTouched(true)
         setConfettiActive(false)
         setTimeout(() => setConfettiActive(true), 50)
-        completeEasterEgg('touch-grass')
-        showHud("YEAHHH! You touched grass! Good job!", 'success', 5000)
+        completeEasterEggRef.current('touch-grass')
+        showHudRef.current('YEAHHH! You touched grass! Good job!', 'success', 5000)
       },
     })
     return () => unregisterInteractable('touch-grass')
-  }, [position, completeEasterEgg, isEasterEggComplete, showHud])
+  }, [px, py, pz])
 
-  const [px, py, pz] = position
+  const bladePositions: [number, number, number][] = [
+    [0, 0.22, 0], [0.3, 0.22, 0.2], [-0.3, 0.22, 0.1],
+    [0.1, 0.22, -0.3], [-0.2, 0.22, -0.25],
+  ]
 
   return (
     <group position={[px, py, pz]}>
@@ -121,24 +144,23 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
       <mesh position={[0, 0.05, 0]}>
         <cylinderGeometry args={[0.7, 0.9, 0.1, 12]} />
         <meshStandardMaterial
+          ref={moundMatRef}
           color={touched ? '#00ff66' : '#1a4d2e'}
           emissive={touched ? '#00ff66' : '#0d2b22'}
-          emissiveIntensity={glowPulse * 0.3}
+          emissiveIntensity={0.18}
           roughness={0.8}
         />
       </mesh>
 
       {/* Grass blades — 5 spike clusters */}
-      {[
-        [0, 0, 0], [0.3, 0, 0.2], [-0.3, 0, 0.1],
-        [0.1, 0, -0.3], [-0.2, 0, -0.25],
-      ].map(([bx, , bz], i) => (
-        <mesh key={i} position={[bx, 0.22, bz]} rotation={[(Math.random() - 0.5) * 0.3, i * 1.2, 0]}>
+      {bladePositions.map(([bx, by, bz], i) => (
+        <mesh key={i} position={[bx, by, bz]} rotation={[0, i * 1.2, 0]}>
           <coneGeometry args={[0.04, 0.35, 5]} />
           <meshStandardMaterial
+            ref={(el) => { bladeMatRefs.current[i] = el }}
             color={touched ? '#00ff66' : '#2d7a44'}
             emissive={touched ? '#00ff88' : '#1a4d2e'}
-            emissiveIntensity={glowPulse * 0.5}
+            emissiveIntensity={0.3}
           />
         </mesh>
       ))}
@@ -148,18 +170,19 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
         <cylinderGeometry args={[0.025, 0.025, 1.0, 6]} />
         <meshStandardMaterial color="#5c3d1e" roughness={0.9} />
       </mesh>
+
       {/* Sign board */}
       <mesh position={[0.9, 1.05, 0]}>
         <boxGeometry args={[0.55, 0.22, 0.04]} />
         <meshStandardMaterial color="#f5e6c8" roughness={0.7} />
       </mesh>
 
-      {/* Glow light — brightens when touched */}
+      {/* Glow light */}
       <pointLight
         position={[0, 0.8, 0]}
         color={touched ? '#00ff88' : '#2d7a44'}
-        intensity={isNear ? glowPulse * 2 : glowPulse}
-        distance={touched ? 6 : 3}
+        intensity={touched ? 6 : 3}
+        distance={8}
         decay={2}
       />
 

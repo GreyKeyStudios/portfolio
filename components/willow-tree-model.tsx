@@ -7,7 +7,7 @@ import { Box3 } from "three"
 import type * as THREE from "three"
 import { getModelUrl } from "@/lib/model-url"
 
-const TREE_MODEL_URL = getModelUrl("tree-main.glb")
+const TREE_MODEL_URL = getModelUrl("tree-main-optimized.glb")
 
 export function WillowTreeModel({ position }: { position: [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null)

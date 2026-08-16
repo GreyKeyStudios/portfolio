@@ -1,5 +1,7 @@
 "use client"
 
+import { useGroundTexture } from "@/lib/use-ground-texture"
+
 // Neighborhood across the street — opposing sidewalk, curb, and 3 simple houses
 
 interface NeighborHouse {
@@ -13,6 +15,9 @@ interface NeighborHouse {
   windowColor: string
   hasDriveway?: boolean
 }
+
+/** Placeholder houses across the street, off until real ones replace them. */
+const SHOW_NEIGHBOUR_HOUSES = false
 
 const HOUSES: NeighborHouse[] = [
   // House 1 — left side, slightly closer
@@ -105,31 +110,39 @@ function NeighborHouseMesh({ h }: { h: NeighborHouse }) {
   )
 }
 
+function OpposingSidewalk() {
+  // Same concrete texture and density as our side, so both sides of the street
+  // read as one material rather than two different greys.
+  const { map, normalMap } = useGroundTexture("concrete", 0.55, 80, 2.5)
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, -32]} receiveShadow>
+      <planeGeometry args={[80, 2.5]} />
+      <meshStandardMaterial map={map} normalMap={normalMap} color="#4a5268" roughness={0.9} />
+    </mesh>
+  )
+}
+
 export function NeighborStreet() {
   return (
     <group>
-      {/* Opposing sidewalk — matches our side at Z=-17.25 but mirrored across road */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, -32]}>
-        <planeGeometry args={[80, 2.5]} />
-        <meshStandardMaterial color="#1a2035" roughness={0.9} />
+      <OpposingSidewalk />
+
+      {/* Opposing curb — matches the near-side curb profile */}
+      <mesh position={[0, 0.07, -33.3]} receiveShadow castShadow>
+        <boxGeometry args={[80, 0.14, 0.3]} />
+        <meshStandardMaterial color="#535c73" roughness={0.85} />
       </mesh>
 
-      {/* Opposing curb */}
-      <mesh position={[0, 0.1, -33.3]}>
-        <boxGeometry args={[80, 0.2, 0.3]} />
-        <meshStandardMaterial color="#222840" roughness={0.85} />
-      </mesh>
+      {/* No grass strip here — the textured lawn in yard-ground.tsx already
+          covers Z -50..50, and a flat-colour plane on top of it just created a
+          visible mismatched patch. */}
 
-      {/* Grass strip between opposing sidewalk and houses */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, -36]}>
-        <planeGeometry args={[80, 5]} />
-        <meshStandardMaterial color="#0a1810" roughness={0.8} />
-      </mesh>
-
-      {/* 3 neighbor houses */}
-      {HOUSES.map((h) => (
-        <NeighborHouseMesh key={h.x} h={h} />
-      ))}
+      {/* Neighbour houses are hidden pending replacement. The street, curb and
+          opposing sidewalk stay — only the buildings are gated, so the road
+          still reads as a street rather than the yard ending in nothing.
+          Flip SHOW_NEIGHBOUR_HOUSES to bring the placeholders back. */}
+      {SHOW_NEIGHBOUR_HOUSES &&
+        HOUSES.map((h) => <NeighborHouseMesh key={h.x} h={h} />)}
     </group>
   )
 }

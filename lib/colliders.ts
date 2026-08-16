@@ -6,8 +6,12 @@ import type { AABB } from './collision'
  * Coordinate system:
  *   X negative = player's left (facing house from street)
  *   X positive = player's right (driveway side)
- *   Z negative = toward house
- *   Z positive = toward street / player start
+ *   Z negative = toward the street / player spawn
+ *   Z positive = toward the backyard
+ *
+ * Fence bounds mirror the runs in components/perimeter-fence.tsx. If you move a
+ * fence line there, update the matching entry here — the fence is instanced
+ * geometry, so there's no automatic bbox to read back.
  *
  * ── HOW TO CALIBRATE HOUSE BOUNDS ───────────────────────────────────────────
  * 1. npm run dev
@@ -24,12 +28,22 @@ export const COLLIDERS: AABB[] = [
   // Front door interaction zone (proximity) handles entry — no gap needed here.
   { label: 'house', minX: -4.835, maxX: 6.272, minZ: -4.571, maxZ: 4.639 },
 
-  // ── All others disabled — re-enable one at a time after house is solid ────
-  // { label: 'terminal',      minX: -1.0,  maxX:  0.0,  minZ: -4.75, maxZ: -4.05 },
-  // { label: 'willow-trunk',  minX: -9.5,  maxX: -6.5,  minZ:  8.5,  maxZ: 11.5  },
-  // { label: 'fence-front-L', minX: -15.0, maxX:  0.15, minZ: -16.5, maxZ: -15.5 },
-  // { label: 'fence-front-M', minX:  1.65, maxX:  2.5,  minZ: -16.5, maxZ: -15.5 },
-  // { label: 'fence-front-R', minX:  5.5,  maxX: 15.0,  minZ: -16.5, maxZ: -15.5 },
-  // { label: 'fence-left',    minX: -15.5, maxX: -14.5, minZ: -16.0, maxZ:  0.0  },
-  // { label: 'fence-right',   minX:  14.5, maxX:  15.5, minZ: -16.0, maxZ:  0.0  },
+  // ── Front fence line (Z=-16), broken by the two gate openings ────────────
+  // Walkway opening X=0.15..1.65, driveway opening X=2.5..5.5
+  { label: 'fence-front-L', minX: -15.1, maxX: 0.25, minZ: -16.2, maxZ: -15.8 },
+  { label: 'fence-front-M', minX: 1.55, maxX: 2.6, minZ: -16.2, maxZ: -15.8 },
+  { label: 'fence-front-R', minX: 5.4, maxX: 15.1, minZ: -16.2, maxZ: -15.8 },
+
+  // ── Side + back fence lines enclosing the backyard ───────────────────────
+  { label: 'fence-left', minX: -15.2, maxX: -14.8, minZ: -16.2, maxZ: 14.2 },
+  { label: 'fence-right', minX: 14.8, maxX: 15.2, minZ: -16.2, maxZ: 14.2 },
+  { label: 'fence-back', minX: -15.1, maxX: 15.1, minZ: 13.8, maxZ: 14.2 },
+
+  // ── Props ────────────────────────────────────────────────────────────────
+  // Terminal at [-0.65, 0, -6.0]; body is 0.55 wide × ~0.4 deep.
+  { label: 'terminal', minX: -0.95, maxX: -0.35, minZ: -6.25, maxZ: -5.75 },
+
+  // Willow at [-8, 0, 10] scaled 5×. Only the trunk blocks — the canopy hangs
+  // overhead and the player should be able to walk under its outer fringe.
+  { label: 'willow-trunk', minX: -8.5, maxX: -7.5, minZ: 9.5, maxZ: 10.5 },
 ]

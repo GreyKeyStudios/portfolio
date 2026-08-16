@@ -2,11 +2,12 @@
 
 import type React from "react"
 
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import { resolveCollision } from "@/lib/collision"
-import { COLLIDERS } from "@/lib/colliders"
+import { getActiveColliders, getWorldBounds, resolveEyeY } from "@/lib/use-player-vertical"
+import { usePlayerStore } from "@/lib/player-store"
 
 interface MobileFPSControlsProps {
   joystickRef: React.MutableRefObject<{ x: number; y: number }>
@@ -17,6 +18,30 @@ export function MobileFPSControls({ joystickRef, cameraRotationRef }: MobileFPSC
   const { camera } = useThree()
   const velocity = useRef(new THREE.Vector3())
   const initialized = useRef(false)
+
+  // Terminal / Home Office / enter-house-prompt overlays — this control scheme
+  // previously never checked terminalOpen at all, so opening the terminal on
+  // mobile didn't pause movement. See fps-controls.tsx for the enterPromptOpen note.
+  const terminalOpen = usePlayerStore((s) => s.terminalOpen)
+  const homeOfficeOpen = usePlayerStore((s) => s.homeOfficeOpen)
+  const enterPromptOpen = usePlayerStore((s) => s.enterPromptOpen)
+  const pausedRef = useRef(false)
+  useEffect(() => { pausedRef.current = terminalOpen || homeOfficeOpen || enterPromptOpen }, [terminalOpen, homeOfficeOpen, enterPromptOpen])
+
+  // Teleport handling — same pattern as fps-controls.tsx
+  useEffect(() => {
+    return usePlayerStore.subscribe((state, prevState) => {
+      const req = state.teleportRequest
+      if (!req || req === prevState.teleportRequest) return
+      camera.position.set(req.position[0], req.position[1], req.position[2])
+      if (req.yaw !== undefined) {
+        cameraRotationRef.current.y = req.yaw
+        cameraRotationRef.current.x = 0
+      }
+      velocity.current.set(0, 0, 0)
+      usePlayerStore.getState().clearTeleportRequest()
+    })
+  }, [camera, cameraRotationRef])
 
   useFrame((state, delta) => {
     if (!initialized.current) {
@@ -30,6 +55,8 @@ export function MobileFPSControls({ joystickRef, cameraRotationRef }: MobileFPSC
     camera.rotation.order = "YXZ"
     camera.rotation.y = cameraRotationRef.current.y
     camera.rotation.x = cameraRotationRef.current.x
+
+    if (pausedRef.current) return   // paused while terminal/home-office overlay is open
 
     // Calculate movement direction based on camera
     const forward = new THREE.Vector3()
@@ -54,13 +81,23 @@ export function MobileFPSControls({ joystickRef, cameraRotationRef }: MobileFPSC
     velocity.current.lerp(direction, 0.15)
     camera.position.addScaledVector(velocity.current, delta)
 
-    // Collision resolution — push player out of any AABB colliders
-    const resolved = resolveCollision(camera.position.x, camera.position.z, COLLIDERS)
+    const location = usePlayerStore.getState().currentLocation
+
+    // Collision resolution — push player out of any AABB colliders on the active floor
+    const resolved = resolveCollision(camera.position.x, camera.position.z, getActiveColliders(location))
     camera.position.x = resolved.x
     camera.position.z = resolved.z
 
-    // Keep camera at eye level
-    camera.position.y = 1.7
+    // Eye height follows the active floor, same stair interpolation as desktop controls
+    const { y, crossedTo } = resolveEyeY(location, camera.position.x, camera.position.z)
+    camera.position.y = y
+    if (crossedTo && crossedTo !== location) {
+      usePlayerStore.getState().setCurrentLocation(crossedTo)
+    }
+
+    const bounds = getWorldBounds(location)
+    camera.position.x = Math.max(bounds.minX, Math.min(bounds.maxX, camera.position.x))
+    camera.position.z = Math.max(bounds.minZ, Math.min(bounds.maxZ, camera.position.z))
   })
 
   return null

@@ -6,7 +6,7 @@ import type * as THREE from "three"
 import { Box3 } from "three"
 import { getModelUrl } from "@/lib/model-url"
 
-const HOUSE_MODEL_URL = getModelUrl("house-main.glb")
+const HOUSE_MODEL_URL = getModelUrl("house-main-optimized.glb")
 const USE_PLACEHOLDER = false
 
 function PlaceholderHouse({ position }: { position: [number, number, number] }) {
@@ -44,6 +44,15 @@ export function HouseModel({ position = [0, 0, 0] }: { position?: [number, numbe
   const houseRef = useRef<THREE.Group>(null)
   const hasAligned = useRef(false)
   const { scene } = useGLTF(HOUSE_MODEL_URL)
+
+  useEffect(() => {
+    scene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        child.castShadow = true
+        child.receiveShadow = true
+      }
+    })
+  }, [scene])
 
   useEffect(() => {
     if (!houseRef.current || hasAligned.current) return

@@ -6,7 +6,9 @@ import { Box3 } from "three"
 import type * as THREE from "three"
 import { getModelUrl } from "@/lib/model-url"
 
-const GRASS_URL = getModelUrl("grass-1.glb")
+// Stylized low-poly patch (8.5k tris) — the photoreal grass-1.glb was 130MB and
+// bottomed out at ~137k tris per patch under decimation, too heavy for scatter.
+const GRASS_URL = getModelUrl("grass-patch.glb")
 
 interface GrassPatchProps {
   position: [number, number, number]
@@ -22,6 +24,23 @@ export function GrassPatch({
   const groupRef = useRef<THREE.Group>(null)
   const hasAligned = useRef(false)
   const { scene } = useGLTF(GRASS_URL)
+
+  // The GLB ships flat daylight greens (no texture map, so color IS the shade).
+  // Darken toward the scene's night palette once — materials are shared across
+  // every cloned patch, so this runs on the source and applies to all of them.
+  useEffect(() => {
+    scene.traverse((child) => {
+      const mesh = child as THREE.Mesh
+      if (!mesh.isMesh) return
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+      mats.forEach((m) => {
+        const std = m as THREE.MeshStandardMaterial
+        if (!std.color) return
+        std.color.multiplyScalar(0.28)
+        std.roughness = 0.95
+      })
+    })
+  }, [scene])
 
   // Auto-ground: drop the model so its lowest point sits flush on the ground
   useEffect(() => {
