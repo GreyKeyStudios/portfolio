@@ -63,13 +63,17 @@ const TEX = "/textures/skyline.png"
  * covered, since most of that canvas was transparent padding.
  */
 /**
- * HEIGHT was 20, which put the towers at a technically-correct ~10 degrees —
- * realistic for a downtown a few miles off, and too small to read. At that size
- * the whole city spanned ~280px of a 628px view, each building was ~15px wide,
- * and the window grid went sub-pixel and turned to speckle. Being right about
- * the angle is worth nothing if the detail cannot survive it.
+ * HEIGHT is the plate's world height, and the texture is now cropped tight to
+ * the city, so all of it is buildings — earlier versions spent most of this on
+ * transparent padding, which is why the same number used to read much smaller.
+ *
+ * 20 was technically correct (towers at ~10 degrees, right for a downtown a few
+ * miles out) and far too small to read: the city spanned ~280px of a 628px
+ * view, each building was ~15px wide, and the detail went sub-pixel. Being
+ * right about the angle is worth nothing if the detail cannot survive it. At 38
+ * the city covers most of the view down the street and the architecture reads.
  */
-const HEIGHT = 30
+const HEIGHT = 38
 const DEPTH = -120
 const BASE_Y = -2
 

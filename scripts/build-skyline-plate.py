@@ -65,6 +65,8 @@ SILHOUETTE_BITE = 2     # px cut INTO the building, so the feather has no sky in
 SIDE_FADE = 0.10        # share of width faded out at each end
 BOTTOM_FADE = 0.16      # share of height faded out at the waterline
 SILHOUETTE_SMOOTH = 9   # median window across columns, kills leftover spikes
+BASELINE_WINDOW = 81    # wide median defining the local roofline
+MAX_SPIKE = 14          # px a column may rise above that baseline
 EDGE_FEATHER = 3        # px of soft edge on the cutout, so it does not alias
 # The photo's own dusk brightness is KEPT. Grading it toward navy was the
 # wrong direction: it is the better-looking half of this pairing, so the sky
@@ -152,6 +154,21 @@ def main():
     padded = np.pad(first, half, mode="edge")
     stack = np.stack([padded[i:i + len(first)] for i in range(SILHOUETTE_SMOOTH)])
     first = np.median(stack, axis=0)
+
+    # Clamp spikes against a WIDE local baseline.
+    #
+    # What is left after the opening is mostly real: antennas, masts, the odd
+    # star that survived. But a 1px bright line standing 200px above the
+    # roofline does not read as an antenna at plate scale, it reads as a glitch
+    # — and the narrow median above cannot remove them because several adjacent
+    # columns spike together. A wide median gives the true local roofline, and
+    # anything towering over it by more than MAX_SPIKE gets pulled back down.
+    bhalf = BASELINE_WINDOW // 2
+    bpad = np.pad(first, bhalf, mode="edge")
+    baseline = np.median(
+        np.stack([bpad[i:i + len(first)] for i in range(BASELINE_WINDOW)]), axis=0
+    )
+    first = np.maximum(first, baseline - MAX_SPIKE)
 
     # Bite into the building before feathering. Feathering AT the silhouette
     # blends the bright sky pixel sitting immediately above each roofline, which

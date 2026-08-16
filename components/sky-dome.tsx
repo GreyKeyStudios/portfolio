@@ -44,13 +44,16 @@ import * as THREE from "three"
  * to meet a navy dome threw away the dusk that made it worth using.
  */
 const STOPS: [number, string][] = [
-  // Below the skyline's base — the warm haze the photo has at its waterline.
-  [0.0, "#7a7c93"],
-  [0.09, "#72758e"],
-  [0.17, "#334b7d"],
-  [0.24, "#1e3564"],
-  // Top of the plate. Also, near enough, the logo's navy.
-  [0.29, "#152a53"],
+  // Horizon. Deliberately NOT the photo's waterline haze (#72758e) — that
+  // sample sits low in the frame, mostly behind buildings, and painting the
+  // whole 360-degree dome that bright put a pale band right around the yard.
+  // The only place the two skies actually meet is the ROOFLINE, so that is
+  // the height the match has to be right at.
+  [0.0, "#2a3d68"],
+  [0.14, "#22355e"],
+  // Where the plate's top edge lands, and what the photo's sky reads there.
+  // Also, near enough, the logo's navy.
+  [0.27, "#152a53"],
   [1.0, "#05070f"],
 ]
 
