@@ -7,6 +7,7 @@ import { getModelUrl } from "@/lib/model-url"
 import { registerInteractable, unregisterInteractable } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
 import { playSound } from "@/lib/audio"
+import { placeInRoom } from "@/lib/interior-layout"
 
 const MODEL_URL = getModelUrl("home-office-furniture.glb")
 
@@ -15,11 +16,25 @@ interface HomeOfficeRoomProps {
   rotation?: [number, number, number]
 }
 
-// Desk faces -X locally (built facing the chair at local +Z, rotated -90° here
-// so that direction points toward the room's west wall) — position/rotation
-// default to roughly centered against Home Office's west wall (room spans
-// X0-9..X0-1.2, Z6..14; door is on the east side, so the desk faces away from it).
-export function HomeOfficeRoom({ position = [293.5, 3.2, 10], rotation = [0, -Math.PI / 2, 0] }: HomeOfficeRoomProps) {
+/**
+ * Placed FROM THE LAYOUT, not from a literal.
+ *
+ * The previous default was [293.5, 3.2, 10], with a comment describing the room
+ * as spanning "X0-9..X0-1.2, Z6..14". That was true of the old floor plan. The
+ * rebuild moved Home Office to the opposite side of the house — it now spans
+ * X0+0.98..X0+7.59, Z 0..6.21 — and the furniture stayed where it was, which
+ * put it in a different room entirely, through the walls.
+ *
+ * u=0.78 sets it near the east wall. The room's door is on the WEST side now
+ * (it was east before), so the desk sits opposite the door rather than beside
+ * it, and the chair still has room behind it.
+ */
+const DESK_FOOTPRINT: [number, number] = [1.1, 0.9]
+
+export function HomeOfficeRoom({
+  position = placeInRoom('home-office', 0.78, 0.5, DESK_FOOTPRINT),
+  rotation = [0, -Math.PI / 2, 0],
+}: HomeOfficeRoomProps) {
   const { scene } = useGLTF(MODEL_URL)
   const [isNear, setIsNear] = useState(false)
   const { openHomeOffice } = usePlayerStore()

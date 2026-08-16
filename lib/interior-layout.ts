@@ -484,8 +484,82 @@ export const STAIRS: StairDef[] = [
   ...switchback('second'),
 ]
 
-/** Where the player lands inside, just north of the front door. */
-export const FOYER_ENTRY_POINT: [number, number, number] = [X0, 1.7, 1.3]
+/**
+ * Where the player lands inside — a couple of paces past the front door.
+ *
+ * Not 1.3: that put the spawn 0.5 units from the exit trigger, so you arrived
+ * already being prompted to leave. 2.4 is still on the flat apron (the first
+ * flight starts at CORE_Z0 = 2.99), and leaves enough separation that walking
+ * back to the door is a deliberate act.
+ */
+export const FOYER_ENTRY_POINT: [number, number, number] = [X0, 1.7, 2.4]
+
+/**
+ * Where the "Exit to Yard" trigger sits — INSIDE the foyer, at the front door.
+ *
+ * Derived, because a hardcoded copy of this stranded the player in the house.
+ * components/interior/exit-door.tsx defaulted to z = -3.8, which was correct
+ * for an older, smaller floor plan; after the rebuild (PLAN_SCALE 1.15) the
+ * foyer's south wall — the front door — sits at z = 0, putting that trigger
+ * 3.8 units OUTSIDE the building. Its 2.0 radius reached z = -1.8 at best and
+ * the player can only reach about z = 0.3 before the wall stops them, so the
+ * exit was roughly 1.5 units beyond anywhere you could stand. No way out.
+ *
+ * Kept a little north of the wall so the prompt appears as you approach the
+ * door from inside rather than while standing in it.
+ */
+export const FOYER_EXIT_POINT: [number, number, number] = [X0, 1.0, 0.8]
+
+/**
+ * Plan-space scale helper, exported so that anything POSITIONED against the
+ * plan scales with it.
+ *
+ * This is the bug that stranded the exit door and scattered the props: the
+ * rebuild multiplied every room bound by PLAN_SCALE, but components holding
+ * raw literals did not move. Anything placing objects in the house should work
+ * in plan units and convert here, or better, use roomCenter/placeInRoom below.
+ */
+export const plan = (n: number) => n * PLAN_SCALE
+
+export function roomById(id: string): RoomDef | undefined {
+  return ROOMS.find((r) => r.id === id)
+}
+
+/** Floor-level centre of a room, in world space. */
+export function roomCenter(id: string): [number, number, number] {
+  const r = roomById(id)
+  if (!r) throw new Error(`roomCenter: no room "${id}"`)
+  const b = r.bounds
+  return [(b.minX + b.maxX) / 2, FLOOR_BASE_Y[r.floor], (b.minZ + b.maxZ) / 2]
+}
+
+/**
+ * Place something inside a room using 0..1 coordinates across its bounds, and
+ * refuse to let it poke through a wall.
+ *
+ * `half` is the object's half-extent in X and Z; the result is clamped so the
+ * object stays inside the room by at least `margin`. Props previously used raw
+ * world coordinates, which meant every plan change silently pushed furniture
+ * into walls — an armchair at x=301.01 straddling a wall at x=300.98, for one.
+ */
+export function placeInRoom(
+  id: string,
+  u: number,
+  v: number,
+  half: [number, number] = [0, 0],
+  margin = 0.08
+): [number, number, number] {
+  const r = roomById(id)
+  if (!r) throw new Error(`placeInRoom: no room "${id}"`)
+  const b = r.bounds
+  const loX = b.minX + half[0] + margin
+  const hiX = b.maxX - half[0] - margin
+  const loZ = b.minZ + half[1] + margin
+  const hiZ = b.maxZ - half[1] - margin
+  const x = Math.min(Math.max(b.minX + (b.maxX - b.minX) * u, loX), Math.max(loX, hiX))
+  const z = Math.min(Math.max(b.minZ + (b.maxZ - b.minZ) * v, loZ), Math.max(loZ, hiZ))
+  return [x, FLOOR_BASE_Y[r.floor], z]
+}
 
 /** Where the player lands back in the yard after using the Foyer exit door. */
 export const YARD_EXIT_POINT: [number, number, number] = [0.72, 1.7, -3.5]
