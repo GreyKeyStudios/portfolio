@@ -53,3 +53,7 @@ public/models/Plan.glb
 public/models/Basketball court.glb
 public/models/Dingus the cat.glb
 public/models/Foreign object in the ring.glb
+
+# Local 3D working files - raw Meshy downloads, hundreds of MB.
+# Never commit these; only their processed outputs belong in public/.
+tmps/

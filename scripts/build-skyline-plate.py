@@ -1,5 +1,11 @@
 """
-Builds public/textures/skyline.png from the source skyline photo.
+Builds public/textures/skyline.png from the source skyline PHOTO.
+
+SUPERSEDED, kept as a fallback. The plate is now rendered from our own city
+model instead — see scripts/render-skyline-plate.py and
+scripts/pack-skyline-render.py, which produce a smaller file (574 KB vs 1513),
+need no alpha painting at all, and let the palette be set rather than matched.
+Use this only to go back to the stock photo.
 
 Run:  python scripts/build-skyline-plate.py
 Needs: Pillow  (pip install pillow)

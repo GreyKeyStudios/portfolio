@@ -2,7 +2,7 @@
 
 import { useTexture } from "@react-three/drei"
 import * as THREE from "three"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 
 /**
  * The distant skyline, as a single image plate rather than procedural boxes.
@@ -22,11 +22,18 @@ import { useEffect } from "react"
 
 const TEX = "/textures/skyline.png"
 
-// Canvas is 4096 x 784; the skyline itself occupies the middle ~41% and the
-// rest is transparent, feathered extension. HEIGHT is the height of the whole
-// canvas, of which the buildings are the lower ~58% — the top 42% is the alpha
-// ramp that dissolves the painted sky into the sky dome.
-const ASPECT = 4096 / 784
+/**
+ * The texture is now a RENDER of our own city model rather than a stock photo
+ * (scripts/render-skyline-plate.py, then scripts/pack-skyline-render.py). It
+ * arrives on transparent film cropped tight to the silhouette, so there is no
+ * painted sky to blend away and no alpha ramp to maintain.
+ *
+ * Its aspect ratio is read off the loaded texture instead of hard-coded,
+ * because the crop depends on the city's own silhouette and changes whenever
+ * the art is re-rendered. A hard-coded constant here would go stale silently
+ * and stretch the skyline — the same shape of bug as the alpha ramp that spent
+ * months doing nothing.
+ */
 
 /**
  * Distance and size are chosen together, against one target: the towers should
@@ -44,17 +51,29 @@ const ASPECT = 4096 / 784
  * now shows open sky, which is what the ends of a real skyline look like —
  * so the plate is free to sit where it belongs.
  *
- * Geometry, for anyone re-tuning: buildings top out at 0.58 * HEIGHT - 3 in
- * world Y, and the eye is at 1.7, so from the spawn at z = -30 the towers
- * subtend atan((0.58 * 36 - 4.7) / 90) = 10.0 degrees, and the plate spans
- * about 92 degrees of horizontal arc.
+ * Geometry, for anyone re-tuning: the texture is cropped to the silhouette, so
+ * the plate's top edge IS the tallest tower and its bottom edge is the city's
+ * base. BASE_Y sinks that base just under the ground plane so the plate never
+ * shows a cut-off edge floating above the horizon.
+ *
+ * From the spawn at z = -30 the towers therefore subtend
+ * atan((20 - 2 - 1.7) / 90) = 10.3 degrees, and the city spans about 44 of
+ * horizontal arc — near identical to what the old photo plate actually
+ * covered, since most of that canvas was transparent padding.
  */
-const HEIGHT = 36
-const WIDTH = HEIGHT * ASPECT
+const HEIGHT = 20
 const DEPTH = -120
+const BASE_Y = -2
 
 export function SkylinePlate() {
   const map = useTexture(TEX)
+
+  // Derived, not declared — see the note above.
+  const width = useMemo(() => {
+    const img = map.image as { width?: number; height?: number } | undefined
+    const aspect = img?.width && img?.height ? img.width / img.height : 3.64
+    return HEIGHT * aspect
+  }, [map])
 
   useEffect(() => {
     map.colorSpace = THREE.SRGBColorSpace
@@ -67,8 +86,8 @@ export function SkylinePlate() {
   }, [map])
 
   return (
-    <mesh position={[0, HEIGHT / 2 - 3, DEPTH]} renderOrder={-1}>
-      <planeGeometry args={[WIDTH, HEIGHT]} />
+    <mesh position={[0, HEIGHT / 2 + BASE_Y, DEPTH]} renderOrder={-1}>
+      <planeGeometry args={[width, HEIGHT]} />
       <meshBasicMaterial
         map={map}
         transparent
