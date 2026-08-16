@@ -15,8 +15,20 @@ interface MobileFPSControlsProps {
   magnitudeRef?: React.MutableRefObject<number>
 }
 
-const WALK = 2
-const RUN = 4.5
+/**
+ * Deliberately slower than the desktop scheme's 2 / 4.5.
+ *
+ * Two reasons. A thumb naturally pushes a stick to its rim, so the run
+ * threshold was being tripped almost constantly rather than on purpose — you
+ * were effectively always sprinting. And the same speed reads faster on a phone
+ * than on a monitor: the screen is smaller, the field of view narrower, and
+ * rooms here are only 5–6m across, so 4.5m/s crosses one in about a second.
+ *
+ * Threshold raised alongside it so running takes a deliberate full push.
+ */
+const WALK = 1.5
+const RUN = 2.8
+const RUN_THRESHOLD = 0.9
 
 export function MobileFPSControls({ joystickRef, cameraRotationRef, magnitudeRef }: MobileFPSControlsProps) {
   const { camera } = useThree()
@@ -72,9 +84,9 @@ export function MobileFPSControls({ joystickRef, cameraRotationRef, magnitudeRef
         // Stick Y is screen-space (down is positive), so forward is negated.
         forward: -joystickRef.current.y,
         strafe: joystickRef.current.x,
-        // Push past ~85% to run. No sprint button on a phone — there is no
-        // spare thumb, and a stick already carries the intent.
-        speed: mag > 0.85 ? RUN : WALK,
+        // Push past the threshold to run. No sprint button on a phone — there
+        // is no spare thumb, and a stick already carries the intent.
+        speed: mag > RUN_THRESHOLD ? RUN : WALK,
       },
       delta,
       justTeleported

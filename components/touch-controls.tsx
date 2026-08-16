@@ -19,6 +19,18 @@ import { useCallback, useEffect, useRef, useState } from "react"
  * single shared handler would have the second finger steal the first's stick.
  */
 
+/**
+ * Height of the strip along the top edge the capture layer does NOT claim.
+ *
+ * touch-action:none over the whole viewport swallows the browser's own
+ * gestures — pull-to-refresh, and the swipe that brings back a hidden address
+ * bar. On a phone that leaves no way to reload the page at all. Leaving the top
+ * edge free restores browser chrome while keeping gesture protection over the
+ * part of the screen you actually play in, so a look-drag still cannot turn
+ * into an accidental refresh.
+ */
+const TOP_SAFE = 40
+
 const STICK_RADIUS = 56
 const DEAD_ZONE = 0.12
 const LOOK_SENSITIVITY = 0.0042
@@ -134,8 +146,9 @@ export function TouchControls({ onMove, onLook, onInteract, nearbyLabel }: Props
 
   return (
     <>
-      {/* Full-screen capture layer. touchAction none stops the browser from
-          treating a drag as a scroll or a pinch mid-look. */}
+      {/* Capture layer. touchAction none stops a drag being treated as a
+          scroll or pinch mid-look. Inset from the top so the browser keeps its
+          own edge gestures — see TOP_SAFE. */}
       <div
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -143,7 +156,10 @@ export function TouchControls({ onMove, onLook, onInteract, nearbyLabel }: Props
         onPointerCancel={endPointer}
         style={{
           position: "fixed",
-          inset: 0,
+          top: TOP_SAFE,
+          left: 0,
+          right: 0,
+          bottom: 0,
           touchAction: "none",
           zIndex: 20,
         }}

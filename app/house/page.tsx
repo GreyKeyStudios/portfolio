@@ -687,6 +687,32 @@ export default function StackHouse() {
       <TerminalUI />
       <HomeOfficeUI />
 
+      {/* Explicit exit. On a phone the browser chrome is often hidden and the
+          play area eats gestures, so an in-app way back is the reliable one —
+          and it doubles as the reload the browser makes awkward here. */}
+      {booted && (
+        <a
+          href="/"
+          style={{
+            position: "fixed",
+            top: 10,
+            right: 12,
+            zIndex: 30,
+            padding: "8px 14px",
+            fontSize: 10,
+            letterSpacing: "0.22em",
+            color: "rgba(232,228,220,0.55)",
+            textDecoration: "none",
+            border: "1px solid rgba(232,228,220,0.16)",
+            borderRadius: 2,
+            background: "rgba(8,8,10,0.55)",
+            fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
+          }}
+        >
+          EXIT
+        </a>
+      )}
+
       {isMobile && booted && (
         <TouchControls
           onMove={handleTouchMove}
