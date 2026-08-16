@@ -63,7 +63,10 @@ MIN_RUN = 14            # consecutive building rows needed to trust a silhouette
 OPEN_RADIUS = 3         # morphological opening; erases stars and thin antennas
 SILHOUETTE_BITE = 2     # px cut INTO the building, so the feather has no sky in it
 SIDE_FADE = 0.10        # share of width faded out at each end
-BOTTOM_FADE = 0.16      # share of height faded out at the waterline
+BOTTOM_FADE = 0.05      # share of height faded at the waterline - small, because
+                        # the dome now supplies a dark horizon for the base to
+                        # meet. A wide fade dissolved the city ABOVE that line,
+                        # which is what read as floating in mid air.
 SILHOUETTE_SMOOTH = 9   # median window across columns, kills leftover spikes
 BASELINE_WINDOW = 81    # wide median defining the local roofline
 MAX_SPIKE = 14          # px a column may rise above that baseline

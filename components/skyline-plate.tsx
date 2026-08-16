@@ -75,7 +75,9 @@ const TEX = "/textures/skyline.png"
  */
 const HEIGHT = 38
 const DEPTH = -120
-const BASE_Y = -2
+// Base sits BELOW the dome horizon (eye level, y=1.7) so the plate's bottom
+// edge is never visible against sky - it meets dark ground instead.
+const BASE_Y = -5
 
 export function SkylinePlate() {
   const map = useTexture(TEX)

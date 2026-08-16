@@ -48,14 +48,33 @@ const STOPS: [number, string][] = [
   // sample sits low in the frame, mostly behind buildings, and painting the
   // whole 360-degree dome that bright put a pale band right around the yard.
   // The only place the two skies actually meet is the ROOFLINE, so that is
-  // the height the match has to be right at.
-  [0.0, "#2a3d68"],
-  [0.14, "#22355e"],
+  // the height the match has to be right at. This is a dusk that lifts toward
+  // the horizon without becoming a band.
+  [0.0, "#4a5a83"],
+  [0.13, "#3a4c76"],
   // Where the plate's top edge lands, and what the photo's sky reads there.
   // Also, near enough, the logo's navy.
-  [0.27, "#152a53"],
-  [1.0, "#05070f"],
+  [0.28, "#1e3564"],
+  [0.55, "#152a53"],
+  [1.0, "#070c1a"],
 ]
+
+/**
+ * Below the horizon.
+ *
+ * There is no ground geometry past the neighbour street — the largest plane out
+ * there is 80x2.5 — so beyond it the dome was showing sky all the way down, and
+ * the skyline plate's base faded out against open air. That is what "floating
+ * in mid air" was: not the plate's position, but the absence of anything for it
+ * to sit on.
+ *
+ * Painting the dome's lower half dark gives a real horizon line at no cost in
+ * geometry or draw calls, and the plate's faded waterline now dissolves into
+ * dark ground rather than into sky.
+ */
+const GROUND = "#0a1020"
+/** Angular softness of the horizon, in units of sin(elevation). */
+const GROUND_FADE = 0.05
 
 const VERT = /* glsl */ `
   varying vec3 vDir;
@@ -77,6 +96,7 @@ const VERT = /* glsl */ `
 const FRAG = /* glsl */ `
   varying vec3 vDir;
   ${STOPS.map((_, i) => `uniform vec3 c${i};`).join("\n  ")}
+  uniform vec3 cGround;
 
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -91,6 +111,9 @@ const FRAG = /* glsl */ `
           `col = mix(col, c${i + 1}, smoothstep(${STOPS[i][0].toFixed(3)}, ${pos.toFixed(3)}, t));`
       )
       .join("\n    ")}
+    // Ground half. Soft rather than a hard line, so it reads as distance haze
+    // meeting the horizon instead of a cut across the dome.
+    col = mix(col, cGround, smoothstep(0.0, -${GROUND_FADE.toFixed(3)}, vDir.y));
     col += (hash(gl_FragCoord.xy) - 0.5) / 255.0;
     gl_FragColor = vec4(col, 1.0);
   }
@@ -102,15 +125,16 @@ export function SkyDome() {
 
   const uniforms = useMemo(
     () =>
-      Object.fromEntries(
+      Object.fromEntries([
         // Linearised here because the material is toneMapped={false} and the
         // renderer converts back to sRGB on output — so the hex above is what
         // actually lands on screen, and can be compared against the art.
-        STOPS.map(([, hex], i) => [
+        ...STOPS.map(([, hex], i) => [
           `c${i}`,
           { value: new THREE.Color(hex).convertSRGBToLinear() },
-        ])
-      ),
+        ]),
+        ["cGround", { value: new THREE.Color(GROUND).convertSRGBToLinear() }],
+      ]),
     []
   )
 
