@@ -1,73 +1,20 @@
 "use client"
-
-import Link from "next/link"
-import { ACCENT, TEXT, alpha } from "@/lib/brand"
-
-/**
- * PLACEHOLDER. The recruiter-friendly side, pending design.
- *
- * Exists so the gate has somewhere real to point and so the route is in the
- * static export from the start — a dead link on the front door is worse than
- * a holding page, and adding the route later would mean re-testing deployment.
- * Content and layout are entirely open.
- */
-export default function Portfolio() {
-  return (
-    <main
-      style={{
-        minHeight: "100dvh",
-        background: "radial-gradient(120% 90% at 50% 0%, #0e1424 0%, #000000 62%)",
-        color: TEXT,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 28,
-        padding: 24,
-        textAlign: "center",
-        fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
-      }}
-    >
-      <div style={{ fontSize: 11, letterSpacing: "0.42em", opacity: 0.45 }}>A PORTFOLIO BY</div>
-      <h1 style={{ fontSize: "clamp(26px, 5vw, 46px)", letterSpacing: "0.16em", fontWeight: 300, color: TEXT, margin: 0 }}>
-        MICHAEL WALTON
-      </h1>
-
-      <p style={{ maxWidth: 460, fontSize: 13, lineHeight: 1.9, opacity: 0.45, letterSpacing: "0.03em" }}>
-        The standard portfolio is being built. The interactive version is fully
-        walkable — and very much still a work in progress.
-      </p>
-
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
-        <Link
-          href="/house"
-          style={{
-            padding: "13px 26px",
-            border: `1px solid ${ACCENT}88`,
-            color: ACCENT,
-            textDecoration: "none",
-            fontSize: 11,
-            letterSpacing: "0.24em",
-            background: alpha(ACCENT, 0.06),
-          }}
-        >
-          ENTER THE STACK HOUSE
-        </Link>
-        <Link
-          href="/"
-          style={{
-            padding: "13px 26px",
-            border: `1px solid ${alpha(TEXT, 0.1)}`,
-            color: TEXT,
-            textDecoration: "none",
-            fontSize: 11,
-            letterSpacing: "0.24em",
-            opacity: 0.7,
-          }}
-        >
-          BACK
-        </Link>
-      </div>
-    </main>
-  )
-}
+import dynamic from "next/dynamic"
+import { useEffect,useRef } from "react"
+import { BRIDGE_PROJECT,BUILDING_PROJECTS,CATEGORY_LABELS,GAME_PROJECTS,LAB_PROJECTS,ProjectMedia,PortfolioProject,SHIPPED_PROJECTS,STACK_HOUSE_PROJECT,STATUS_LABELS } from "@/lib/portfolio-projects"
+import { MusicIdentities } from "./music-identities"
+import "./portfolio.css"
+const GateScene=dynamic(()=>import("@/components/gate-scene").then(m=>m.GateScene),{ssr:false})
+function Status({value}:{value:PortfolioProject["status"]}){return <span className={`status status--${value}`}><i/>{STATUS_LABELS[value]}</span>}
+function Media({media}:{media:ProjectMedia}){if(media.src&&media.readiness==="ready"&&media.kind==="browser-capture")return <img src={media.src} alt={media.alt}/>;const format=media.kind==="mobile-preview"?"mobile":media.kind==="wireframe"?"wireframe":media.kind==="concept-art"?"video":media.aspect==="16:9"?"video":"desktop";return <div className={`media-placeholder media-placeholder--${format}`} role="img" aria-label={`${media.label}. ${media.note??"Media pending"}`}><div className="placeholder-chrome"><i/><i/><i/></div><div className="placeholder-grid"><span/><span/><span/><span/></div><strong>{media.label}</strong><small>{media.note??`${media.provenance.toUpperCase()} · ${media.readiness.toUpperCase()}`}</small></div>}
+function ProjectLink({project}:{project:PortfolioProject}){const href=project.links.live??project.links.preview??project.links.internal;if(!href)return <div className="project-exhibit__availability">DESTINATION PENDING VERIFICATION</div>;const external=href.startsWith("http");return <a className="project-exhibit__launch" href={href} target={external?"_blank":undefined} rel={external?"noreferrer":undefined}><span>{project.links.live?"Launch live site":project.links.preview?"Open preview":"Explore project"}</span><span>↗</span></a>}
+export default function Portfolio(){const root=useRef<HTMLElement>(null);useEffect(()=>{const node=root.current;if(!node)return;const move=(e:PointerEvent)=>{node.style.setProperty("--pointer-x",`${(e.clientX/innerWidth-.5)*2}`);node.style.setProperty("--pointer-y",`${(e.clientY/innerHeight-.5)*2}`)};addEventListener("pointermove",move,{passive:true});return()=>removeEventListener("pointermove",move)},[]);return <main ref={root} className="portfolio-shell">
+<section className="portfolio-hero" id="about" aria-labelledby="portfolio-title"><div className="portfolio-hero__aurora"/><div className="portfolio-hero__architecture"><span className="portfolio-hero__plane portfolio-hero__plane--one"/><span className="portfolio-hero__plane portfolio-hero__plane--two"/><span className="portfolio-hero__keyline"/></div><header className="portfolio-nav"><a className="portfolio-nav__brand" href="/" aria-label="Back to the portfolio gate"><img src="/brand/greykey-lockup.svg" alt="Grey Key Studios — Minneapolis"/></a><nav aria-label="Portfolio navigation"><a href="#work">Projects</a><a href="#about">About</a><a href="https://resume.greykeystudios.dev" target="_blank" rel="noreferrer">Resume</a><a href="https://www.greykeystudios.com/contact-us" target="_blank" rel="noreferrer">Contact</a></nav></header><div className="portfolio-hero__content"><p className="portfolio-kicker">MINNEAPOLIS · CREATIVE TECHNOLOGY · 2026</p><h1 id="portfolio-title"><span>MICHAEL</span><span>WALTON</span></h1><p className="portfolio-hero__positioning">Creative technologist building useful systems,<br/> expressive digital spaces, and independent culture.</p></div><a className="portfolio-scroll-cue" href="#work"><span>See what works</span><i/></a></section>
+<section className="work-exhibition" id="work" aria-labelledby="work-title"><header className="work-intro"><p className="portfolio-kicker">SELECTED SHIPPED WORK · 01—{String(SHIPPED_PROJECTS.length).padStart(2,"0")}</p><h2 id="work-title">Things that<br/><em>work.</em></h2><p>Real systems, live on the internet. Missing captures and destinations stay visibly pending until verified.</p></header><div className="project-sequence">{SHIPPED_PROJECTS.map((p,i)=><article className={`project-exhibit${p.homepage?.featured?" project-exhibit--featured":""}`} key={p.id}><div className="project-exhibit__media"><Media media={p.media[0]}/><Status value={p.status}/>{p.homepage?.featured&&<span className="project-exhibit__reveal"/>}</div><div className="project-exhibit__details"><div className="project-exhibit__index">{String(i+1).padStart(2,"0")} / {String(SHIPPED_PROJECTS.length).padStart(2,"0")}</div><div><p className="project-exhibit__type">{CATEGORY_LABELS[p.category]}</p><h3>{p.name}</h3><p className="project-exhibit__hook">{p.hook}</p><p className="project-exhibit__summary">{p.description}</p></div>{p.role&&<dl><div><dt>Role</dt><dd>{p.role}</dd></div></dl>}<ProjectLink project={p}/></div></article>)}</div></section>
+<section className="building-section" id="building"><header className="section-heading section-heading--dark"><span>05 / ON THE BENCH · {BUILDING_PROJECTS.length} SYSTEMS</span><h2>Things I’m<br/><em>building.</em></h2><p>Working software and scaffolds, shown at their actual stage.</p></header><div className="building-roster">{BUILDING_PROJECTS.map((p,i)=><article className={`building-bench${p.homepage?.featured?" building-bench--featured":""}`} key={p.id}><div className="building-bench__copy"><Status value={p.status}/><p>{CATEGORY_LABELS[p.category]}</p><h3>{p.name}</h3><b>{p.hook}</b><p>{p.description}</p>{p.links.preview&&<a className="building-preview" href={p.links.preview} target="_blank" rel="noreferrer">Open working preview <span>↗</span></a>}</div><div className="building-devices"><div className="building-desktop"><Media media={p.media[0]}/></div>{p.media[1]&&<div className="building-mobile"><Media media={p.media[1]}/></div>}</div><span className="building-index">{String(i+1).padStart(2,"0")}</span></article>)}</div></section>
+<section className="lab-section" id="lab"><header className="section-heading"><span>06 / SPECIMEN TABLE · {LAB_PROJECTS.length} STUDIES</span><h2>The <em>Lab.</em></h2><p>Questions with interfaces. Early work stays visibly early here.</p></header><div className="lab-table">{LAB_PROJECTS.map((p,i)=><article className={`lab-specimen lab-specimen--${i+1}`} key={p.id}><div className="lab-specimen__number">0{i+1}</div><div className="lab-specimen__media"><Media media={p.media[0]}/></div><Status value={p.status}/><h3>{p.name}</h3><b>{p.hook}</b><p>{p.description}</p><small>{CATEGORY_LABELS[p.category]}</small></article>)}</div></section>
+<section className="game-section" id="games"><div className="game-word">PLAY</div><header className="section-heading section-heading--dark"><span>07 / GAME LAB · {GAME_PROJECTS.length-1} GAMES + BACKLOT</span><h2>Small worlds.<br/><em>Real ideas.</em></h2><p>Concept art is never presented as gameplay. Prototype language appears only where the project record supports it.</p></header><div className="game-roster">{GAME_PROJECTS.map((p,i)=><article className={`game-stage${p.id==="gk-backlot"?" game-stage--backlot":""}`} key={p.id}><div className="game-stage__screen"><Media media={p.media[0]}/><span className="game-stage__scan"/></div><div className="game-stage__caption"><span className="game-stage__number">{String(i+1).padStart(2,"0")}</span><Status value={p.status}/><p>{CATEGORY_LABELS[p.category]}</p><h3>{p.name}</h3><b>{p.hook}</b><p>{p.description}</p>{p.supporting&&<ul>{p.supporting.map(x=><li key={x.name}><span>{x.name}</span><small>{x.label}</small></li>)}</ul>}</div></article>)}</div></section>
+<MusicIdentities/>
+<section className="bridge-section" id="bridge"><div className="bridge-blueprint"><i/><i/><i/><i/></div><div className="bridge-copy"><p>09 / {CATEGORY_LABELS[BRIDGE_PROJECT.category].toUpperCase()}</p><Status value={BRIDGE_PROJECT.status}/><h2>Build the<br/><em>bridge.</em></h2><b>{BRIDGE_PROJECT.hook}</b><p>{BRIDGE_PROJECT.description}</p><div className="bridge-note"><b>{BRIDGE_PROJECT.media[0].label}</b><span>{BRIDGE_PROJECT.media[0].readiness.toUpperCase()}</span></div></div></section>
+<section className="stack-finale" id="stack-house"><div className="stack-finale__sky"/><div className="stack-finale__scene"><GateScene/></div><div className="stack-finale__copy"><p>10 / THE OTHER DOOR</p><Status value={STACK_HOUSE_PROJECT.status}/><h2>Enter the<br/><em>Stack House.</em></h2><b>{STACK_HOUSE_PROJECT.hook}</b><p>{STACK_HOUSE_PROJECT.description}</p><a href={STACK_HOUSE_PROJECT.links.internal}><span>Enter the Stack House</span><b>→</b></a><nav className="stack-finale__nav" aria-label="Portfolio closing navigation"><a href="#work">Projects</a><a href="#about">Back to top</a><a href="https://resume.greykeystudios.dev" target="_blank" rel="noreferrer">Resume</a><a href="https://www.greykeystudios.com/contact-us" target="_blank" rel="noreferrer">Contact</a><a href="#music">Grey Key</a></nav></div><footer><span>MICHAEL WALTON · MINNEAPOLIS</span><span>GREY KEY STUDIOS · 2026</span></footer></section>
+</main>}
