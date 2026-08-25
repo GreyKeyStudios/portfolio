@@ -1,3 +1,5 @@
-**/source/*
-!**/source/.gitkeep
-
+**/*
+!**/
+!**/.gitkeep
+!README.md
+!.gitignore
