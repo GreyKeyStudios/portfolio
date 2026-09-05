@@ -2,6 +2,10 @@
 
 _Last updated: 2026-09-05_
 
+**Stairwell correction:** Removed the projecting slab strip between flights in
+v002. Floor/ceiling cuts now include the centre gap as one continuous opening.
+Regression raycasts and all six stair traversals pass.
+
 **Shell v002:** Foyer/client room now has Blender-authored oak flooring, blue
 panelling, detailed door trim and wall fixtures. Attic guards have matching,
 height-aware collision. Preview `/house?architecture=v002&controls=desktop`

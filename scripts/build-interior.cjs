@@ -472,9 +472,19 @@ function buildFloor(floor) {
   const arrivingFrom = new Set(
     STAIRS.filter((s) => floorAtY(s.bottomY) === floor || floorAtY(s.topY) === floor).map((s) => s.floor)
   )
-  const holes = STAIRS
+  const crossingStairs = STAIRS
     .filter((s) => s.floor === floor || arrivingFrom.has(s.floor))
-    .map((s) => s.bounds)
+  // The whole switchback is one opening, including the central newel gap.
+  // Separate flight cuts leave a thin slab cantilever between the flights.
+  const holes = candidate
+    ? [...new Set(crossingStairs.map(s => s.floor))].map(owner => {
+      const bounds = crossingStairs.filter(s => s.floor === owner).map(s => s.bounds)
+      return {
+        minX: Math.min(...bounds.map(b => b.minX)), maxX: Math.max(...bounds.map(b => b.maxX)),
+        minZ: Math.min(...bounds.map(b => b.minZ)), maxZ: Math.max(...bounds.map(b => b.maxZ)),
+      }
+    })
+    : crossingStairs.map(s => s.bounds)
 
   for (const room of rooms) {
     const { minX, maxX, minZ, maxZ } = room.bounds

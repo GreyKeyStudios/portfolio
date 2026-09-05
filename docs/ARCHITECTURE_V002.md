@@ -43,6 +43,13 @@ closing Blender to release memory during the pause.
 
 ## Verification and limits
 
+Follow-up correction: the user identified a projecting floor/ceiling strip between
+the stair flights. Separate rectangular cuts left the 20 cm centre gap filled.
+Candidate shell generation now cuts one bounding opening per switchback, including
+that gap. Regression raycasts check three positions in each affected floor and
+ceiling; they reproduced the old failure and pass after regeneration. Basement
+closure and all six stair traversals still pass. Original/v001 assets are retained.
+
 TypeScript passes. `node scripts/check-architecture-v001.mjs` checks the original
 18 treads/landing, basement closure, attic winding, all six stair traversals, and
 now all four attic guard collisions plus their removal below the slab. All pass.

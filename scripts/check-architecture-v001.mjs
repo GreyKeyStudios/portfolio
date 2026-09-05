@@ -19,6 +19,22 @@ scene.updateMatrixWorld(true)
 const bounds = new Box3().setFromObject(scene)
 assert.ok(Math.abs(bounds.min.x + 1.15) < .01 && Math.abs(bounds.max.x - 1.15) < .01, 'Flight width/origin mismatch')
 const ray = new Raycaster()
+// The centre gap between flights belongs to the shaft, not to the floor slab.
+// Cutting each flight separately used to leave a 20 cm floor/ceiling beam here.
+for (const floor of ['basement', 'ground', 'second', 'attic']) {
+  const shell = (await load(`interior-${floor}-v002`)).scene
+  shell.updateMatrixWorld(true)
+  for (const z of [2.8, 3.8, 4.7]) {
+    if (floor !== 'basement') {
+      ray.set(new Vector3(layout.X0, .2, z), new Vector3(0, -1, 0))
+      assert.ok(!ray.intersectObject(shell, true).some(hit => hit.distance < .4), `${floor}: floor strip in stair gap at ${z}`)
+    }
+    if (floor !== 'attic') {
+      ray.set(new Vector3(layout.X0, 2.8, z), new Vector3(0, 1, 0))
+      assert.ok(!ray.intersectObject(shell, true).some(hit => hit.distance < .4), `${floor}: ceiling strip in stair gap at ${z}`)
+    }
+  }
+}
 let samples = 0
 for (const s of layout.stairs.filter(s => s.floor === 'ground')) {
   const x = (s.bounds.minX + s.bounds.maxX) / 2 - layout.X0
