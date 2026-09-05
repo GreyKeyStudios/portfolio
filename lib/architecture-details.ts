@@ -1,4 +1,16 @@
-import { CORE_MIN_X, CORE_MAX_X, CORE_Z0, CORE_Z1, FLIGHT_W_MAX } from './interior-layout'
+import { CORE_MIN_X, CORE_MAX_X, CORE_Z0, CORE_Z1, FLIGHT_W_MAX, ROOMS } from './interior-layout'
+
+const frontOpening = ROOMS.find(r => r.id === 'foyer')!.doors.find(d => d.side === 'south')!
+/** Closed interior leaf; exit remains the existing nearby E/USE interaction. */
+export const ENTRY_DOOR = {
+  centerX: frontOpening.center,
+  openingWidth: frontOpening.width,
+  leafWidth: frontOpening.width - .12,
+  height: 1.98,
+  bottomY: .018,
+  centerZ: .10,
+  thickness: .055,
+}
 
 /** World-space guard centrelines shared by art and collision. East-front stays open. */
 export const ATTIC_GUARDS = [

@@ -1,5 +1,5 @@
 import type { AABB } from './collision'
-import { ATTIC_GUARDS } from './architecture-details'
+import { ATTIC_GUARDS, ENTRY_DOOR } from './architecture-details'
 import {
   ROOMS, FLOOR_BASE_Y,
   CORE_MIN_X, CORE_MAX_X, CORE_Z0, CORE_Z1, TURN_Z, FLIGHT_W_MAX, FLIGHT_E_MIN,
@@ -109,6 +109,13 @@ const atticGuardColliders: AABB[] = ATTIC_GUARDS.map(g => ({
   minZ: Math.min(g.a[1], g.b[1]) - .035, maxZ: Math.max(g.a[1], g.b[1]) + .035,
 }))
 const atticWithGuards = [...COLLIDERS_BY_FLOOR.attic, ...atticGuardColliders]
+COLLIDERS_BY_FLOOR.ground.push({
+  label: 'foyer-closed-entry-door',
+  minX: ENTRY_DOOR.centerX - ENTRY_DOOR.openingWidth / 2,
+  maxX: ENTRY_DOOR.centerX + ENTRY_DOOR.openingWidth / 2,
+  minZ: ENTRY_DOOR.centerZ - ENTRY_DOOR.thickness / 2,
+  maxZ: ENTRY_DOOR.centerZ + ENTRY_DOOR.thickness / 2,
+})
 
 export function getInteriorColliders(floor: Exclude<FloorId, 'yard'>, eyeY = Infinity): AABB[] {
   // Floor identity stays "attic" while descending both flights. The guards

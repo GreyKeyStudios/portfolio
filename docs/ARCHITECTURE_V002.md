@@ -5,7 +5,17 @@ Use `controls=touch` for touch navigation, including the in-app browser.
 The earlier v001 room treatment remains selectable. Original production assets
 and main are preserved; this work belongs to `codex/house-photoreal-v1`.
 
+The approved v002 shell is now the default for plain `/house` on this branch.
+Use `architecture=legacy` for the original procedural shell, or `architecture=v001`
+for the earlier staircase preview. Control selection remains independent.
+
 ## Changes
+
+- Added a closed, panelled deep-blue interior front door with ivory frame, brass
+  lever, deadbolt, hinge knuckles and threshold. Art dimensions and collision
+  derive from `ENTRY_DOOR` in `lib/architecture-details.ts`. The existing E/USE
+  interaction still performs the yard transition; this pass adds no swing animation.
+  The model appears in all branch shell variants to match shared collision.
 
 - Blender-authored oak boards with an embedded grain texture, low ink-blue
   client-room panelling, skirting caps, doorway plinths and architraves, recessed
@@ -23,6 +33,12 @@ and main are preserved; this work belongs to `codex/house-photoreal-v1`.
   branch so these shared collision changes always have corresponding art.
 
 ## Sources and exports
+
+Entrance source: `scripts/build-entry-door-v001.py`, with frozen dimensions and
+editable `.blend` under `portfolio-assets/stack-house/blender/entry-door-v001.*`.
+The manifest records source/input hashes, bounds and placement. The GLB contains
+9,040 triangles in four material primitives, 476,544 bytes, and no textures.
+Blender was saved and closed after export to release memory.
 
 `scripts/build-shell-details-v002.py` authors a separate Blender scene. Execute
 through Blender MCP with `__file__` set to the script path; it refuses to replace
@@ -42,6 +58,13 @@ closing Blender to release memory during the pause.
   `node scripts/build-interior.cjs --candidate-v002`. Stair art remains v001.
 
 ## Verification and limits
+
+Entrance follow-up: TypeScript and the extended architecture checks pass. The
+closed leaf blocks forward walking while leaving the exit interaction in reach;
+a raycast verifies the model face agrees with the collider. Live browser USE
+exited to the yard, then USE at the exterior door returned to ground at
+`[300, 1.7, 2.38]`, clear of the new door. Foyer proportions/hardware were visually
+inspected. The full stair/guard regressions still pass.
 
 Follow-up correction: the user identified a projecting floor/ceiling strip between
 the stair flights. Separate rectangular cuts left the 20 cm centre gap filled.

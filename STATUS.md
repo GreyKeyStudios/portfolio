@@ -2,6 +2,11 @@
 
 _Last updated: 2026-09-05_
 
+**Foyer entrance:** Added a Blender-authored blue panelled door, ivory frame,
+brass hardware and matching closed-door collision. Live USE exit/re-entry and
+architecture/TypeScript checks pass. Plain `/house` now defaults to the approved
+v002 shell on this branch; `architecture=legacy` preserves the old shell view.
+
 **Stairwell correction:** Removed the projecting slab strip between flights in
 v002. Floor/ceiling cuts now include the centre gap as one continuous opening.
 Regression raycasts and all six stair traversals pass.

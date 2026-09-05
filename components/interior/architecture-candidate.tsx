@@ -4,6 +4,7 @@ import { useGLTF } from "@react-three/drei"
 import { useEffect, useMemo } from "react"
 import { Mesh, MeshStandardMaterial } from "three"
 import { FLOOR_BASE_Y, X0, type FloorId } from "@/lib/interior-layout"
+import { ENTRY_DOOR } from "@/lib/architecture-details"
 
 type InteriorFloor = Exclude<FloorId, "yard">
 
@@ -49,4 +50,8 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
 
 export function AtticGuards() {
   return <group position={[X0, FLOOR_BASE_Y.attic, 0]}><CandidateAsset url="/models/attic-guards-v002.glb" /></group>
+}
+
+export function EntryDoorModel() {
+  return <group position={[ENTRY_DOOR.centerX, FLOOR_BASE_Y.ground, 0]}><CandidateAsset url="/models/entry-door-v001.glb" /></group>
 }

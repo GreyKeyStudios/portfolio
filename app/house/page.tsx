@@ -34,7 +34,7 @@ import { HomeOfficeRoom } from "@/components/interior/home-office-room"
 import { ExitDoor } from "@/components/interior/exit-door"
 import { DoorPlaceholder } from "@/components/interior/door-placeholder"
 import { ProxyFurniture } from "@/components/interior/proxy-furniture"
-import { ArchitectureCandidate, AtticGuards } from "@/components/interior/architecture-candidate"
+import { ArchitectureCandidate, AtticGuards, EntryDoorModel } from "@/components/interior/architecture-candidate"
 import { SHELL_PRACTICALS } from "@/lib/architecture-details"
 import { useProximitySystem, triggerInteract } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
@@ -528,7 +528,8 @@ function Scene() {
   const [architectureCandidate, setArchitectureCandidate] = useState<string | null>(null)
   useEffect(() => {
     const version = new URLSearchParams(window.location.search).get('architecture')
-    setArchitectureCandidate(version === 'v001' || version === 'v002' ? version : null)
+    // The approved shell is the branch default; explicit legacy remains available.
+    setArchitectureCandidate(version === 'legacy' ? null : version === 'v001' ? 'v001' : 'v002')
   }, [])
 
   return (
@@ -555,6 +556,7 @@ function Scene() {
         <group visible={nearFloor(currentLocation, 'ground')}>
           {architectureCandidate ? <ArchitectureCandidate floor="ground" version={architectureCandidate} /> : <InteriorFloorGround />}
           <ExitDoor showGlow={architectureCandidate !== 'v002'} />
+          <EntryDoorModel />
           {/* TEMPORARY scale reference — see ProxyFurniture. */}
           {!architectureCandidate && <ProxyFurniture />}
         </group>

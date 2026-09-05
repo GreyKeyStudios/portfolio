@@ -76,6 +76,18 @@ require.extensions['.ts'] = (module, filename) => {
   }).outputText, filename)
 }
 const { stepPlayer } = require('../lib/player-movement.ts')
+const { ENTRY_DOOR } = require('../lib/architecture-details.ts')
+const doorCamera = new PerspectiveCamera()
+doorCamera.position.set(ENTRY_DOOR.centerX, 1.7, 1.0)
+doorCamera.lookAt(ENTRY_DOOR.centerX, 1.7, -1)
+for (let i = 0; i < 120; i++) stepPlayer(doorCamera, 'ground', {forward:1,strafe:0,speed:2}, 1/60, false)
+assert.ok(doorCamera.position.z > ENTRY_DOOR.centerZ + ENTRY_DOOR.thickness/2 + .21, 'Walked through closed entrance')
+assert.ok(doorCamera.position.distanceTo(new Vector3(ENTRY_DOOR.centerX,1,.8)) < 1.3, 'Door blocks exit interaction reach')
+const doorArt = (await load('entry-door-v001')).scene
+doorArt.updateMatrixWorld(true)
+ray.set(new Vector3(0,1,1), new Vector3(0,0,-1))
+const doorHit = ray.intersectObject(doorArt,true)[0]
+assert.ok(doorHit && Math.abs(doorHit.point.z - ENTRY_DOOR.centerZ - ENTRY_DOOR.thickness/2) < .025, 'Door art/collision mismatch')
 const { getInteriorColliders } = require('../lib/interior-colliders.ts')
 const { moveWithCollision } = require('../lib/collision.ts')
 const topGuards = getInteriorColliders('attic', 8.1).filter(c => c.label.startsWith('attic-guard-'))
