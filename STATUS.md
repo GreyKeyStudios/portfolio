@@ -2,6 +2,14 @@
 
 _Last updated: 2026-09-04_
 
+**Codex rebuild setup:** The read-only 3D audit has been reviewed. The user has
+approved a substantial photoreal-leaning `/house` overhaul, starting with the
+foyer/stair hall/client room, while retaining the house identity and nighttime
+palette. See `docs/3D_REBUILD_BRIEF.md` for the approved scope, audit follow-ups,
+and browser observations. Claude's shell work is preserved in recovery commit
+`47bb3ba` on `codex/house-photoreal-v1`, pushed to GitHub. The local server is
+available at `http://127.0.0.1:3000`; no visual rebuild has been made yet.
+
 Living state-of-the-project file. Update at the end of every session.
 
 ---
