@@ -34,6 +34,7 @@ import { HomeOfficeRoom } from "@/components/interior/home-office-room"
 import { ExitDoor } from "@/components/interior/exit-door"
 import { DoorPlaceholder } from "@/components/interior/door-placeholder"
 import { ProxyFurniture } from "@/components/interior/proxy-furniture"
+import { ArchitectureCandidate } from "@/components/interior/architecture-candidate"
 import { useProximitySystem, triggerInteract } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
 import { FLOOR_BASE_Y, X0, ROOMS, type FloorId } from "@/lib/interior-layout"
@@ -344,15 +345,19 @@ function SceneLights() {
     if (!l) return
     if (isYard) {
       l.position.set(-8, 12, -5)
+      l.target.position.set(0, 0, 0)
       l.color.set('#becdf6')
       l.intensity = 0.8
       Object.assign(l.shadow.camera, { left: -15, right: 15, top: 15, bottom: -15, near: 0.5, far: 40 })
     } else {
       l.position.set(X0 - 4, 10, 4)
+      l.target.position.set(X0, 1.6, 5.4)
       l.color.set('#fff4e0')
       l.intensity = 0.3
-      Object.assign(l.shadow.camera, { left: X0 - 14, right: X0 + 14, top: 20, bottom: -8, near: 0.5, far: 40 })
+      // Orthographic extents are camera-local; X0 belongs in the target only.
+      Object.assign(l.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 0.5, far: 40 })
     }
+    l.target.updateMatrixWorld()
     l.shadow.camera.updateProjectionMatrix()
   }, [isYard])
 
@@ -503,6 +508,10 @@ function YardScene() {
 function Scene() {
   const currentLocation = usePlayerStore((s) => s.currentLocation)
   const isYard = currentLocation === 'yard'
+  const [architectureCandidate, setArchitectureCandidate] = useState(false)
+  useEffect(() => {
+    setArchitectureCandidate(new URLSearchParams(window.location.search).get('architecture') === 'v001')
+  }, [])
 
   return (
     <group>
@@ -523,20 +532,20 @@ function Scene() {
           rendering as a faint silhouette on the yard's horizon. */}
       <group visible={!isYard}>
         <group visible={nearFloor(currentLocation, 'basement')}>
-          <InteriorFloorBasement />
+          {architectureCandidate ? <ArchitectureCandidate floor="basement" /> : <InteriorFloorBasement />}
         </group>
         <group visible={nearFloor(currentLocation, 'ground')}>
-          <InteriorFloorGround />
+          {architectureCandidate ? <ArchitectureCandidate floor="ground" /> : <InteriorFloorGround />}
           <ExitDoor />
           {/* TEMPORARY scale reference — see ProxyFurniture. */}
-          <ProxyFurniture />
+          {!architectureCandidate && <ProxyFurniture />}
         </group>
         <group visible={nearFloor(currentLocation, 'second')}>
-          <InteriorFloorSecond />
+          {architectureCandidate ? <ArchitectureCandidate floor="second" /> : <InteriorFloorSecond />}
           <HomeOfficeRoom />
         </group>
         <group visible={nearFloor(currentLocation, 'attic')}>
-          <InteriorFloorAttic />
+          {architectureCandidate ? <ArchitectureCandidate floor="attic" /> : <InteriorFloorAttic />}
         </group>
 
         {PLACEHOLDER_ROOMS.map((r) => (

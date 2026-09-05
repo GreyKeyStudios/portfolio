@@ -23,6 +23,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const candidate = process.argv.includes('--candidate-v001')
 
 const LAYOUT = path.join(__dirname, '..', '.interior-build', 'interior-layout.js')
 if (!fs.existsSync(LAYOUT)) {
@@ -233,6 +234,10 @@ function addPrismX(group, x0, x1, pts) {
  * roof slopes and the gable ends both do.
  */
 function addPrismZ(group, z0, z1, pts) {
+  if (candidate && pts.reduce((a, p, i) => {
+    const q = pts[(i + 1) % pts.length]
+    return a + p[0] * q[1] - q[0] * p[1]
+  }, 0) < 0) pts = [...pts].reverse()
   const n = pts.length
   for (const [z, nz] of [[z0, -1], [z1, 1]]) {
     const start = group.pos.length / 3
@@ -259,7 +264,8 @@ function addPrismZ(group, z0, z1, pts) {
     group.uv.push(arc / UV_SCALE, z0 / UV_SCALE, arc / UV_SCALE, z1 / UV_SCALE,
                   (arc + len) / UV_SCALE, z1 / UV_SCALE, (arc + len) / UV_SCALE, z0 / UV_SCALE)
     arc += len
-    group.idx.push(s, s + 1, s + 2, s, s + 2, s + 3)
+    if (candidate) group.idx.push(s, s + 2, s + 1, s, s + 3, s + 2)
+    else group.idx.push(s, s + 1, s + 2, s, s + 2, s + 3)
   }
 }
 
@@ -472,8 +478,10 @@ function buildFloor(floor) {
   for (const room of rooms) {
     const { minX, maxX, minZ, maxZ } = room.bounds
 
-    for (const p of subtractRects(room.bounds, holes)) {
+    for (const p of subtractRects(room.bounds, candidate && floor === 'basement' ? [] : holes)) {
       addBox(mesh[MAT.floor], p.minX, p.maxX, -SLAB, 0, p.minZ, p.maxZ)
+    }
+    for (const p of subtractRects(room.bounds, holes)) {
       // The attic has a roof instead of a ceiling slab — see buildRoof.
       if (room.floor !== 'attic') {
         // Clamped so it never intersects the floor slab of the storey above.
@@ -677,7 +685,7 @@ function buildFloor(floor) {
 
   // Each run is emitted into the GLB of the floor that owns it, with heights
   // made relative to that floor's base (the component mounts at FLOOR_BASE_Y).
-  for (const s of STAIRS.filter((x) => x.floor === floor)) {
+  for (const s of STAIRS.filter((x) => !candidate && x.floor === floor)) {
     const y0 = s.bottomY - base
     const y1 = s.topY - base
     const rise = y1 - y0
@@ -845,11 +853,11 @@ let totalTris = 0
 for (const floor of Object.keys(FLOOR_BASE_Y)) {
   const mesh = buildFloor(floor)
   const tris = mesh.reduce((n, g) => n + g.idx.length / 3, 0)
-  const out = path.join(OUT_DIR, `interior-${floor}.glb`)
+  const out = path.join(OUT_DIR, `interior-${floor}${candidate ? '-v001' : ''}.glb`)
   const { bytes, primitives } = writeGLB(mesh, out)
   totalTris += tris
   console.log(
-    `interior-${floor}.glb`.padEnd(26) +
+    path.basename(out).padEnd(32) +
     `${String(tris).padStart(6)} tris  ` +
     `${String(primitives)} prims  ` +
     `${(bytes / 1024).toFixed(1)} KB`

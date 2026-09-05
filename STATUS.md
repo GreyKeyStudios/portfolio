@@ -1,6 +1,6 @@
 # Stack House — Status
 
-_Last updated: 2026-09-04_
+_Last updated: 2026-09-05_
 
 **Codex rebuild setup:** The read-only 3D audit has been reviewed. The user has
 approved a substantial photoreal-leaning `/house` overhaul, starting with the
@@ -8,7 +8,13 @@ foyer/stair hall/client room, while retaining the house identity and nighttime
 palette. See `docs/3D_REBUILD_BRIEF.md` for the approved scope, audit follow-ups,
 and browser observations. Claude's shell work is preserved in recovery commit
 `47bb3ba` on `codex/house-photoreal-v1`, pushed to GitHub. The local server is
-available at `http://127.0.0.1:3000`; no visual rebuild has been made yet.
+available at `http://127.0.0.1:3017`. The first Blender-authored staircase candidate
+is available at `/house?architecture=v001&controls=desktop`. It includes detailed
+treads/risers/railings and smooth soffits, candidate slab/winding fixes, and an
+interior shadow-camera correction. Geometry checks, six simulated stair traversals,
+and TypeScript pass; desktop/touch visual inspections completed. See
+`docs/ARCHITECTURE_V001.md` for reproducible sources and remaining shell work.
+Furniture remains deferred until the shell is believable.
 
 Living state-of-the-project file. Update at the end of every session.
 

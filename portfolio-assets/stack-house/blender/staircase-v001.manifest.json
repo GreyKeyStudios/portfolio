@@ -1,0 +1,35 @@
+{
+  "version": "v001",
+  "source": "staircase-v001.blend",
+  "asset": "public/models/staircase-v001.glb",
+  "units": "metres",
+  "source_axes": "Z up, -Y forward",
+  "runtime_axes": "Y up, +Z forward",
+  "runtime_placement": [
+    300,
+    "FLOOR_BASE_Y",
+    0
+  ],
+  "layout_sha256": "665a520dae82355874221811317d1c84501c8ee8ccbea4092adebe51e2605b19",
+  "source_sha256": "b8545a3f8070545c64f2ed636587cd76306be4546be0897ca82fadfb0f9553f0",
+  "triangles": 11344,
+  "materials": [
+    "V001 Smoked oak.001",
+    "V001 Warm painted joinery.001",
+    "V001 Blackened steel.001"
+  ],
+  "textures": [],
+  "note": "Architectural geometry candidate; plain PBR swatches, no baked lighting or wood textures yet.",
+  "bounds": {
+    "min": [
+      -1.149999976158142,
+      -0.1989295780658722,
+      2.558356761932373
+    ],
+    "max": [
+      1.149999976158142,
+      4.179999768733978,
+      6.099999904632568
+    ]
+  }
+}
