@@ -2,6 +2,14 @@
 
 _Last updated: 2026-09-05_
 
+**Canonical design alignment:** Read and incorporated the new experience bible
+and `AGENTS.md`. The entrance pass is architectural, not the locked arrival
+gameplay. The current night/free-roam preview does not yet implement the bible's
+daytime arrival, initially locked front door, or outdoor tutorial puzzle. Keep
+those requirements for the gameplay phase; current geometry and traversal remain
+stable. Future room work must use Library/Study, Writing Room/Sunroom, and Master
+Bedroom/Merch identities from the bible despite older code labels.
+
 **Foyer entrance:** Added a Blender-authored blue panelled door, ivory frame,
 brass hardware and matching closed-door collision. Live USE exit/re-entry and
 architecture/TypeScript checks pass. Plain `/house` now defaults to the approved
