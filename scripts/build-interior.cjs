@@ -23,7 +23,8 @@
 
 const fs = require('fs')
 const path = require('path')
-const candidate = process.argv.includes('--candidate-v001')
+const revision = process.argv.includes('--candidate-v002') ? 'v002' : 'v001'
+const candidate = process.argv.includes('--candidate-v001') || process.argv.includes('--candidate-v002')
 
 const LAYOUT = path.join(__dirname, '..', '.interior-build', 'interior-layout.js')
 if (!fs.existsSync(LAYOUT)) {
@@ -853,7 +854,7 @@ let totalTris = 0
 for (const floor of Object.keys(FLOOR_BASE_Y)) {
   const mesh = buildFloor(floor)
   const tris = mesh.reduce((n, g) => n + g.idx.length / 3, 0)
-  const out = path.join(OUT_DIR, `interior-${floor}${candidate ? '-v001' : ''}.glb`)
+  const out = path.join(OUT_DIR, `interior-${floor}${candidate ? `-${revision}` : ''}.glb`)
   const { bytes, primitives } = writeGLB(mesh, out)
   totalTris += tris
   console.log(

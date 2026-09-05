@@ -56,6 +56,7 @@ export function HomeOfficeRoom({
     const pos = new THREE.Vector3(px, py, pz)
     registerInteractable({
       id: 'home-office-desk',
+      floor: 'second',
       label: 'Home Office',
       position: pos,
       radius: 2.2,

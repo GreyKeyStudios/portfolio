@@ -8,6 +8,7 @@ import { playSound } from '@/lib/audio'
 import { FOYER_EXIT_POINT } from '@/lib/interior-layout'
 
 interface ExitDoorProps {
+  showGlow?: boolean
   position?: [number, number, number]
 }
 
@@ -18,7 +19,7 @@ interface ExitDoorProps {
  * which the floor-plan rebuild left stranded outside the building and made the
  * house impossible to leave. See FOYER_EXIT_POINT.
  */
-export function ExitDoor({ position = FOYER_EXIT_POINT }: ExitDoorProps) {
+export function ExitDoor({ position = FOYER_EXIT_POINT, showGlow = true }: ExitDoorProps) {
   const [isNear, setIsNear] = useState(false)
   const { exitToYard } = usePlayerStore()
   const exitToYardRef = useRef(exitToYard)
@@ -30,6 +31,7 @@ export function ExitDoor({ position = FOYER_EXIT_POINT }: ExitDoorProps) {
     const pos = new THREE.Vector3(px, py, pz)
     registerInteractable({
       id: 'exit-door',
+      floor: 'ground',
       label: 'Exit to Yard',
       position: pos,
       // 1.3, not 2.0: the trigger sits at the front door and the spawn is 1.6
@@ -48,8 +50,8 @@ export function ExitDoor({ position = FOYER_EXIT_POINT }: ExitDoorProps) {
 
   return (
     <group position={[px, py, pz]}>
-      {isNear && (
-        <pointLight color="#00ff88" intensity={1.2} distance={3} decay={2} />
+      {showGlow && (
+        <pointLight color="#00ff88" intensity={isNear ? 1.2 : 0} distance={3} decay={2} />
       )}
     </group>
   )

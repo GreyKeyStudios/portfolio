@@ -5,9 +5,9 @@ import { FLOOR_BASE_Y, STAIRS, X0, floorAtY, type FloorId } from './interior-lay
 
 const EYE_HEIGHT = 1.7
 
-export function getActiveColliders(location: FloorId): AABB[] {
+export function getActiveColliders(location: FloorId, eyeY = Infinity): AABB[] {
   if (location === 'yard') return COLLIDERS
-  return getInteriorColliders(location)
+  return getInteriorColliders(location, eyeY)
 }
 
 export function getWorldBounds(location: FloorId): { minX: number; maxX: number; minZ: number; maxZ: number } {

@@ -2,6 +2,14 @@
 
 _Last updated: 2026-09-05_
 
+**Shell v002:** Foyer/client room now has Blender-authored oak flooring, blue
+panelling, detailed door trim and wall fixtures. Attic guards have matching,
+height-aware collision. Preview `/house?architecture=v002&controls=desktop`
+on port 3017; `controls=touch` works in the in-app browser. TypeScript, six
+simulated stair traversals, four guard checks and a live client/foyer doorway
+crossing pass. See `docs/ARCHITECTURE_V002.md` for source assets and limitations.
+The shell remains unfurnished; no production deployment was made.
+
 **Codex rebuild setup:** The read-only 3D audit has been reviewed. The user has
 approved a substantial photoreal-leaning `/house` overhaul, starting with the
 foyer/stair hall/client room, while retaining the house identity and nighttime

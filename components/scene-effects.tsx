@@ -38,9 +38,9 @@ export function SceneEffects() {
           holds up on large flat surfaces, which is exactly what this house is.
           Classic SSAO banded badly across the big untextured wall planes. */}
       <N8AO
-        aoRadius={0.9}
+        aoRadius={isYard ? 0.9 : 0.3}
         distanceFalloff={1.0}
-        intensity={2.4}
+        intensity={isYard ? 2.4 : 1.15}
         // "medium" measured 54.6fps against a 60.1 baseline. The cost is
         // resolution-bound, not geometry-bound (the yard dropped identically
         // despite 80x the triangles), so the lever is sample count, not scene

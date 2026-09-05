@@ -81,7 +81,7 @@ export function stepPlayer(
   const toX = prevX + (_forward.x * intent.forward + _right.x * intent.strafe) * dist
   const toZ = prevZ + (_forward.z * intent.forward + _right.z * intent.strafe) * dist
 
-  const resolved = moveWithCollision(prevX, prevZ, toX, toZ, getActiveColliders(location))
+  const resolved = moveWithCollision(prevX, prevZ, toX, toZ, getActiveColliders(location, prevY))
 
   const step = resolveEyeY(location, resolved.x, resolved.z, prevY)
   let crossedTo = step.crossedTo

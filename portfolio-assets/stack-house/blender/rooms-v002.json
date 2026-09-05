@@ -1,0 +1,157 @@
+{
+  "X0": 300,
+  "rooms": [
+    {
+      "id": "foyer",
+      "label": "Foyer / Stair Hall",
+      "floor": "ground",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 0,
+        "maxZ": 6.1000000000000005
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "south",
+          "center": 300,
+          "width": 1.2
+        }
+      ],
+      "furnished": true
+    },
+    {
+      "id": "client-room",
+      "label": "Client Room / Living",
+      "floor": "ground",
+      "bounds": {
+        "minX": 301.15,
+        "maxX": 306.59999999999997,
+        "minZ": 0,
+        "maxZ": 5.4
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 303.9,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "south",
+          "center": 302.4,
+          "width": 1.2
+        },
+        {
+          "side": "south",
+          "center": 305.2,
+          "width": 1.2
+        },
+        {
+          "side": "east",
+          "center": 2.7,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    }
+  ],
+  "core": {
+    "minX": -1.150000000000034,
+    "maxX": 1.1499999999999773,
+    "z0": 2.6,
+    "z1": 6.1000000000000005,
+    "westMax": -0.10000000000002274
+  },
+  "ATTIC_GUARDS": [
+    {
+      "id": "west",
+      "a": [
+        298.89,
+        2.6
+      ],
+      "b": [
+        298.89,
+        6.0600000000000005
+      ]
+    },
+    {
+      "id": "north",
+      "a": [
+        298.89,
+        6.0600000000000005
+      ],
+      "b": [
+        301.10999999999996,
+        6.0600000000000005
+      ]
+    },
+    {
+      "id": "east",
+      "a": [
+        301.10999999999996,
+        2.6
+      ],
+      "b": [
+        301.10999999999996,
+        6.0600000000000005
+      ]
+    },
+    {
+      "id": "front-west",
+      "a": [
+        298.89,
+        2.6
+      ],
+      "b": [
+        299.945,
+        2.6
+      ]
+    }
+  ],
+  "SHELL_PRACTICALS": [
+    {
+      "id": "foyer",
+      "position": [
+        299.33000000000004,
+        2.12,
+        0.4
+      ],
+      "intensity": 1.8
+    },
+    {
+      "id": "client-south",
+      "position": [
+        303.8,
+        2.12,
+        0.4
+      ],
+      "intensity": 2.8
+    },
+    {
+      "id": "client-north",
+      "position": [
+        303,
+        2.12,
+        5
+      ],
+      "intensity": 2.8
+    }
+  ]
+}

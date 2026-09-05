@@ -1,6 +1,7 @@
 import type { AABB } from './collision'
+import { ATTIC_GUARDS } from './architecture-details'
 import {
-  ROOMS,
+  ROOMS, FLOOR_BASE_Y,
   CORE_MIN_X, CORE_MAX_X, CORE_Z0, CORE_Z1, TURN_Z, FLIGHT_W_MAX, FLIGHT_E_MIN,
   type DoorDef, type DoorSide, type FloorId, type RoomDef,
 } from './interior-layout'
@@ -102,6 +103,15 @@ for (const floor of Object.keys(COLLIDERS_BY_FLOOR) as Exclude<FloorId, 'yard'>[
 }
 
 /** Returns the AABB collider set active for a given floor. Empty for 'yard' — that floor uses lib/colliders.ts instead. */
-export function getInteriorColliders(floor: Exclude<FloorId, 'yard'>): AABB[] {
-  return COLLIDERS_BY_FLOOR[floor]
+const atticGuardColliders: AABB[] = ATTIC_GUARDS.map(g => ({
+  label: `attic-guard-${g.id}`,
+  minX: Math.min(g.a[0], g.b[0]) - .035, maxX: Math.max(g.a[0], g.b[0]) + .035,
+  minZ: Math.min(g.a[1], g.b[1]) - .035, maxZ: Math.max(g.a[1], g.b[1]) + .035,
+}))
+const atticWithGuards = [...COLLIDERS_BY_FLOOR.attic, ...atticGuardColliders]
+
+export function getInteriorColliders(floor: Exclude<FloorId, 'yard'>, eyeY = Infinity): AABB[] {
+  // Floor identity stays "attic" while descending both flights. The guards
+  // must stop applying once the player has walked below the attic slab.
+  return floor === 'attic' && eyeY >= FLOOR_BASE_Y.attic + 1.5 ? atticWithGuards : COLLIDERS_BY_FLOOR[floor]
 }

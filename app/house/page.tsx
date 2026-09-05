@@ -34,7 +34,8 @@ import { HomeOfficeRoom } from "@/components/interior/home-office-room"
 import { ExitDoor } from "@/components/interior/exit-door"
 import { DoorPlaceholder } from "@/components/interior/door-placeholder"
 import { ProxyFurniture } from "@/components/interior/proxy-furniture"
-import { ArchitectureCandidate } from "@/components/interior/architecture-candidate"
+import { ArchitectureCandidate, AtticGuards } from "@/components/interior/architecture-candidate"
+import { SHELL_PRACTICALS } from "@/lib/architecture-details"
 import { useProximitySystem, triggerInteract } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
 import { FLOOR_BASE_Y, X0, ROOMS, type FloorId } from "@/lib/interior-layout"
@@ -86,6 +87,7 @@ const ROOM_TINT: Record<string, string> = {
 }
 
 const POINT_LIGHTS: {
+  roomId?: string
   where: 'yard' | InteriorFloor
   position: [number, number, number]
   color: string
@@ -127,6 +129,7 @@ const POINT_LIGHTS: {
     const alongZ = d >= w
     const splits = w * d > 60 ? [1 / 3, 2 / 3] : [1 / 2]
     return splits.map((t) => ({
+      roomId: r.id,
       where: r.floor,
       position: [
         alongZ ? (minX + maxX) / 2 : minX + w * t,
@@ -143,6 +146,16 @@ const POINT_LIGHTS: {
       decay: 2,
     }))
   }),
+]
+
+const REFINED_POINT_LIGHTS = [
+  ...POINT_LIGHTS.filter(l => l.roomId !== 'foyer' && l.roomId !== 'client-room'),
+  ...SHELL_PRACTICALS.map(p => ({
+    where: 'ground' as const,
+    // A small inward offset approximates the broad diffuser with a point source.
+    position: [p.position[0], p.position[1], p.position[2] + (p.id === 'client-north' ? -.3 : .3)] as [number, number, number],
+    color: '#ffe5bc', intensity: p.intensity, distance: 8, decay: 2,
+  })),
 ]
 
 /**
@@ -329,7 +342,7 @@ const POOL_SIZE = 7
  * Slots are written imperatively through refs. Doing it in React state would
  * re-render the whole subtree every time the player walks a few metres.
  */
-function SceneLights() {
+function SceneLights({ refined = false }: { refined?: boolean }) {
   const currentLocation = usePlayerStore((s) => s.currentLocation)
   const isYard = currentLocation === 'yard'
 
@@ -352,20 +365,20 @@ function SceneLights() {
     } else {
       l.position.set(X0 - 4, 10, 4)
       l.target.position.set(X0, 1.6, 5.4)
-      l.color.set('#fff4e0')
-      l.intensity = 0.3
+      l.color.set(refined ? '#e3e8ef' : '#fff4e0')
+      l.intensity = refined ? 0.2 : 0.3
       // Orthographic extents are camera-local; X0 belongs in the target only.
       Object.assign(l.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 0.5, far: 40 })
     }
     l.target.updateMatrixWorld()
     l.shadow.camera.updateProjectionMatrix()
-  }, [isYard])
+  }, [isYard, refined])
 
   // Re-pick slots on a timer rather than per frame — the winning set only
   // changes when the player crosses a light's falloff radius, which walking
   // does far slower than 60Hz. Forced immediately on a location change so a
   // teleport never lands in a dark room.
-  useEffect(() => { sinceUpdate.current = Infinity }, [currentLocation])
+  useEffect(() => { sinceUpdate.current = Infinity }, [currentLocation, refined])
 
   useFrame((state, delta) => {
     sinceUpdate.current += delta
@@ -373,7 +386,8 @@ function SceneLights() {
     sinceUpdate.current = 0
 
     const cam = state.camera.position
-    const active = POINT_LIGHTS
+    const candidates = refined ? REFINED_POINT_LIGHTS : POINT_LIGHTS
+    const active = candidates
       .filter((l) => (isYard ? l.where === 'yard' : l.where !== 'yard' && nearFloor(currentLocation, l.where)))
       .map((l) => ({
         l,
@@ -409,8 +423,8 @@ function SceneLights() {
           now do the lighting, and ambient only stops shadow sides going pure
           black. */}
       <ambientLight
-        intensity={isYard ? 0.6 : 0.12}
-        color={isYard ? '#becdf6' : '#4a5570'}
+        intensity={isYard ? 0.6 : refined ? 0.24 : 0.12}
+        color={isYard ? '#becdf6' : refined ? '#b7c2ce' : '#4a5570'}
       />
 
       {/* Key light — the moon outdoors, the interior's directional indoors.
@@ -420,6 +434,7 @@ function SceneLights() {
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
+        shadow-normalBias={0.02}
       />
 
       {/* Accent fill from left — blue rim (flipped with orientation fix).
@@ -431,6 +446,8 @@ function SceneLights() {
           key={i}
           ref={(r) => { pool.current[i] = r }}
           intensity={0}
+          distance={8}
+          decay={2}
         />
       ))}
     </>
@@ -508,9 +525,10 @@ function YardScene() {
 function Scene() {
   const currentLocation = usePlayerStore((s) => s.currentLocation)
   const isYard = currentLocation === 'yard'
-  const [architectureCandidate, setArchitectureCandidate] = useState(false)
+  const [architectureCandidate, setArchitectureCandidate] = useState<string | null>(null)
   useEffect(() => {
-    setArchitectureCandidate(new URLSearchParams(window.location.search).get('architecture') === 'v001')
+    const version = new URLSearchParams(window.location.search).get('architecture')
+    setArchitectureCandidate(version === 'v001' || version === 'v002' ? version : null)
   }, [])
 
   return (
@@ -520,7 +538,7 @@ function Scene() {
 
       {/* Every light in the scene lives here, mounted permanently — see
           SceneLights for why the count must never change. */}
-      <SceneLights />
+      <SceneLights refined={architectureCandidate === 'v002'} />
 
       <YardScene />
 
@@ -532,23 +550,24 @@ function Scene() {
           rendering as a faint silhouette on the yard's horizon. */}
       <group visible={!isYard}>
         <group visible={nearFloor(currentLocation, 'basement')}>
-          {architectureCandidate ? <ArchitectureCandidate floor="basement" /> : <InteriorFloorBasement />}
+          {architectureCandidate ? <ArchitectureCandidate floor="basement" version={architectureCandidate} /> : <InteriorFloorBasement />}
         </group>
         <group visible={nearFloor(currentLocation, 'ground')}>
-          {architectureCandidate ? <ArchitectureCandidate floor="ground" /> : <InteriorFloorGround />}
-          <ExitDoor />
+          {architectureCandidate ? <ArchitectureCandidate floor="ground" version={architectureCandidate} /> : <InteriorFloorGround />}
+          <ExitDoor showGlow={architectureCandidate !== 'v002'} />
           {/* TEMPORARY scale reference — see ProxyFurniture. */}
           {!architectureCandidate && <ProxyFurniture />}
         </group>
         <group visible={nearFloor(currentLocation, 'second')}>
-          {architectureCandidate ? <ArchitectureCandidate floor="second" /> : <InteriorFloorSecond />}
+          {architectureCandidate ? <ArchitectureCandidate floor="second" version={architectureCandidate} /> : <InteriorFloorSecond />}
           <HomeOfficeRoom />
         </group>
         <group visible={nearFloor(currentLocation, 'attic')}>
-          {architectureCandidate ? <ArchitectureCandidate floor="attic" /> : <InteriorFloorAttic />}
+          {architectureCandidate ? <ArchitectureCandidate floor="attic" version={architectureCandidate} /> : <InteriorFloorAttic />}
+          <AtticGuards />
         </group>
 
-        {PLACEHOLDER_ROOMS.map((r) => (
+        {architectureCandidate !== 'v002' && PLACEHOLDER_ROOMS.map((r) => (
           <group key={r.id} visible={nearFloor(currentLocation, r.floor)}>
             <DoorPlaceholder id={r.id} label={r.label} position={r.position} />
           </group>

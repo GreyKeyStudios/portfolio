@@ -1,0 +1,49 @@
+{
+  "version": "v002",
+  "source": "shell-details-v002.blend",
+  "units": "metres",
+  "axes": "Blender Z up to glTF Y up",
+  "placement": "X0 plus owning floor base Y",
+  "exports": [
+    {
+      "asset": "attic-guards-v002.glb",
+      "triangles": 12420,
+      "bounds": {
+        "min": [
+          -1.1425000429153442,
+          0.0,
+          2.567499876022339
+        ],
+        "max": [
+          1.1425000429153442,
+          1.0525004863739014,
+          6.092499732971191
+        ]
+      },
+      "bytes": 989628
+    },
+    {
+      "asset": "foyer-client-details-v002.glb",
+      "triangles": 25272,
+      "bounds": {
+        "min": [
+          -1.1549999713897705,
+          -4.190951585769653e-08,
+          -0.004999995231628418
+        ],
+        "max": [
+          6.400000095367432,
+          3.0,
+          5.900000095367432
+        ]
+      },
+      "bytes": 1799636
+    }
+  ],
+  "layout_sha256": "665a520dae82355874221811317d1c84501c8ee8ccbea4092adebe51e2605b19",
+  "source_sha256": "c862be48371f8396873176eb907521201acd0f6cd8340c92dc2f0908bf09065e",
+  "textures": [
+    "oak-grain-v002.png"
+  ],
+  "note": "Authored fixtures use separately pooled runtime lights; no glTF lights."
+}

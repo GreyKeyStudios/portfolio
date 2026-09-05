@@ -60,6 +60,20 @@ require.extensions['.ts'] = (module, filename) => {
   }).outputText, filename)
 }
 const { stepPlayer } = require('../lib/player-movement.ts')
+const { getInteriorColliders } = require('../lib/interior-colliders.ts')
+const { moveWithCollision } = require('../lib/collision.ts')
+const topGuards = getInteriorColliders('attic', 8.1).filter(c => c.label.startsWith('attic-guard-'))
+assert.equal(topGuards.length, 4)
+assert.equal(getInteriorColliders('attic', 6.7).filter(c => c.label.startsWith('attic-guard-')).length, 0)
+for (const g of topGuards) {
+  const x = (g.minX + g.maxX) / 2, z = (g.minZ + g.maxZ) / 2
+  const alongX = g.maxX - g.minX < g.maxZ - g.minZ
+  const sign = g.label.endsWith('east') || g.label.endsWith('north') ? -1 : 1
+  const fromX = x - (alongX ? sign * .5 : 0), fromZ = z - (alongX ? 0 : sign * .5)
+  const toX = x + (alongX ? sign * .5 : 0), toZ = z + (alongX ? 0 : sign * .5)
+  const hit = moveWithCollision(fromX, fromZ, toX, toZ, [g])
+  assert.ok(Math.hypot(hit.x - toX, hit.z - toZ) > .5, `Guard did not block ${g.label}`)
+}
 let traversals = 0
 for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['second', 'attic']]) {
   for (const descending of [false, true]) {

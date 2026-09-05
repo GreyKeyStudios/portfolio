@@ -1,8 +1,11 @@
 import { useRef } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { usePlayerStore } from './player-store'
+import type { FloorId } from './interior-layout'
 
 export interface Interactable {
+  floor?: FloorId
   id: string
   label?: string  // Human-readable name shown in "Press E to interact" hint
   position: THREE.Vector3Like
@@ -28,7 +31,7 @@ export function unregisterInteractable(id: string) {
 export function triggerInteract() {
   if (nearestId) {
     const item = interactables.get(nearestId)
-    item?.onInteract()
+    if (item && (!item.floor || item.floor === usePlayerStore.getState().currentLocation)) item.onInteract()
   }
 }
 
@@ -60,6 +63,7 @@ export function useProximitySystem(onNearbyChange?: (label: string | null) => vo
 
     let closest: string | null = null
     let bestScore = -Infinity
+    const currentFloor = usePlayerStore.getState().currentLocation
 
     // Flatten camera forward to XZ for look-direction checks
     // Guard: if looking straight up/down, flatForward length ≈ 0 — normalize() gives NaN.
@@ -72,6 +76,7 @@ export function useProximitySystem(onNearbyChange?: (label: string | null) => vo
     }
 
     interactables.forEach((item, id) => {
+      if (item.floor && item.floor !== currentFloor) return
       // Distance check — must be within this interactable's radius
       _target.set(item.position.x, item.position.y, item.position.z)
       const dist = _pos.distanceTo(_target)
