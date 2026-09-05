@@ -29,7 +29,21 @@ if (!fs.existsSync(LAYOUT)) {
   console.error('Missing', LAYOUT, '\nRun via `npm run build:interior` (it transpiles the layout first).')
   process.exit(1)
 }
-const { ROOMS, STAIRS, FLOOR_BASE_Y, FLOOR_CEILING, FLOOR_TO_FLOOR, floorAtY } = require(LAYOUT)
+const {
+  ROOMS, STAIRS, FLOOR_BASE_Y, FLOOR_CEILING, FLOOR_TO_FLOOR, floorAtY,
+  X0, HOUSE_W, HOUSE_D, WINDOW_SILL, WINDOW_HEAD,
+} = require(LAYOUT)
+
+/**
+ * The footprint edges, in world coordinates. A window is only legal on a wall
+ * that lies on one of these — see assertExterior.
+ */
+const FOOT = {
+  minX: X0 - HOUSE_W / 2,
+  maxX: X0 + HOUSE_W / 2,
+  minZ: 0,
+  maxZ: HOUSE_D,
+}
 
 /**
  * Attic roof. A gable running north-south: knee walls at the sides, two sloped
@@ -71,8 +85,28 @@ const MATERIALS = [
   // matches its wall is invisible; the whole point of a baseboard or casing is
   // the line it draws where two surfaces meet.
   { name: 'trim', color: [0.93, 0.92, 0.90, 1], rough: 0.55 },
+  // Glazing, seen from inside at night.
+  //
+  // There is nothing outside the interior scene to look at — it lives alone at
+  // X0=300 and the yard is 300 units away and hidden. So the glass cannot be
+  // transparent: it would show the void, or the inside of the room behind it.
+  // It is instead a dark, faintly emissive panel the colour of the yard's fog
+  // (#152341), which is what a window actually looks like from a lit room at
+  // night. Emissive rather than lit, because a window that needs a light source
+  // to read would cost one of the seven pool slots (see SceneLights).
+  //
+  // The emissive value is deliberately below the Bloom luminance threshold
+  // (0.85 in scene-effects.tsx) — these should glow faintly, not flare.
+  //
+  // Tuned DOWN from a first pass at 0.07/0.11/0.20 with roughness 0.08. That
+  // read as daylight: the panes were the brightest surface in every room and
+  // the near-mirror roughness put a hard specular blob of the nearest point
+  // light in one corner of each. At night a window is DARKER than the lit wall
+  // around it, so the value sits below the wall's and the roughness is high
+  // enough to smear the reflection into a sheen rather than a highlight.
+  { name: 'glass', color: [0.022, 0.036, 0.072, 1], rough: 0.22, emissive: [0.026, 0.046, 0.09] },
 ]
-const MAT = { floor: 0, wall: 1, ceiling: 2, stair: 3, trim: 4 }
+const MAT = { floor: 0, wall: 1, ceiling: 2, stair: 3, trim: 4, glass: 5 }
 
 // Trim dimensions. Doors stop at 2.05 with wall above — a floor-to-ceiling gap
 // reads as a missing wall panel, not a doorway, and was a large part of why the
@@ -86,6 +120,16 @@ const RAIL_H = 0.92     // handrail height above the tread nose
 const RAIL_T = 0.06
 const NEWEL_T = 0.11
 const STRINGER_T = 0.05
+
+// Window trim. A bare hole with glass in it reads as a texture, not an opening;
+// what makes it read as joinery is the stool standing proud of the wall and the
+// muntins breaking the pane up. Both are cheap — a handful of boxes each.
+const GLASS_T = 0.02
+const STOOL_T = 0.032   // thickness of the interior sill ledge
+const STOOL_D = 0.055   // how far it projects into the room past the wall face
+const APRON_H = 0.085   // the board under the stool
+const MUNTIN_T = 0.035
+const LIGHT_W = 0.55    // target width of one pane between muntins
 
 /**
  * Thickness of the stair structure below its walking surface — the waist.
@@ -242,6 +286,147 @@ function subtractRects(rect, holes) {
   return parts
 }
 
+/**
+ * Sutherland-Hodgman clip of a convex polygon against one axis-aligned
+ * half-plane. `axis` 0 = x, 1 = y; `sign` +1 keeps the side >= value.
+ *
+ * Exists for exactly one job: cutting a window out of the attic gable. Every
+ * other opening in the house is a rectangle in a rectangular wall, so it is
+ * subtracted arithmetically by solidSegments. The gable is a triangle, and a
+ * rectangular hole in it leaves four pieces whose shapes depend on where the
+ * roof slope crosses the opening — which is a clip, not a subtraction.
+ */
+function clipHalf(pts, axis, sign, value) {
+  const keep = (p) => (sign > 0 ? p[axis] >= value - 1e-9 : p[axis] <= value + 1e-9)
+  const out = []
+  for (let i = 0; i < pts.length; i++) {
+    const cur = pts[i]
+    const nxt = pts[(i + 1) % pts.length]
+    if (keep(cur)) out.push(cur)
+    if (keep(cur) !== keep(nxt)) {
+      const t = (value - cur[axis]) / (nxt[axis] - cur[axis])
+      out.push([cur[0] + (nxt[0] - cur[0]) * t, cur[1] + (nxt[1] - cur[1]) * t])
+    }
+  }
+  return out
+}
+
+/** The part of a convex polygon inside an axis-aligned box. May be empty. */
+function clipRect(pts, x0, x1, y0, y1) {
+  let p = pts
+  for (const [axis, sign, v] of [[0, 1, x0], [0, -1, x1], [1, 1, y0], [1, -1, y1]]) {
+    p = clipHalf(p, axis, sign, v)
+    if (p.length < 3) return []
+  }
+  return p
+}
+
+/**
+ * A window may only be cut into a wall that faces outdoors.
+ *
+ * Doors on a shared boundary have to be declared on BOTH rooms or the
+ * neighbour's wall renders solid across the opening — a bug this project has
+ * shipped more than once. Windows sidestep that entirely by being illegal on
+ * interior walls, and this is what makes that a build failure rather than
+ * something you find by walking into it.
+ */
+function assertExterior(room, w) {
+  const b = room.bounds
+  const on = {
+    north: Math.abs(b.maxZ - FOOT.maxZ) < 1e-6,
+    south: Math.abs(b.minZ - FOOT.minZ) < 1e-6,
+    east: Math.abs(b.maxX - FOOT.maxX) < 1e-6,
+    west: Math.abs(b.minX - FOOT.minX) < 1e-6,
+  }
+  if (!on[w.side]) {
+    throw new Error(
+      `${room.id}: ${w.side} window is not on an exterior wall. ` +
+      `That side sits at ${JSON.stringify(b)}, footprint is ${JSON.stringify(FOOT)}.`
+    )
+  }
+}
+
+/**
+ * A window must fit its wall with its casing on, and must not collide with any
+ * other opening on the same side.
+ *
+ * The casing is included in the extent on purpose. Cutting the hole is the easy
+ * part; the failure this catches is an opening placed with just enough room for
+ * the glass and none for the trim around it, which is exactly what happened
+ * when the Foyer was considered for sidelights — a 2.3 wall with a 1.2 door and
+ * its casings in the middle of it has no honest room either side.
+ *
+ * Doors are not checked against each other here. They are existing, working
+ * data, and a window pass has no business introducing a new way for them to
+ * fail the build.
+ */
+function assertWindowsFit(room, s) {
+  for (const w of s.windows) {
+    const lo = w.center - w.width / 2 - CASING_W
+    const hi = w.center + w.width / 2 + CASING_W
+    if (lo < s.lo - 1e-9 || hi > s.hi + 1e-9) {
+      throw new Error(
+        `${room.id}: ${w.side} window at ${w.center.toFixed(2)} needs ` +
+        `${lo.toFixed(2)}..${hi.toFixed(2)} with casing, but the wall runs ` +
+        `${s.lo.toFixed(2)}..${s.hi.toFixed(2)}.`
+      )
+    }
+    for (const o of [...s.doors, ...s.windows]) {
+      if (o === w) continue
+      if (o.center - o.width / 2 < hi - 1e-9 && lo < o.center + o.width / 2 - 1e-9) {
+        throw new Error(
+          `${room.id}: ${w.side} window at ${w.center.toFixed(2)} overlaps the ` +
+          `opening at ${o.center.toFixed(2)}.`
+        )
+      }
+    }
+  }
+}
+
+/**
+ * Everything inside a window opening: the pane, its muntins, the casing round
+ * it, and the stool and apron below.
+ *
+ * Shared between ordinary walls and the attic gable, which is why it takes a
+ * `box` mapper rather than working in world axes — the gable is built in the
+ * X/Y plane extruded along Z, and every other wall is not.
+ *
+ * `slab` is the wall's two depth faces, `inner` the room-facing one, `dir` the
+ * sign that points from it into the room.
+ */
+function addGlazing(mesh, box, a, b, sill, head, slab, inner, dir) {
+  const mid = (slab[0] + slab[1]) / 2
+
+  // The pane sits at the middle of the wall depth, not flush with a face, so
+  // there is a reveal on both sides of it.
+  box(mesh[MAT.glass], a, b, sill, head, mid - GLASS_T / 2, mid + GLASS_T / 2)
+
+  // Muntins. One undivided pane at this size reads as a hole with a colour in
+  // it; the bars are what make it parse as a window at a glance, and they cost
+  // a handful of boxes.
+  const lights = Math.max(2, Math.round((b - a) / LIGHT_W))
+  for (let i = 1; i < lights; i++) {
+    const c = a + ((b - a) * i) / lights
+    box(mesh[MAT.trim], c - MUNTIN_T / 2, c + MUNTIN_T / 2, sill, head, mid - MUNTIN_T / 2, mid + MUNTIN_T / 2)
+  }
+  const my = (sill + head) / 2
+  box(mesh[MAT.trim], a, b, my - MUNTIN_T / 2, my + MUNTIN_T / 2, mid - MUNTIN_T / 2, mid + MUNTIN_T / 2)
+
+  // Casing — the same profile as the door casings, so the two read as trim from
+  // one house rather than two separate systems.
+  const c0 = inner
+  const c1 = inner + dir * CASING_D
+  box(mesh[MAT.trim], a - CASING_W, a, sill, head + CASING_W, c0, c1)
+  box(mesh[MAT.trim], b, b + CASING_W, sill, head + CASING_W, c0, c1)
+  box(mesh[MAT.trim], a - CASING_W, b + CASING_W, head, head + CASING_W, c0, c1)
+
+  // Stool and apron. The stool is the only part of a window that projects into
+  // the room, and it does most of the work of making the opening read as depth
+  // rather than as a panel painted on the wall.
+  box(mesh[MAT.trim], a - CASING_W, b + CASING_W, sill - STOOL_T, sill, mid, inner + dir * STOOL_D)
+  box(mesh[MAT.trim], a, b, sill - STOOL_T - APRON_H, sill - STOOL_T, c0, c1)
+}
+
 /** Identical to solidSegments in lib/interior-colliders.ts — deliberately so. */
 function solidSegments(lo, hi, gaps) {
   const sorted = [...gaps].sort((a, b) => a.center - b.center)
@@ -301,15 +486,34 @@ function buildFloor(floor) {
     const bySide = { north: [], south: [], east: [], west: [] }
     for (const d of room.doors) bySide[d.side].push(d)
 
+    // Windows are validated on the way in, so an illegal one fails the build
+    // rather than quietly cutting a hole into the neighbouring room.
+    //
+    // The attic's north and south openings are GABLE windows: its room bounds
+    // are inset to the knee walls, so they are neither on the footprint edge
+    // nor in a wall tall enough to hold them (the knee is 1.15). They are
+    // handled with the roof instead, and skipped here.
+    const winBySide = { north: [], south: [], east: [], west: [] }
+    for (const w of room.windows ?? []) {
+      if (room.floor === 'attic') {
+        if (w.side === 'east' || w.side === 'west') {
+          throw new Error(`${room.id}: ${w.side} window sits in a ${ATTIC_KNEE_H} knee wall — gable ends only.`)
+        }
+        continue // built with the roof, below
+      }
+      assertExterior(room, w)
+      winBySide[w.side].push(w)
+    }
+
     // Each side is described once, then walls / headers / casings / baseboards
     // are all driven off the same description. `along` maps a coordinate on the
     // wall's own axis plus a depth offset into a world box, so the four sides
     // don't need four near-identical copies of every piece of trim.
     const sides = [
-      { doors: bySide.north, lo: minX, hi: maxX, slab: [maxZ - WALL, maxZ], inner: maxZ - WALL, dir: -1, axis: 'x' },
-      { doors: bySide.south, lo: minX, hi: maxX, slab: [minZ, minZ + WALL], inner: minZ + WALL, dir: 1, axis: 'x' },
-      { doors: bySide.east, lo: minZ, hi: maxZ, slab: [maxX - WALL, maxX], inner: maxX - WALL, dir: -1, axis: 'z' },
-      { doors: bySide.west, lo: minZ, hi: maxZ, slab: [minX, minX + WALL], inner: minX + WALL, dir: 1, axis: 'z' },
+      { doors: bySide.north, windows: winBySide.north, lo: minX, hi: maxX, slab: [maxZ - WALL, maxZ], inner: maxZ - WALL, dir: -1, axis: 'x' },
+      { doors: bySide.south, windows: winBySide.south, lo: minX, hi: maxX, slab: [minZ, minZ + WALL], inner: minZ + WALL, dir: 1, axis: 'x' },
+      { doors: bySide.east, windows: winBySide.east, lo: minZ, hi: maxZ, slab: [maxX - WALL, maxX], inner: maxX - WALL, dir: -1, axis: 'z' },
+      { doors: bySide.west, windows: winBySide.west, lo: minZ, hi: maxZ, slab: [minX, minX + WALL], inner: minX + WALL, dir: 1, axis: 'z' },
     ]
 
     // Walls run the FULL floor-to-floor height, not just to the ceiling. At
@@ -328,10 +532,41 @@ function buildFloor(floor) {
       // Under a gable the wall stops at the knee and the roof takes over.
       const wallTop = room.floor === 'attic' ? ATTIC_KNEE_H : FLOOR_TO_FLOOR
 
-      for (const [a, b] of solidSegments(s.lo, s.hi, s.doors)) {
+      // Both doors and windows cut the wall; each then puts back the parts of
+      // its own opening that are solid (a door's header, a window's sill and
+      // head panels). Cutting first and refilling keeps the jamb reveals
+      // correct for free — the faces of the neighbouring wall segments ARE the
+      // reveal, so a window is a real hole through 0.2 of wall rather than a
+      // decal on a flat surface.
+      const openings = [...s.doors, ...s.windows]
+      assertWindowsFit(room, s)
+
+      for (const [a, b] of solidSegments(s.lo, s.hi, openings)) {
         box(mesh[MAT.wall], a, b, 0, wallTop, s.slab[0], s.slab[1])
-        // Baseboard, on the room-facing side only.
+      }
+
+      // Baseboard, on the room-facing side only. Cut by DOORS ONLY — a base
+      // runs underneath a window, and stopping it either side of one is the
+      // kind of detail that reads as wrong without being obvious why.
+      for (const [a, b] of solidSegments(s.lo, s.hi, s.doors)) {
         box(mesh[MAT.trim], a, b, 0, BASE_H, s.inner, s.inner + s.dir * BASE_D)
+      }
+
+      for (const w of s.windows) {
+        const a = w.center - w.width / 2
+        const b = w.center + w.width / 2
+        const sill = w.sill ?? WINDOW_SILL
+        const head = w.head ?? WINDOW_HEAD
+        if (sill >= head) throw new Error(`${room.id}: window sill ${sill} is not below head ${head}.`)
+        if (head + CASING_W > wallTop) {
+          throw new Error(`${room.id}: window head ${head} + casing does not fit under a ${wallTop} wall.`)
+        }
+
+        // Put back the wall under the sill and above the head.
+        box(mesh[MAT.wall], a, b, 0, sill, s.slab[0], s.slab[1])
+        box(mesh[MAT.wall], a, b, head, wallTop, s.slab[0], s.slab[1])
+
+        addGlazing(mesh, box, a, b, sill, head, s.slab, s.inner, s.dir)
       }
 
       for (const d of s.doors) {
@@ -375,10 +610,50 @@ function buildFloor(floor) {
 
     // Gable end at each end of the run: the triangle between the knee walls
     // and the ridge, closing the roof off.
-    for (const [za, zb] of [[minZ, minZ + WALL], [maxZ - WALL, maxZ]]) {
-      addPrismZ(mesh[MAT.wall], za, zb, [
-        [minX, kneeY], [ridgeX, ridgeY], [maxX, kneeY],
-      ])
+    //
+    // This is also the only place in the attic a window can go. The knee walls
+    // are 1.15 and the roof takes over above them, so the gable is the one
+    // surface with the height for an opening — which is why real attics are
+    // lit this way too.
+    const BIG = 1e4
+    for (const [za, zb, side] of [[minZ, minZ + WALL, 'south'], [maxZ - WALL, maxZ, 'north']]) {
+      const tri = [[minX, kneeY], [ridgeX, ridgeY], [maxX, kneeY]]
+      const wins = (room.windows ?? []).filter((w) => w.side === side)
+      if (wins.length > 1) {
+        throw new Error(`${room.id}: ${side} gable carries ${wins.length} windows; the clip below subtracts one.`)
+      }
+      const w = wins[0]
+
+      if (!w) {
+        addPrismZ(mesh[MAT.wall], za, zb, tri)
+      } else {
+        const a = w.center - w.width / 2
+        const b = w.center + w.width / 2
+        const sill = w.sill ?? WINDOW_SILL
+        const head = w.head ?? WINDOW_HEAD
+
+        // The triangle minus the opening, as four clipped pieces. The two outer
+        // ones keep the sloping roof line; the top piece is whatever triangle
+        // is left between the head and the rafters, and vanishes on its own if
+        // the opening reaches the ridge.
+        for (const piece of [
+          clipRect(tri, -BIG, a, -BIG, BIG),
+          clipRect(tri, b, BIG, -BIG, BIG),
+          clipRect(tri, a, b, -BIG, sill),
+          clipRect(tri, a, b, head, BIG),
+        ]) {
+          if (piece.length >= 3) addPrismZ(mesh[MAT.wall], za, zb, piece)
+        }
+
+        // Depth here runs along Z, so the box mapper is the identity on X/Y.
+        const dir = side === 'south' ? 1 : -1
+        const inner = side === 'south' ? zb : za
+        addGlazing(
+          mesh,
+          (g, x0, x1, y0, y1, d0, d1) => addBox(g, x0, x1, y0, y1, Math.min(d0, d1), Math.max(d0, d1)),
+          a, b, sill, head, [za, zb], inner, dir
+        )
+      }
     }
 
     // Exposed rafters. The Archive is meant to read as structure you can see —
@@ -533,6 +808,7 @@ function writeGLB(mesh, outPath) {
     materials: MATERIALS.map((m) => ({
       name: m.name,
       pbrMetallicRoughness: { baseColorFactor: m.color, metallicFactor: 0, roughnessFactor: m.rough },
+      ...(m.emissive ? { emissiveFactor: m.emissive } : {}),
       doubleSided: true,
     })),
     accessors,

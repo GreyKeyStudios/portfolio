@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1282.8" height="1534" viewBox="0 0 1282.8 1534">
+<style>
+  rect,polygon,line{shape-rendering:crispEdges}
+  .bg{fill:#0e1420}
+  .wall{fill:#2a3242;stroke:#48546c;stroke-width:1}
+  .below{fill:#0a0f18}
+  .win{fill:#8fb4ee;stroke:#cfe0ff;stroke-width:1.5}
+  .door{fill:#6b5330;stroke:#c9a86a;stroke-width:1.5}
+  .floor{stroke:#48546c;stroke-width:1;stroke-dasharray:4 4}
+  .grade{stroke:#7d8aa6;stroke-width:2}
+  .t{fill:#cfe0ff;font:600 15px system-ui,sans-serif;letter-spacing:.08em}
+  .n{fill:#8b97ad;font:12px system-ui,sans-serif}
+  .h{fill:#e8eefc;font:600 20px system-ui,sans-serif;letter-spacing:.1em}
+  .s{fill:#8b97ad;font:12px system-ui,sans-serif}
+</style>
+<rect class="bg" x="0" y="0" width="1282.8" height="1534"/>
+<text class="h" x="54" y="54">THE STACK HOUSE — INTERIOR SHELL ELEVATIONS</text>
+<text class="s" x="54" y="76">13.2 x 10.8 m footprint · 28 windows · dashed lines are storey levels · heavy line is grade</text>
+<g transform="translate(54,94)">
+<text x="0" y="-30" class="t">SOUTH — front / street</text>
+<rect x="0" y="432.6" width="554.4000000000019" height="134.39999999999998" class="below"/>
+<rect x="0" y="432.6" width="554.4000000000019" height="134.4" class="wall"/>
+<rect x="0" y="298.20000000000005" width="554.4000000000019" height="134.4" class="wall"/>
+<rect x="0" y="163.8" width="554.4000000000019" height="134.4" class="wall"/>
+<polygon class="wall" points="0,115.5 277.20000000000095,0 554.4000000000019,115.5 554.4000000000019,163.8 0,163.8"/>
+<line x1="0" y1="432.6" x2="554.4000000000019" y2="432.6" class="floor"/>
+<line x1="0" y1="298.20000000000005" x2="554.4000000000019" y2="298.20000000000005" class="floor"/>
+<line x1="0" y1="163.8" x2="554.4000000000019" y2="163.8" class="floor"/>
+<line x1="-14" y1="432.6" x2="568.4000000000019" y2="432.6" class="grade"/>
+<rect x="130.20000000000095" y="344.40000000000003" width="33.59999999999809" height="50.400000000000006" class="win"/>
+<rect x="252" y="346.5" width="50.40000000000191" height="86.1" class="door"/>
+<rect x="352.79999999999905" y="344.40000000000003" width="50.40000000000191" height="50.400000000000006" class="win"/>
+<rect x="470.3999999999995" y="344.40000000000003" width="50.40000000000191" height="50.400000000000006" class="win"/>
+<rect x="121.79999999999905" y="210" width="50.40000000000191" height="50.400000000000006" class="win"/>
+<rect x="256.20000000000095" y="210" width="42" height="50.400000000000006" class="win"/>
+<rect x="352.79999999999905" y="210" width="50.40000000000191" height="50.400000000000006" class="win"/>
+<rect x="470.3999999999995" y="210" width="50.40000000000191" height="50.400000000000006" class="win"/>
+<rect x="252" y="50.39999999999997" width="50.40000000000191" height="46.2" class="win"/>
+<text x="0" y="593" class="n">8 windows</text>
+</g>
+<g transform="translate(674.4,94)">
+<text x="0" y="-30" class="t">NORTH — back / yard</text>
+<rect x="0" y="432.6" width="554.4000000000019" height="134.39999999999998" class="below"/>
+<rect x="0" y="432.6" width="554.4000000000019" height="134.4" class="wall"/>
+<rect x="0" y="298.20000000000005" width="554.4000000000019" height="134.4" class="wall"/>
+<rect x="0" y="163.8" width="554.4000000000019" height="134.4" class="wall"/>
+<polygon class="wall" points="0,115.5 277.20000000000095,0 554.4000000000019,115.5 554.4000000000019,163.8 0,163.8"/>
+<line x1="0" y1="432.6" x2="554.4000000000019" y2="432.6" class="floor"/>
+<line x1="0" y1="298.20000000000005" x2="554.4000000000019" y2="298.20000000000005" class="floor"/>
+<line x1="0" y1="163.8" x2="554.4000000000019" y2="163.8" class="floor"/>
+<line x1="-14" y1="432.6" x2="568.4000000000019" y2="432.6" class="grade"/>
+<rect x="420.0000000000024" y="480.90000000000003" width="42" height="86.1" class="door"/>
+<rect x="264.6000000000005" y="451.5" width="25.200000000000955" height="21" class="win"/>
+<rect x="407.4000000000019" y="344.40000000000003" width="67.20000000000095" height="50.400000000000006" class="win"/>
+<rect x="84.00000000000239" y="344.40000000000003" width="58.799999999999045" height="50.400000000000006" class="win"/>
+<rect x="411.60000000000286" y="210" width="58.799999999999045" height="50.400000000000006" class="win"/>
+<rect x="172.20000000000334" y="210" width="33.59999999999809" height="27.300000000000004" class="win"/>
+<rect x="50.40000000000191" y="210" width="50.40000000000191" height="50.400000000000006" class="win"/>
+<rect x="252" y="50.39999999999997" width="50.40000000000191" height="46.2" class="win"/>
+<text x="0" y="593" class="n">7 windows</text>
+</g>
+<g transform="translate(54,787)">
+<text x="0" y="-30" class="t">EAST — side</text>
+<rect x="0" y="432.6" width="453.6" height="134.39999999999998" class="below"/>
+<rect x="0" y="432.6" width="453.6" height="134.4" class="wall"/>
+<rect x="0" y="298.20000000000005" width="453.6" height="134.4" class="wall"/>
+<rect x="0" y="163.8" width="453.6" height="134.4" class="wall"/>
+<rect x="0" y="0" width="453.6" height="163.79999999999998" class="wall"/>
+<line x1="0" y1="432.6" x2="453.6" y2="432.6" class="floor"/>
+<line x1="0" y1="298.20000000000005" x2="453.6" y2="298.20000000000005" class="floor"/>
+<line x1="0" y1="163.8" x2="453.6" y2="163.8" class="floor"/>
+<line x1="-14" y1="432.6" x2="467.6" y2="432.6" class="grade"/>
+<rect x="98.7" y="451.5" width="29.40000000000002" height="21" class="win"/>
+<rect x="325.5" y="451.5" width="29.399999999999977" height="21" class="win"/>
+<rect x="92.4" y="344.40000000000003" width="42" height="50.400000000000006" class="win"/>
+<rect x="319.2" y="344.40000000000003" width="42" height="50.400000000000006" class="win"/>
+<rect x="92.4" y="210" width="42" height="50.400000000000006" class="win"/>
+<rect x="319.2" y="210" width="42" height="50.400000000000006" class="win"/>
+<text x="0" y="593" class="n">6 windows</text>
+</g>
+<g transform="translate(674.4,787)">
+<text x="0" y="-30" class="t">WEST — side</text>
+<rect x="0" y="432.6" width="453.6" height="134.39999999999998" class="below"/>
+<rect x="0" y="432.6" width="453.6" height="134.4" class="wall"/>
+<rect x="0" y="298.20000000000005" width="453.6" height="134.4" class="wall"/>
+<rect x="0" y="163.8" width="453.6" height="134.4" class="wall"/>
+<rect x="0" y="0" width="453.6" height="163.79999999999998" class="wall"/>
+<line x1="0" y1="432.6" x2="453.6" y2="432.6" class="floor"/>
+<line x1="0" y1="298.20000000000005" x2="453.6" y2="298.20000000000005" class="floor"/>
+<line x1="0" y1="163.8" x2="453.6" y2="163.8" class="floor"/>
+<line x1="-14" y1="432.6" x2="467.6" y2="432.6" class="grade"/>
+<rect x="325.5" y="451.5" width="29.400000000000034" height="21" class="win"/>
+<rect x="81.90000000000005" y="451.5" width="29.399999999999963" height="21" class="win"/>
+<rect x="378" y="344.40000000000003" width="25.200000000000045" height="27.300000000000004" class="win"/>
+<rect x="201.60000000000002" y="344.40000000000003" width="42" height="50.400000000000006" class="win"/>
+<rect x="75.60000000000002" y="344.40000000000003" width="42" height="50.400000000000006" class="win"/>
+<rect x="319.20000000000005" y="210" width="42" height="50.400000000000006" class="win"/>
+<rect x="75.60000000000002" y="210" width="42" height="50.400000000000006" class="win"/>
+<text x="0" y="593" class="n">7 windows</text>
+</g>
+</svg>

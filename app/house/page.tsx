@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useCallback, useRef } from "react"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import type * as THREE from "three"
-import { Environment, Stars } from "@react-three/drei"
+import { Environment, Stars, Html } from "@react-three/drei"
 import { SkyDome } from "@/components/sky-dome"
 import { INK, TEXT, alpha } from "@/lib/brand"
 import { FPSControls } from "@/components/fps-controls"
@@ -74,6 +74,8 @@ const ROOM_TINT: Record<string, string> = {
   'bathroom': '#eaf2ff',
   'linen': '#b8b0a0',
   'upstairs-storage': '#b8b0a0',
+  'laundry': '#cfd8e0',
+  'guest-room': '#e8d8c0',
   'pantry': '#b8b0a0',
   'half-bath': '#fff0d6',
   'foyer': '#f6c97a',               // warm entry
@@ -142,21 +144,111 @@ const POINT_LIGHTS: {
   }),
 ]
 
-// Unfurnished rooms — each gets a "still being built" marker near its own
-// doorway. Positions read off the same coordinates as their wall openings
-// in interior-layout.ts's ROOMS. music-studio and archive have no wall door
-// (see RoomDef comments there), so their markers sit near where the stairs
-// actually land instead.
-const PLACEHOLDER_ROOMS: { id: string; label: string; floor: InteriorFloor; position: [number, number, number] }[] = [
-  { id: 'kitchen', label: 'Kitchen', floor: 'ground', position: [X0 - 2, FLOOR_BASE_Y.ground + 1.2, 3] },
-  { id: 'client-room', label: 'Client Room', floor: 'ground', position: [X0 + 2, FLOOR_BASE_Y.ground + 1.2, 3] },
-  { id: 'half-bath', label: 'Half-Bath', floor: 'ground', position: [X0 + 2, FLOOR_BASE_Y.ground + 1.2, 8.5] },
-  { id: 'game-room', label: 'Game Room', floor: 'ground', position: [X0 - 2, FLOOR_BASE_Y.ground + 1.2, 11] },
-  { id: 'bathroom', label: 'Bathroom', floor: 'second', position: [X0 + 2, FLOOR_BASE_Y.second + 1.2, 8] },
-  { id: 'music-studio', label: 'Grey Key Studios', floor: 'basement', position: [X0 - 2, FLOOR_BASE_Y.basement + 1.2, -1.5] },
-  // Near where stair-attic now lands (Z19..21), not its old Z15..17 footprint.
-  { id: 'archive', label: 'Archive', floor: 'attic', position: [X0 + 2.2, FLOOR_BASE_Y.attic + 1.2, 20] },
-]
+/**
+ * Unfurnished rooms — each gets a "still being built" marker.
+ *
+ * DERIVED from ROOMS, never hand-positioned, for the same reason the interior
+ * lights are. This was a literal list of seven ids with hardcoded coordinates,
+ * authored against a floor plan that has since changed twice: PLAN_SCALE moved
+ * 1.15 -> 1.0 and the service rooms were re-cut, which left markers sitting
+ * inside walls and rooms with no marker at all. A label in the middle of a room
+ * is not a creative decision, so it should not be maintained by hand.
+ *
+ * The secret room is excluded on purpose — announcing it as "still being built"
+ * rather defeats it.
+ */
+const PLACEHOLDER_ROOMS: { id: string; label: string; floor: InteriorFloor; position: [number, number, number] }[] =
+  ROOMS
+    .filter((r) => !r.furnished && r.id !== 'secret-room')
+    .map((r) => {
+      const { minX, maxX, minZ, maxZ } = r.bounds
+      return {
+        id: r.id,
+        label: r.label,
+        floor: r.floor,
+        position: [
+          (minX + maxX) / 2,
+          FLOOR_BASE_Y[r.floor] + 1.2,
+          (minZ + maxZ) / 2,
+        ] as [number, number, number],
+      }
+    })
+
+/**
+ * Frame timing readout, behind `?stats`.
+ *
+ * Exists because "it feels laggy" is not a number, and the two usual causes —
+ * a dev build and an overdrawn GPU — need completely different fixes. Median vs
+ * 95th percentile separates them: a steady 45 fps is fill rate or draw calls,
+ * while a good median with a bad p95 is hitching, which on this project has
+ * historically meant a shader recompile (see SceneLights).
+ *
+ * Reads renderer.info for the two counts that actually drive cost, and is
+ * mounted inside the Canvas so it can reach them at all.
+ */
+function Stats() {
+  const { gl } = useThree()
+  const [text, setText] = useState('')
+  const frames = useRef<number[]>([])
+  const last = useRef(performance.now())
+  const since = useRef(0)
+  const counts = useRef({ calls: 0, triangles: 0 })
+
+  /**
+   * three resets renderer.info on every render() call, and EffectComposer makes
+   * several per frame — so reading it straight gave "1 draw call, 1 triangle",
+   * which is the last full-screen quad of the last post pass and nothing else.
+   * Taking over the reset accumulates the whole frame, post included, which is
+   * the number that actually matters here.
+   */
+  useEffect(() => {
+    gl.info.autoReset = false
+    return () => { gl.info.autoReset = true }
+  }, [gl])
+
+  useFrame((_, delta) => {
+    const now = performance.now()
+    frames.current.push(now - last.current)
+    last.current = now
+
+    counts.current = { calls: gl.info.render.calls, triangles: gl.info.render.triangles }
+    gl.info.reset()
+
+    since.current += delta
+    if (since.current < 0.5) return
+    since.current = 0
+
+    const f = [...frames.current].sort((a, b) => a - b)
+    frames.current = frames.current.slice(-180)
+    if (!f.length) return
+    const med = f[Math.floor(f.length / 2)]
+    const p95 = f[Math.floor(f.length * 0.95)]
+    setText(
+      `${(1000 / med).toFixed(0)} fps  ·  median ${med.toFixed(1)}ms  ·  p95 ${p95.toFixed(1)}ms\n` +
+      `${counts.current.calls} draw calls  ·  ${counts.current.triangles.toLocaleString()} tris  ·  ` +
+      `dpr ${gl.getPixelRatio().toFixed(2)}  ·  ${gl.domElement.width}x${gl.domElement.height}`
+    )
+  })
+
+  return (
+    <Html
+      calculatePosition={() => [12, 12, 0]}
+      style={{
+        margin: 0,
+        padding: '6px 10px',
+        font: '11px/1.5 ui-monospace, monospace',
+        whiteSpace: 'pre',
+        color: '#becdf6',
+        background: 'rgba(0,0,0,0.7)',
+        border: '1px solid #becdf644',
+        borderRadius: 4,
+        pointerEvents: 'none',
+      }}
+    >
+      {text}
+    </Html>
+  )
+}
 
 function CameraInit() {
   const { camera } = useThree()
@@ -559,6 +651,8 @@ export default function StackHouse() {
   // The Canvas mounts immediately and streams underneath the credits — that is
   // the entire point of the boot sequence. Do NOT gate the Canvas on this.
   const [booted, setBooted] = useState(false)
+  // /house?stats — frame timing and draw counts. See Stats.
+  const [showStats, setShowStats] = useState(false)
   // Drives the interact button's lit state, so it only reads as live when
   // something is actually in range.
   const nearbyLabel = usePlayerStore((st) => st.nearbyLabel)
@@ -575,13 +669,40 @@ export default function StackHouse() {
     // recognize as the reason keyboard input stopped doing anything. Narrow
     // width now only counts alongside an actual touch signal.
     const checkMobile = () => {
-      const hasTouch = navigator.maxTouchPoints > 0
-      return (
-        /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-        (hasTouch && (navigator.maxTouchPoints > 2 || window.innerWidth < 768))
-      )
+      // Manual override, because no amount of sniffing gets this right for
+      // everyone and being stuck in the wrong control scheme is unrecoverable
+      // from inside the page. /house?controls=desktop or ?controls=touch.
+      const forced = new URLSearchParams(window.location.search).get('controls')
+      if (forced === 'desktop') return false
+      if (forced === 'touch') return true
+
+      const ua = navigator.userAgent
+
+      // Phones and Android tablets identify themselves honestly.
+      if (/iPhone|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) return true
+
+      // iPadOS 13+ reports a desktop Safari UA and has to be caught by the one
+      // thing a Mac never has: touch points.
+      if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return true
+
+      // Everything else is decided by what INPUT the device has, not by how
+      // many fingers its screen can track.
+      //
+      // The previous check was `maxTouchPoints > 2`, and it silently broke every
+      // touch-capable Windows desktop: Windows reports 10 touch points for any
+      // touchscreen or precision touchpad, so a normal PC with a mouse and
+      // keyboard got the phone build — joystick UI, no WASD, and no
+      // post-processing, since SceneEffects is gated on this same flag.
+      //
+      // A pointing device that can hover is a mouse or a trackpad, and anything
+      // with one of those should get the desktop scheme regardless of whether
+      // the screen also happens to accept touch.
+      const hasFinePointer = window.matchMedia('(any-pointer: fine)').matches
+      const canHover = window.matchMedia('(any-hover: hover)').matches
+      return navigator.maxTouchPoints > 0 && !hasFinePointer && !canHover
     }
     setIsMobile(checkMobile())
+    setShowStats(new URLSearchParams(window.location.search).has('stats'))
 
     // TEMP DEBUG — exposes the store for direct inspection/manipulation
     // while diagnosing the stair-warp report. Remove once resolved.
@@ -635,6 +756,23 @@ export default function StackHouse() {
           position: [0, 1.7, -30],
           fov: 75,
         }}
+        /**
+         * Render resolution is CAPPED. This was unset, and react-three-fiber's
+         * default is [1, 2] — so on any display reporting devicePixelRatio 2
+         * (most laptop panels, and any Windows machine at 200% scaling) the
+         * whole scene rendered at four times the pixels, and every full-screen
+         * post pass with it. The gate scene has clamped this since it was
+         * written; this Canvas never did.
+         *
+         * 1.5 rather than 1: text and thin trim still resolve, and the cost is
+         * 2.25x pixels instead of 4x.
+         */
+        dpr={[1, 1.5]}
+        /**
+         * Laptops with switchable graphics default to the integrated GPU unless
+         * asked otherwise. Matches the gate scene, which already asks.
+         */
+        gl={{ powerPreference: 'high-performance' }}
         shadows
       >
         <Suspense fallback={null}>
@@ -667,6 +805,8 @@ export default function StackHouse() {
               passes and a phone GPU has no headroom for them on top of a scene
               that already fills the frame. */}
           {!isMobile && <SceneEffects />}
+
+          {showStats && <Stats />}
         </Suspense>
       </Canvas>
 

@@ -12,12 +12,12 @@ floor transitions are all driven from them.
 
 | | Value |
 |---|---|
-| Shaft footprint (world X) | 298.678 → 300.978 (2.3 wide) |
-| Shaft footprint (world Z) | 2.99 → 6.49 (3.5 deep) |
-| West flight, X band | 298.678 → 299.728 (1.05 wide) |
-| East flight, X band | 299.928 → 300.978 (1.05 wide) |
+| Shaft footprint (world X) | 298.85 → 301.15 (2.3 wide) |
+| Shaft footprint (world Z) | 2.6 → 6.1 (3.5 deep) |
+| West flight, X band | 298.85 → 299.9 (1.05 wide) |
+| East flight, X band | 300.1 → 301.15 (1.05 wide) |
 | Newel gap between flights | 0.2 |
-| Turn / half-landing Z | 5.29 → 6.49 (1.2 deep) |
+| Turn / half-landing Z | 4.9 → 6.1 (1.2 deep) |
 | House origin | X0 = 300, front wall at Z = 0 |
 
 ## Flight
@@ -37,15 +37,15 @@ a switchback's return leg runs toward −Z, so its topCoord is the smaller numbe
 
 | id | floor | X band | Z: bottom → top | Y: bottom → top |
 |---|---|---|---|---|
-| `basement-flight-a` | basement | 298.678 → 299.728 | 2.99 → 5.29 | -3.2 → -1.6 |
-| `basement-half-landing` | basement | 298.678 → 300.978 | 5.29 → 6.49 | -1.6 → -1.6 *(flat landing)* |
-| `basement-flight-b` | basement | 299.928 → 300.978 | 5.29 → 2.99 | -1.6 → 0 |
-| `ground-flight-a` | ground | 298.678 → 299.728 | 2.99 → 5.29 | 0 → 1.6 |
-| `ground-half-landing` | ground | 298.678 → 300.978 | 5.29 → 6.49 | 1.6 → 1.6 *(flat landing)* |
-| `ground-flight-b` | ground | 299.928 → 300.978 | 5.29 → 2.99 | 1.6 → 3.2 |
-| `second-flight-a` | second | 298.678 → 299.728 | 2.99 → 5.29 | 3.2 → 4.8 |
-| `second-half-landing` | second | 298.678 → 300.978 | 5.29 → 6.49 | 4.8 → 4.8 *(flat landing)* |
-| `second-flight-b` | second | 299.928 → 300.978 | 5.29 → 2.99 | 4.8 → 6.4 |
+| `basement-flight-a` | basement | 298.85 → 299.9 | 2.6 → 4.9 | -3.2 → -1.6 |
+| `basement-half-landing` | basement | 298.85 → 301.15 | 4.9 → 6.1 | -1.6 → -1.6 *(flat landing)* |
+| `basement-flight-b` | basement | 300.1 → 301.15 | 4.9 → 2.6 | -1.6 → 0 |
+| `ground-flight-a` | ground | 298.85 → 299.9 | 2.6 → 4.9 | 0 → 1.6 |
+| `ground-half-landing` | ground | 298.85 → 301.15 | 4.9 → 6.1 | 1.6 → 1.6 *(flat landing)* |
+| `ground-flight-b` | ground | 300.1 → 301.15 | 4.9 → 2.6 | 1.6 → 3.2 |
+| `second-flight-a` | second | 298.85 → 299.9 | 2.6 → 4.9 | 3.2 → 4.8 |
+| `second-half-landing` | second | 298.85 → 301.15 | 4.9 → 6.1 | 4.8 → 4.8 *(flat landing)* |
+| `second-flight-b` | second | 300.1 → 301.15 | 4.9 → 2.6 | 4.8 → 6.4 |
 
 ## Rules for the art asset
 

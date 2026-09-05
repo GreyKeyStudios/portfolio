@@ -54,9 +54,45 @@ export const X0 = 300
  * are all authored as absolutes and are deliberately outside `pl()`.
  *
  * This exists so "make the house a bit bigger" is one number rather than forty
- * literals that can drift apart. Start 11.0 x 9.0 -> 1.2x -> 1.15x again.
+ * literals that can drift apart. Start 11.0 x 9.0 -> 1.2x -> 1.15x -> back to
+ * 1.0 on 2026-09-04.
+ *
+ * ── WHY IT CAME BACK DOWN ────────────────────────────────────────────────────
+ * The two increases compounded to 1.38x, which is 1.9x the AREA of the original
+ * plan, and the comment above records that most rooms already met or exceeded
+ * the reference sheet before any of it. The result was a house measuring 189 m2
+ * per floor — roughly 8,100 sqft over four storeys — with a 41 m2 living room,
+ * a 41 m2 home office, a 22 m2 bathroom and an 18 m2 linen closet. Grey Key
+ * Studios came out at 82 m2 against the sheet's own stated 35.8.
+ *
+ * That is the wrong direction for the stated goal. The interior is aiming at
+ * arch-viz quality, and what makes those spaces read as real is DENSITY —
+ * furniture, rugs, lamps, clutter. Empty floor is the clearest tell that a room
+ * is a set, and a 41 m2 room needs about three times the props of a 22 m2 one
+ * to fill. With 27 rooms still unfurnished, size multiplies the remaining work.
+ *
+ * Two existing problems in this codebase were the oversizing surfacing
+ * elsewhere, and both improve for free at 1.0:
+ *
+ * 1. Lighting. SceneLights runs a fixed pool of 7 decay-2 point lights; the
+ *    comments there record rooms over 60 m2 needing two fills and the 134 m2
+ *    Archive being "lit to the point of being unreadable". No room this size can
+ *    be lit from one source with physical falloff.
+ * 2. Ceiling proportion. 3.0 reads as lofty in a small room and squat in a
+ *    6.6 x 6.2 one, which is why 2.8 "read as low" and got raised. Smaller
+ *    footprints make the existing 3.0 generous rather than a compromise.
+ *
+ * Do not raise this again without a reason that isn't "the rooms feel small in
+ * first person" — that is usually the 75-degree FOV in app/house/page.tsx
+ * talking, not the plan. Fix the camera before the architecture.
+ *
+ * Going BELOW 1.0 gets progressively riskier: CORE_WIDTH is a fixed 2.3 and does
+ * not scale, so the columns either side of the stair absorb every reduction and
+ * the east one shrinks fastest. Circulation has already failed once here (see
+ * the CORE_WIDTH note below).
+ * ─────────────────────────────────────────────────────────────────────────────
  */
-export const PLAN_SCALE = 1.15
+export const PLAN_SCALE = 1.0
 
 /** Scale a plan-space length. Never apply to a human-scale dimension. */
 const pl = (n: number) => n * PLAN_SCALE
@@ -108,6 +144,36 @@ export interface RoomBounds {
 export type DoorSide = 'north' | 'south' | 'east' | 'west'
 export interface DoorDef { side: DoorSide; center: number; width: number }
 
+/**
+ * A glazed opening in an EXTERIOR wall.
+ *
+ * Deliberately a separate list from `doors` rather than a flag on DoorDef,
+ * because the two differ in every way that matters:
+ *
+ * - A door is a hole in the collider. A window is not — collision reads
+ *   `doors` and nothing else, so a window can never be walked through by
+ *   construction rather than by remembering to special-case it.
+ * - A door on a shared boundary needs a MATCHING entry on both rooms. A window
+ *   never does: it faces outside, so exactly one room owns it. The generator
+ *   asserts the wall is actually on the footprint edge, which turns the old
+ *   door-matching class of bug into a build error here.
+ * - A door interrupts the baseboard. A window does not — the base runs
+ *   underneath it.
+ *
+ * `center` follows the same convention as DoorDef: a Z coordinate on
+ * east/west sides, an X coordinate on north/south.
+ *
+ * `sill` and `head` are heights above THIS floor's base. They default to
+ * WINDOW_SILL / WINDOW_HEAD; below-grade and privacy openings override them.
+ */
+export interface WindowDef {
+  side: DoorSide
+  center: number
+  width: number
+  sill?: number
+  head?: number
+}
+
 export interface RoomDef {
   id: string
   label: string
@@ -122,6 +188,17 @@ export interface RoomDef {
    * For east/west sides `center` is a Z coordinate; for north/south it is an X.
    */
   doors: DoorDef[]
+  /**
+   * Exterior openings. Only walls lying on the footprint edge may carry one —
+   * `npm run build:interior` fails loudly otherwise rather than quietly
+   * cutting a hole into the room next door.
+   *
+   * The attic is the exception: its room bounds are inset to the knee walls, so
+   * its north/south windows are GABLE windows, cut from the triangle above the
+   * knee rather than from a rectangular wall. East/west there is rejected — a
+   * 1.15 knee wall cannot hold a window.
+   */
+  windows?: WindowDef[]
   furnished: boolean
   /** True for a room with no walls of its own. */
   noWalls?: boolean
@@ -167,6 +244,28 @@ export const CORE_Z1 = TURN_Z + LANDING_D // 6.3 — far edge of the half-landin
 const DOOR = 1.0
 
 /**
+ * Default glazing heights, above the floor of whatever storey they sit on.
+ *
+ * 0.9 / 2.1 is an ordinary residential sill and head. The head deliberately
+ * matches nothing else: doors stop at 2.05 and the ceiling is at 3.0, so a
+ * window head at 2.1 sits just proud of the door line the way a real one does,
+ * and still leaves 0.9 of wall above it to read as a header.
+ */
+export const WINDOW_SILL = 0.9
+export const WINDOW_HEAD = 2.1
+
+/**
+ * Below grade. The basement floor is at -3.2, so anything at normal sill
+ * height would be looking at soil. These sit hard up under the ceiling, the way
+ * a real window well does, and are the only daylight the basement has.
+ */
+export const BASEMENT_SILL = 2.25
+export const BASEMENT_HEAD = 2.75
+
+/** Bathrooms and the half-bath: high enough that the glass is not at eye level. */
+export const PRIVACY_SILL = 1.45
+
+/**
  * How far in from the footprint edge the attic knee walls sit. The strip
  * outside them is under the lowest part of the roof — storable, not walkable.
  */
@@ -194,6 +293,12 @@ export const ROOMS: RoomDef[] = [
       // The secret door. Cover story: foundation walls and shelving.
       { side: 'north', center: lx(pl(2.7)), width: DOOR },
     ],
+    windows: [
+      // Window wells along the west foundation wall. Two, on the same Z as the
+      // openings on the storeys above, so the west elevation stacks.
+      { side: 'west', center: pl(2.7), width: 0.7, sill: BASEMENT_SILL, head: BASEMENT_HEAD },
+      { side: 'west', center: pl(8.5), width: 0.7, sill: BASEMENT_SILL, head: BASEMENT_HEAD },
+    ],
     furnished: true,
   },
   {
@@ -205,27 +310,44 @@ export const ROOMS: RoomDef[] = [
       { side: 'west', center: pl(1.3), width: DOOR },
       { side: 'east', center: pl(1.3), width: DOOR },
     ],
+    // No window. It had one, purely because the bottom of the shaft is the
+    // darkest point in the house — but that is a lighting problem and this is
+    // the front elevation. A basement well directly under the front door reads
+    // as a mistake from outside.
     furnished: true,
   },
   {
+    // 10.8 m2 and staying that way: a furnace, water heater, panel and softener
+    // is genuinely what this much floor is for.
     id: 'basement-mechanical',
     label: 'Mechanical',
     floor: 'basement',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: HOUSE_D },
     doors: [{ side: 'west', center: pl(8.5), width: DOOR }],
+    windows: [
+      { side: 'north', center: lx(pl(6.6)), width: 0.6, sill: BASEMENT_SILL, head: BASEMENT_HEAD },
+    ],
     furnished: false,
   },
   {
+    // Deliberately left oversized at 58.9 m2 against the sheet's 35.8. It is
+    // the one room in the house allowed to be a fantasy — a live room that size
+    // is the point of it, not an accident of the plan.
     id: 'music-studio',
     label: 'Grey Key Studios',
     floor: 'basement',
     bounds: { minX: CORE_MAX_X, maxX: lx(HOUSE_W), minZ: 0, maxZ: HOUSE_D },
     doors: [{ side: 'west', center: pl(1.3), width: DOOR }],
+    windows: [
+      { side: 'east', center: pl(2.7), width: 0.7, sill: BASEMENT_SILL, head: BASEMENT_HEAD },
+      { side: 'east', center: pl(8.1), width: 0.7, sill: BASEMENT_SILL, head: BASEMENT_HEAD },
+    ],
     furnished: false,
   },
   {
     // Beyond the footprint, under the back yard — which is exactly why it can
-    // exist without appearing on any floor plan.
+    // exist without appearing on any floor plan. No windows, ever: there is
+    // earth on every side of it.
     id: 'secret-room',
     label: '???',
     floor: 'basement',
@@ -242,11 +364,17 @@ export const ROOMS: RoomDef[] = [
   // foyer is now an entry vestibule with the stair directly behind it, and
   // rooms open off it. Client, Game and Kitchen absorb the reclaimed space.
   {
+    // 1.7 wide, not 2.45. At 2.45 x 3.0 this was a 7.3 m2 powder room — bigger
+    // than most bedrooms get, for a toilet and a basin. The 0.75 it gives up
+    // goes to the Mudroom, which is the only room it shares a wall with.
     id: 'half-bath',
     label: 'Half Bath',
     floor: 'ground',
-    bounds: { minX: lx(0), maxX: lx(pl(2.45)), minZ: 0, maxZ: pl(3.0) },
+    bounds: { minX: lx(0), maxX: lx(pl(1.7)), minZ: 0, maxZ: pl(3.0) },
     doors: [{ side: 'east', center: pl(1.5), width: DOOR }],
+    windows: [
+      { side: 'west', center: pl(1.5), width: 0.6, sill: PRIVACY_SILL, head: WINDOW_HEAD },
+    ],
     furnished: false,
   },
   {
@@ -255,11 +383,14 @@ export const ROOMS: RoomDef[] = [
     id: 'mudroom',
     label: 'Mudroom / Coats',
     floor: 'ground',
-    bounds: { minX: lx(pl(2.45)), maxX: CORE_MIN_X, minZ: 0, maxZ: pl(3.0) },
+    bounds: { minX: lx(pl(1.7)), maxX: CORE_MIN_X, minZ: 0, maxZ: pl(3.0) },
     doors: [
       { side: 'west', center: pl(1.5), width: DOOR },
       { side: 'east', center: pl(1.4), width: DOOR },
       { side: 'north', center: lx(pl(3.9)), width: DOOR },
+    ],
+    windows: [
+      { side: 'south', center: lx(pl(3.5)), width: 0.8 },
     ],
     furnished: false,
   },
@@ -270,7 +401,16 @@ export const ROOMS: RoomDef[] = [
     bounds: { minX: lx(0), maxX: CORE_MIN_X, minZ: pl(3.0), maxZ: HOUSE_D },
     doors: [
       { side: 'south', center: lx(pl(3.9)), width: DOOR },
-      { side: 'east', center: pl(8.5), width: DOOR },
+      // Two doors east now: the Pantry no longer runs the whole depth of the
+      // core column, and the Laundry behind it needs its own way in.
+      { side: 'east', center: pl(7.1), width: DOOR },
+      { side: 'east', center: pl(9.4), width: DOOR },
+    ],
+    windows: [
+      // Over the back yard — the big one on this floor.
+      { side: 'north', center: lx(pl(2.7)), width: 1.6 },
+      { side: 'west', center: pl(5.5), width: 1.0 },
+      { side: 'west', center: pl(8.5), width: 1.0 },
     ],
     furnished: false,
   },
@@ -290,11 +430,26 @@ export const ROOMS: RoomDef[] = [
     furnished: true,
   },
   {
+    // 2.0 deep, not the whole 4.7 of the core column. A pantry is a cupboard
+    // you can stand in; at 10.8 m2 it was a room with shelves.
     id: 'pantry',
     label: 'Pantry',
     floor: 'ground',
-    bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: HOUSE_D },
-    doors: [{ side: 'west', center: pl(8.5), width: DOOR }],
+    bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: pl(8.1) },
+    doors: [{ side: 'west', center: pl(7.1), width: DOOR }],
+    // No window. It backs onto the stair core and its only exterior wall would
+    // be north, where the Laundry now sits.
+    furnished: false,
+  },
+  {
+    // NEW. The area the Pantry gave up had to go somewhere, and the core
+    // column's north end backs onto the kitchen with an exterior wall behind
+    // it — which is exactly where a laundry goes in a real plan.
+    id: 'laundry',
+    label: 'Laundry',
+    floor: 'ground',
+    bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: pl(8.1), maxZ: HOUSE_D },
+    doors: [{ side: 'west', center: pl(9.4), width: DOOR }],
     furnished: false,
   },
   {
@@ -306,6 +461,16 @@ export const ROOMS: RoomDef[] = [
       { side: 'west', center: pl(1.4), width: DOOR },
       { side: 'north', center: lx(pl(10.5)), width: DOOR },
     ],
+    windows: [
+      // Street-facing pair, on the same X as the Home Office directly above, so
+      // the front elevation stacks instead of scattering.
+      { side: 'south', center: lx(pl(9.0)), width: 1.2 },
+      { side: 'south', center: lx(pl(11.8)), width: 1.2 },
+      // One on the return, not two. A corner room reads as a corner room with a
+      // single opening on the short elevation; two made every room on this side
+      // of the house look like a shopfront.
+      { side: 'east', center: pl(2.7), width: 1.0 },
+    ],
     furnished: false,
   },
   {
@@ -314,6 +479,10 @@ export const ROOMS: RoomDef[] = [
     floor: 'ground',
     bounds: { minX: CORE_MAX_X, maxX: lx(HOUSE_W), minZ: pl(5.4), maxZ: HOUSE_D },
     doors: [{ side: 'south', center: lx(pl(10.5)), width: DOOR }],
+    windows: [
+      { side: 'east', center: pl(8.1), width: 1.0 },
+      { side: 'north', center: lx(pl(10.5)), width: 1.4 },
+    ],
     furnished: false,
   },
 
@@ -327,6 +496,10 @@ export const ROOMS: RoomDef[] = [
       { side: 'east', center: pl(1.4), width: DOOR },
       { side: 'north', center: lx(pl(2.7)), width: DOOR },
     ],
+    windows: [
+      { side: 'south', center: lx(pl(3.5)), width: 1.2 },
+      { side: 'west', center: pl(2.7), width: 1.0 },
+    ],
     furnished: false,
   },
   {
@@ -337,6 +510,12 @@ export const ROOMS: RoomDef[] = [
     doors: [
       { side: 'south', center: lx(pl(2.7)), width: DOOR },
       { side: 'east', center: pl(8.5), width: DOOR },
+      // The Linen room behind the stair opens off here too — see below.
+      { side: 'east', center: pl(10.1), width: DOOR },
+    ],
+    windows: [
+      { side: 'west', center: pl(8.5), width: 1.0 },
+      { side: 'north', center: lx(pl(2.7)), width: 1.4 },
     ],
     furnished: false,
   },
@@ -349,6 +528,12 @@ export const ROOMS: RoomDef[] = [
       { side: 'west', center: pl(1.4), width: DOOR },
       { side: 'east', center: pl(1.4), width: DOOR },
     ],
+    windows: [
+      // Halfway up the shaft, and directly above the front door. A stair window
+      // is the single most useful opening in a house this tall — it is the only
+      // one visible from three floors.
+      { side: 'south', center: lx(pl(6.6)), width: 1.0 },
+    ],
     furnished: true,
   },
   {
@@ -357,8 +542,19 @@ export const ROOMS: RoomDef[] = [
     id: 'upstairs-storage',
     label: 'Storage',
     floor: 'second',
-    bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: HOUSE_D },
+    bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: pl(9.4) },
     doors: [{ side: 'west', center: pl(8.5), width: DOOR }],
+    furnished: false,
+  },
+  {
+    // MOVED here from the east column, where it was a 14 m2 "linen closet" with
+    // its own window. A linen store wants to be small, central and windowless,
+    // and the tail of the core column is all three.
+    id: 'linen',
+    label: 'Linen',
+    floor: 'second',
+    bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: pl(9.4), maxZ: HOUSE_D },
+    doors: [{ side: 'west', center: pl(10.1), width: DOOR }],
     furnished: false,
   },
   {
@@ -368,25 +564,46 @@ export const ROOMS: RoomDef[] = [
     bounds: { minX: CORE_MAX_X, maxX: lx(HOUSE_W), minZ: 0, maxZ: pl(5.4) },
     doors: [
       { side: 'west', center: pl(1.4), width: DOOR },
-      { side: 'north', center: lx(pl(9.2)), width: DOOR },
+      { side: 'north', center: lx(pl(8.7)), width: DOOR },
       { side: 'north', center: lx(pl(11.9)), width: DOOR },
+    ],
+    windows: [
+      // Stacked directly above the Client Room's pair on the floor below.
+      { side: 'south', center: lx(pl(9.0)), width: 1.2 },
+      { side: 'south', center: lx(pl(11.8)), width: 1.2 },
+      { side: 'east', center: pl(2.7), width: 1.0 },
     ],
     furnished: true,
   },
   {
+    // Re-cut as a long narrow room against the core rather than a 15.4 m2
+    // square. 1.85 x 5.4 is the shape a real bathroom takes — a tub is 1.7 —
+    // and it frees the whole east side of this block for a proper room.
     id: 'bathroom',
     label: 'Bathroom',
     floor: 'second',
-    bounds: { minX: CORE_MAX_X, maxX: lx(pl(10.6)), minZ: pl(5.4), maxZ: HOUSE_D },
-    doors: [{ side: 'south', center: lx(pl(9.2)), width: DOOR }],
+    bounds: { minX: CORE_MAX_X, maxX: lx(pl(9.6)), minZ: pl(5.4), maxZ: HOUSE_D },
+    doors: [{ side: 'south', center: lx(pl(8.7)), width: DOOR }],
+    windows: [
+      { side: 'north', center: lx(pl(8.7)), width: 0.8, sill: PRIVACY_SILL, head: WINDOW_HEAD },
+    ],
     furnished: false,
   },
   {
-    id: 'linen',
-    label: 'Linen',
+    // NEW, and the one genuinely new IDEA rather than a resize: shrinking the
+    // Bathroom and moving the Linen out left 19.4 m2 of the east column with
+    // two exterior walls and no purpose. The house had no bedroom at all, which
+    // is a stranger thing for a dream house to be missing than an oversized
+    // linen closet. Rename it if it should carry portfolio content instead.
+    id: 'guest-room',
+    label: 'Guest Room',
     floor: 'second',
-    bounds: { minX: lx(pl(10.6)), maxX: lx(HOUSE_W), minZ: pl(5.4), maxZ: HOUSE_D },
+    bounds: { minX: lx(pl(9.6)), maxX: lx(HOUSE_W), minZ: pl(5.4), maxZ: HOUSE_D },
     doors: [{ side: 'south', center: lx(pl(11.9)), width: DOOR }],
+    windows: [
+      { side: 'east', center: pl(8.1), width: 1.0 },
+      { side: 'north', center: lx(pl(11.4)), width: 1.2 },
+    ],
     furnished: false,
   },
 
@@ -409,6 +626,13 @@ export const ROOMS: RoomDef[] = [
     // eaves stay low and stay visible; they are just not walkable.
     eaveInset: ATTIC_EAVE_INSET,
     doors: [],
+    windows: [
+      // Gable ends, not walls — cut from the triangle above the knee. Centred
+      // on the ridge so they sit at the tallest part of the section, which is
+      // the only place in the attic with the height for a real window.
+      { side: 'south', center: lx(HOUSE_W / 2), width: 1.2, sill: 1.6, head: 2.7 },
+      { side: 'north', center: lx(HOUSE_W / 2), width: 1.2, sill: 1.6, head: 2.7 },
+    ],
     furnished: false,
   },
 ]

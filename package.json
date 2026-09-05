@@ -7,7 +7,8 @@
     "build:interior": "tsc lib/interior-layout.ts --outDir .interior-build --module commonjs --target es2020 --typeRoots ./.no-ambient-types && node scripts/build-interior.cjs && node scripts/stair-socket.cjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "elevations": "node scripts/elevations.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
