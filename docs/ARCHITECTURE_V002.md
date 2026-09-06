@@ -105,3 +105,10 @@ The v002 shell now uses staircase-v002.glb (14,540 triangles, three material pri
 Verification: 36 baluster ray samples, landing-return continuity, 19 tread/landing samples, all six traversal routes, doorway/attic guard regressions, and TypeScript pass. Upper stair hall, attic opening and landing were inspected in the browser. No furniture or floor-plan changes.
 
 
+
+## Window construction follow-up — 2026-09-06
+
+The v002 shell generator adds inset sash frames, substantial meeting rails, small painted lifts and reveal liners to all windows, including privacy and attic openings. Existing opening dimensions and collisions stay unchanged. Glass uses a darker, restrained night-preview material; outdoor scenery is still deferred. Original and v001 exports remain intact.
+
+Client-room before/after browser inspection confirms the frame depth and reduced blue emission. Regression rays check clear glass and the inset frame at every window across four floors; staircase, door and guard checks still pass. Shell totals: 12,628 triangles across all four v002 floor assets.
+

@@ -89,6 +89,27 @@ require.extensions['.ts'] = (module, filename) => {
   }).outputText, filename)
 }
 const { stepPlayer } = require('../lib/player-movement.ts')
+const { ROOMS, WINDOW_SILL, WINDOW_HEAD } = require('../lib/interior-layout.ts')
+let windowSamples = 0
+for (const floor of ['basement','ground','second','attic']) {
+  const shell = (await load(`interior-${floor}-v002`)).scene
+  shell.updateMatrixWorld(true)
+  for (const room of ROOMS.filter(r => r.floor === floor)) for (const w of room.windows ?? []) {
+    const y = (w.sill ?? WINDOW_SILL) + ((w.head ?? WINDOW_HEAD)-(w.sill ?? WINDOW_SILL))*.3
+    const b = room.bounds
+    for (const [along,expected] of [[w.center+w.width*.24,'glass'],[w.center-w.width/2+.025,'trim']]) {
+      const origin = w.side === 'south' ? new Vector3(along,y,b.minZ+.6)
+        : w.side === 'north' ? new Vector3(along,y,b.maxZ-.6)
+        : w.side === 'east' ? new Vector3(b.maxX-.6,y,along) : new Vector3(b.minX+.6,y,along)
+      const direction = w.side === 'south' ? new Vector3(0,0,-1) : w.side === 'north' ? new Vector3(0,0,1)
+        : w.side === 'east' ? new Vector3(1,0,0) : new Vector3(-1,0,0)
+      ray.set(origin,direction)
+      assert.equal(ray.intersectObject(shell,true)[0]?.object.material.name,expected,`${room.id} ${w.side}: window ${expected}`)
+    }
+    windowSamples++
+  }
+}
+assert.ok(windowSamples >= 28,'Missing window coverage')
 const { ENTRY_DOOR } = require('../lib/architecture-details.ts')
 const doorCamera = new PerspectiveCamera()
 doorCamera.position.set(ENTRY_DOOR.centerX, 1.7, 1.0)

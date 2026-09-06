@@ -370,3 +370,7 @@ Interior entry-door-v002 now follows the exterior rounded arch, two tall glazed 
 ### Stair joinery follow-up — 2026-09-06
 The v002 preview now uses staircase-v002: closer balusters seated on each tread and a connected half-landing handrail. Stair dimensions and collisions are unchanged; original v001 is retained. Blender source saved, architecture regression checks and TypeScript pass. Shell remains the active work front.
 
+
+### Window construction follow-up — 2026-09-06
+Added recessed sash frames, meeting rails, painted lifts and jamb liners throughout the v002 shell. Reduced blue glass emission for the current night preview. Window geometry and traversal regressions pass; client-room appearance verified in browser. Exterior views remain unfinished; no furniture added.
+

@@ -109,6 +109,9 @@ const MATERIALS = [
   { name: 'glass', color: [0.022, 0.036, 0.072, 1], rough: 0.22, emissive: [0.026, 0.046, 0.09] },
 ]
 const MAT = { floor: 0, wall: 1, ceiling: 2, stair: 3, trim: 4, glass: 5 }
+if (candidate && revision === 'v002') {
+  MATERIALS[MAT.glass] = { name: 'glass', color: [.012,.022,.036,1], rough: .3, emissive: [.006,.011,.019] }
+}
 
 // Trim dimensions. Doors stop at 2.05 with wall above — a floor-to-ceiling gap
 // reads as a missing wall panel, not a doorway, and was a large part of why the
@@ -418,6 +421,28 @@ function addGlazing(mesh, box, a, b, sill, head, slab, inner, dir) {
   }
   const my = (sill + head) / 2
   box(mesh[MAT.trim], a, b, my - MUNTIN_T / 2, my + MUNTIN_T / 2, mid - MUNTIN_T / 2, mid + MUNTIN_T / 2)
+
+  if (candidate && revision === 'v002') {
+    // Separate sash and reveal lining make a constructed opening rather than
+    // a single coloured panel. All details stay inside the existing aperture.
+    const sash = .045
+    const sashFront = mid + dir * .033
+    for (const x of [a,b-sash]) {
+      box(mesh[MAT.trim],x,x+sash,sill,head,mid-dir*.025,sashFront)
+    }
+    for (const y of [sill,head-sash]) {
+      box(mesh[MAT.trim],a,b,y,y+sash,mid-dir*.025,sashFront)
+    }
+    // A substantial meeting rail and small painted sash lift.
+    box(mesh[MAT.trim],a,b,my-.027,my+.027,mid-dir*.025,sashFront)
+    const centre = (a+b)/2
+    box(mesh[MAT.trim],centre-.045,centre+.045,my-.047,my-.035,sashFront,sashFront+dir*.025)
+    // Thin jamb liners cover the plaster returns; the stop steps back to glass.
+    for (const x of [a,b-.018]) {
+      box(mesh[MAT.trim],x,x+.018,sill,head,sashFront,inner)
+    }
+    box(mesh[MAT.trim],a,b,head-.018,head,sashFront,inner)
+  }
 
   // Casing — the same profile as the door casings, so the two read as trim from
   // one house rather than two separate systems.
