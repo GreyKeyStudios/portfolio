@@ -366,3 +366,7 @@ npm run build            # static export
 ### Entrance shape correction — 2026-09-05
 Interior entry-door-v002 now follows the exterior rounded arch, two tall glazed panes and two lower panels. Removed conflicting square entrance trim from v002. Blender source and manifest saved; TypeScript and architecture regression checks pass. Shell-first work continues; no furniture added.
 
+
+### Stair joinery follow-up — 2026-09-06
+The v002 preview now uses staircase-v002: closer balusters seated on each tread and a connected half-landing handrail. Stair dimensions and collisions are unchanged; original v001 is retained. Blender source saved, architecture regression checks and TypeScript pass. Shell remains the active work front.
+

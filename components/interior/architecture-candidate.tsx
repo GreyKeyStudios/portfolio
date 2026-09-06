@@ -41,7 +41,7 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
       )}
       {floor !== "attic" && (
         <group position={[X0, 0, 0]}>
-          <CandidateAsset url="/models/staircase-v001.glb" />
+          <CandidateAsset url={`/models/staircase-${version === 'v002' ? 'v002' : 'v001'}.glb`} />
         </group>
       )}
     </group>

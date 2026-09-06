@@ -55,7 +55,7 @@ closing Blender to release memory during the pause.
 - `foyer-client-details-v002.glb`: 24,516 triangles, five primitives, 1,761,704 bytes.
 - Both embed their oak texture; no external runtime image dependency.
 - Candidate shell generation: transpile the layout as for v001, then run
-  `node scripts/build-interior.cjs --candidate-v002`. Stair art remains v001.
+  `node scripts/build-interior.cjs --candidate-v002`. Stair art is v002; the earlier v001 preview retains v001.
 
 ## Verification and limits
 
@@ -96,4 +96,12 @@ window scenery, broader lighting optimization and the rest of the house remain.
 ## Entrance shape correction
 
 The exterior reference has a rounded arch, two tall glazed panes and two lower panels. Door v002 follows that layout and narrower proportions, replacing the initial rectangular six-panel interpretation. The v002 shell and detail builder omit their square entrance trim; the door asset supplies arched ivory casing and plaster infill. Glazing is dark for the night view from inside. Exterior masonry remains unchanged. TypeScript, stair/collision checks, two-pane ray checks and an in-browser interior visual inspection pass. The old door source remains available for rollback.
+
+
+## Stair joinery follow-up — 2026-09-06
+
+The v002 shell now uses staircase-v002.glb (14,540 triangles, three material primitives). Its separate build-staircase-v002.py and editable Blender source retain the frozen layout-v001.json dimensions. Two balusters per tread replace the sparse original spacing; each starts on the horizontal tread surface and meets the sloping handrail. A short oak return joins the rails at the half landing within the existing centre collision strip. v001 remains selectable and retains its original staircase.
+
+Verification: 36 baluster ray samples, landing-return continuity, 19 tread/landing samples, all six traversal routes, doorway/attic guard regressions, and TypeScript pass. Upper stair hall, attic opening and landing were inspected in the browser. No furniture or floor-plan changes.
+
 

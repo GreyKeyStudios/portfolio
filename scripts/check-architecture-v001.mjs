@@ -10,15 +10,28 @@ const load = async (name) => {
   return new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 }
 const layout = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/layout-v001.json'))
-const manifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/staircase-v001.manifest.json'))
+const manifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/staircase-v002.manifest.json'))
 const hash = (path) => crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')
 assert.equal(hash('lib/interior-layout.ts'), manifest.layout_sha256, 'Stair layout is stale')
-assert.equal(hash('portfolio-assets/stack-house/blender/staircase-v001.blend'), manifest.source_sha256, 'Source hash differs')
-const { scene } = await load('staircase-v001')
+assert.equal(hash('portfolio-assets/stack-house/blender/staircase-v002.blend'), manifest.source_sha256, 'Source hash differs')
+const { scene } = await load('staircase-v002')
 scene.updateMatrixWorld(true)
 const bounds = new Box3().setFromObject(scene)
 assert.ok(Math.abs(bounds.min.x + 1.15) < .01 && Math.abs(bounds.max.x - 1.15) < .01, 'Flight width/origin mismatch')
 const ray = new Raycaster()
+// Sample each added baluster above its tread and the short landing return.
+for (const s of layout.stairs.filter(s => s.floor === 'ground' && s.topY > s.bottomY)) {
+  const west = s.bounds.maxX < layout.X0
+  for (let i = 0; i < 9; i++) for (const offset of [.25,.75]) {
+    const z = s.bottomCoord + (s.topCoord-s.bottomCoord)*(i+offset)/9
+    const seat = s.bottomY + (s.topY-s.bottomY)*(i+1)/9
+    ray.set(new Vector3(west ? -.4 : .4,seat+.3,z),new Vector3(west ? 1 : -1,0,0))
+    const hit = ray.intersectObject(scene,true)[0]
+    assert.ok(hit && hit.object.material.name.includes('Blackened steel'), 'Missing seated stair baluster')
+  }
+}
+ray.set(new Vector3(0,2.9,4.9),new Vector3(0,-1,0))
+assert.ok(Math.abs(ray.intersectObject(scene,true)[0]?.point.y-2.5775)<.02, 'Disconnected half-landing handrail')
 // The centre gap between flights belongs to the shaft, not to the floor slab.
 // Cutting each flight separately used to leave a 20 cm floor/ceiling beam here.
 for (const floor of ['basement', 'ground', 'second', 'attic']) {
@@ -132,4 +145,5 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
   }
 }
 console.log(JSON.stringify({treadAndLandingSamples:samples, stairTraversals:traversals, basementFloor:'closed', atticOpposedFaces:opposed, stairBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}}, null, 2))
+
 
