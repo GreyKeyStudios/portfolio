@@ -34,11 +34,9 @@ export function ExitDoor({ position = FOYER_EXIT_POINT, showGlow = true }: ExitD
       floor: 'ground',
       label: 'Exit to Yard',
       position: pos,
-      // 1.3, not 2.0: the trigger sits at the front door and the spawn is 1.6
-      // units behind it, so a wider radius would greet you with "Exit to Yard"
-      // the instant you walked in.
+      // Arrival is near the door: offer exit only when turning back toward it.
       radius: 1.3,
-      // Proximity-only — see front-door.tsx for why requireLook was dropped.
+      requireLook: true,
       onNearby: (near) => setIsNear(near),
       onInteract: () => {
         playSound('interact')

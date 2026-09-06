@@ -73,7 +73,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   enterInterior: () =>
     set({
       currentLocation: 'ground',
-      teleportRequest: { position: FOYER_ENTRY_POINT, floor: 'ground' },
+      teleportRequest: { position: FOYER_ENTRY_POINT, yaw: Math.PI, floor: 'ground' },
     }),
   exitToYard: () =>
     set({

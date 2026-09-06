@@ -708,15 +708,8 @@ export const STAIRS: StairDef[] = [
   ...switchback('second'),
 ]
 
-/**
- * Where the player lands inside — a couple of paces past the front door.
- *
- * Not 1.3: that put the spawn 0.5 units from the exit trigger, so you arrived
- * already being prompted to leave. 2.4 is still on the flat apron (the first
- * flight starts at CORE_Z0 = 2.99), and leaves enough separation that walking
- * back to the door is a deliberate act.
- */
-export const FOYER_ENTRY_POINT: [number, number, number] = [X0, 1.7, 2.4]
+/** Arrival just inside the front door, with the foyer openings ahead. */
+export const FOYER_ENTRY_POINT: [number, number, number] = [X0, 1.7, .65]
 
 /**
  * Where the "Exit to Yard" trigger sits — INSIDE the foyer, at the front door.
@@ -732,7 +725,7 @@ export const FOYER_ENTRY_POINT: [number, number, number] = [X0, 1.7, 2.4]
  * Kept a little north of the wall so the prompt appears as you approach the
  * door from inside rather than while standing in it.
  */
-export const FOYER_EXIT_POINT: [number, number, number] = [X0, 1.0, 0.8]
+export const FOYER_EXIT_POINT: [number, number, number] = [X0, 1.0, 0.35]
 
 /**
  * Plan-space scale helper, exported so that anything POSITIONED against the
@@ -788,3 +781,4 @@ export function placeInRoom(
 /** Where the player lands back in the yard after using the Foyer exit door. */
 export const YARD_EXIT_POINT: [number, number, number] = [0.72, 1.7, -3.5]
 export const YARD_EXIT_YAW = 0 // facing +Z, away from the house
+

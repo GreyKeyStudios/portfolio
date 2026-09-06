@@ -112,3 +112,7 @@ The v002 shell generator adds inset sash frames, substantial meeting rails, smal
 
 Client-room before/after browser inspection confirms the frame depth and reduced blue emission. Regression rays check clear glass and the inset frame at every window across four floors; staircase, door and guard checks still pass. Shell totals: 12,628 triangles across all four v002 floor assets.
 
+
+## Foyer arrival correction
+Entry now starts at [300,1.7,0.65], yaw PI, instead of beside the stair at z=2.4. Exit target moved to z=0.35 and requires facing the door, resolving the earlier prompt workaround without sacrificing the foyer arrival view. Live fresh-page entry and turn-back prompt verified; architectural regression checks pass. Earlier arrival coordinates above describe historical checks.
+

@@ -374,3 +374,7 @@ The v002 preview now uses staircase-v002: closer balusters seated on each tread 
 ### Window construction follow-up — 2026-09-06
 Added recessed sash frames, meeting rails, painted lifts and jamb liners throughout the v002 shell. Reduced blue glass emission for the current night preview. Window geometry and traversal regressions pass; client-room appearance verified in browser. Exterior views remain unfinished; no furniture added.
 
+
+### Foyer arrival correction — 2026-09-06
+Moved entry from z=2.4 to z=0.65, just inside the front door, and explicitly face into the foyer. Exit now requires looking back at the door; its target is z=0.35. Live arrival has no exit prompt; turning back reveals Exit to Yard. Architectural dimensions are unchanged. Stair manifest layout hashes refreshed for the navigation-only layout edit.
+
