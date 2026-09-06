@@ -382,3 +382,7 @@ Moved entry from z=2.4 to z=0.65, just inside the front door, and explicitly fac
 ### Camera proportion review — 2026-09-06
 Interior camera now uses 1.62m eye height and 65-degree vertical FOV (previously 1.7m / 75). Yard camera remains unchanged. Entry and stair resolver share the new eye height; all six stair traversal checks pass. Navy panelling, trim and room geometry are unchanged pending user review.
 
+
+### Resume checkpoint — user feedback
+User reports the 1.62m / 65-degree camera is vastly better, with a slight remaining sense of odd scale. Keep this as the current baseline; do not enlarge rooms or change trim to compensate. The earlier hospital-like trim concern referred specifically to the navy lower-wall panelling; the actual ivory trim is approved. Next: review the living room at desktop aspect ratio and discuss the navy panelling before altering it. Furnishing remains deferred. No background work is scheduled during the usage pause.
+

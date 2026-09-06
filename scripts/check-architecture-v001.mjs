@@ -89,6 +89,7 @@ require.extensions['.ts'] = (module, filename) => {
   }).outputText, filename)
 }
 const { stepPlayer } = require('../lib/player-movement.ts')
+const { INTERIOR_EYE_HEIGHT } = require('../lib/player-camera.ts')
 const { ROOMS, WINDOW_SILL, WINDOW_HEAD } = require('../lib/interior-layout.ts')
 let windowSamples = 0
 for (const floor of ['basement','ground','second','attic']) {
@@ -112,8 +113,8 @@ for (const floor of ['basement','ground','second','attic']) {
 assert.ok(windowSamples >= 28,'Missing window coverage')
 const { ENTRY_DOOR } = require('../lib/architecture-details.ts')
 const doorCamera = new PerspectiveCamera()
-doorCamera.position.set(ENTRY_DOOR.centerX, 1.7, 1.0)
-doorCamera.lookAt(ENTRY_DOOR.centerX, 1.7, -1)
+doorCamera.position.set(ENTRY_DOOR.centerX, INTERIOR_EYE_HEIGHT, 1.0)
+doorCamera.lookAt(ENTRY_DOOR.centerX, INTERIOR_EYE_HEIGHT, -1)
 for (let i = 0; i < 120; i++) stepPlayer(doorCamera, 'ground', {forward:1,strafe:0,speed:2}, 1/60, false)
 assert.ok(doorCamera.position.z > ENTRY_DOOR.centerZ + ENTRY_DOOR.thickness/2 + .21, 'Walked through closed entrance')
 assert.ok(doorCamera.position.distanceTo(new Vector3(ENTRY_DOOR.centerX,1,.8)) < 1.3, 'Door blocks exit interaction reach')
@@ -148,7 +149,7 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
     if (descending) points.reverse()
     let floor = descending ? upper : lower
     const camera = new PerspectiveCamera()
-    camera.position.set(points[0][0], layout.bases[floor] + 1.62, points[0][1])
+    camera.position.set(points[0][0], layout.bases[floor] + INTERIOR_EYE_HEIGHT, points[0][1])
     for (const [x, z] of points.slice(1)) {
       let frames = 0
       while (Math.hypot(camera.position.x - x, camera.position.z - z) > .005 && frames++ < 600) {
@@ -161,7 +162,7 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
       assert.ok(frames < 600, `Stuck at ${x},${z}`)
     }
     assert.equal(floor, descending ? lower : upper)
-    assert.ok(Math.abs(camera.position.y - layout.bases[floor] - 1.62) < .01)
+    assert.ok(Math.abs(camera.position.y - layout.bases[floor] - INTERIOR_EYE_HEIGHT) < .01)
     traversals++
   }
 }
