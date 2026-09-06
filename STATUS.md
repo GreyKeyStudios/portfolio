@@ -378,3 +378,7 @@ Added recessed sash frames, meeting rails, painted lifts and jamb liners through
 ### Foyer arrival correction — 2026-09-06
 Moved entry from z=2.4 to z=0.65, just inside the front door, and explicitly face into the foyer. Exit now requires looking back at the door; its target is z=0.35. Live arrival has no exit prompt; turning back reveals Exit to Yard. Architectural dimensions are unchanged. Stair manifest layout hashes refreshed for the navigation-only layout edit.
 
+
+### Camera proportion review — 2026-09-06
+Interior camera now uses 1.62m eye height and 65-degree vertical FOV (previously 1.7m / 75). Yard camera remains unchanged. Entry and stair resolver share the new eye height; all six stair traversal checks pass. Navy panelling, trim and room geometry are unchanged pending user review.
+

@@ -148,7 +148,7 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
     if (descending) points.reverse()
     let floor = descending ? upper : lower
     const camera = new PerspectiveCamera()
-    camera.position.set(points[0][0], layout.bases[floor] + 1.7, points[0][1])
+    camera.position.set(points[0][0], layout.bases[floor] + 1.62, points[0][1])
     for (const [x, z] of points.slice(1)) {
       let frames = 0
       while (Math.hypot(camera.position.x - x, camera.position.z - z) > .005 && frames++ < 600) {
@@ -161,10 +161,8 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
       assert.ok(frames < 600, `Stuck at ${x},${z}`)
     }
     assert.equal(floor, descending ? lower : upper)
-    assert.ok(Math.abs(camera.position.y - layout.bases[floor] - 1.7) < .01)
+    assert.ok(Math.abs(camera.position.y - layout.bases[floor] - 1.62) < .01)
     traversals++
   }
 }
 console.log(JSON.stringify({treadAndLandingSamples:samples, stairTraversals:traversals, basementFloor:'closed', atticOpposedFaces:opposed, stairBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}}, null, 2))
-
-

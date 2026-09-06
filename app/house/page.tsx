@@ -39,6 +39,7 @@ import { SHELL_PRACTICALS } from "@/lib/architecture-details"
 import { useProximitySystem, triggerInteract } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
 import { FLOOR_BASE_Y, X0, ROOMS, type FloorId } from "@/lib/interior-layout"
+import { INTERIOR_FOV, YARD_FOV } from "@/lib/player-camera"
 
 type InteriorFloor = Exclude<FloorId, 'yard'>
 
@@ -266,6 +267,12 @@ function Stats() {
 
 function CameraInit() {
   const { camera } = useThree()
+  const isYard = usePlayerStore(s => s.currentLocation === 'yard')
+  useEffect(() => {
+    const perspective = camera as THREE.PerspectiveCamera
+    perspective.fov = isYard ? YARD_FOV : INTERIOR_FOV
+    perspective.updateProjectionMatrix()
+  }, [camera, isYard])
   const done = useRef(false)
   useEffect(() => {
     if (done.current) return

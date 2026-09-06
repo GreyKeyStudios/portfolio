@@ -116,3 +116,7 @@ Client-room before/after browser inspection confirms the frame depth and reduced
 ## Foyer arrival correction
 Entry now starts at [300,1.7,0.65], yaw PI, instead of beside the stair at z=2.4. Exit target moved to z=0.35 and requires facing the door, resolving the earlier prompt workaround without sacrificing the foyer arrival view. Live fresh-page entry and turn-back prompt verified; architectural regression checks pass. Earlier arrival coordinates above describe historical checks.
 
+
+## Camera proportion review
+Interior eye height 1.62m and vertical FOV 65 degrees are centralized in lib/player-camera.ts. Yard stays at 1.7m / 75 degrees. Entry applies the same eye height as the vertical movement resolver. This is a camera-only review: no panelling, trim or room-size edits. Stair traversal regressions pass at the new eye height.
+

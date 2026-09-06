@@ -3,7 +3,7 @@ import { COLLIDERS } from './colliders'
 import { getInteriorColliders } from './interior-colliders'
 import { FLOOR_BASE_Y, STAIRS, X0, floorAtY, type FloorId } from './interior-layout'
 
-const EYE_HEIGHT = 1.7
+import { INTERIOR_EYE_HEIGHT as EYE_HEIGHT, YARD_EYE_HEIGHT } from './player-camera'
 
 export function getActiveColliders(location: FloorId, eyeY = Infinity): AABB[] {
   if (location === 'yard') return COLLIDERS
@@ -47,7 +47,7 @@ export function resolveEyeY(
   currentY: number = FLOOR_BASE_Y[location === 'yard' ? 'ground' : location] + EYE_HEIGHT
 ): { y: number; crossedTo: FloorId | null } {
   if (location === 'yard') {
-    return { y: EYE_HEIGHT, crossedTo: null }
+    return { y: YARD_EYE_HEIGHT, crossedTo: null }
   }
 
   const baseY = FLOOR_BASE_Y[location]

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { FloorId } from './interior-layout'
 import { FOYER_ENTRY_POINT, YARD_EXIT_POINT, YARD_EXIT_YAW } from './interior-layout'
+import { INTERIOR_EYE_HEIGHT } from './player-camera'
 
 export type EasterEggStep = 'touch-grass' // more steps added as rooms are built
 
@@ -73,7 +74,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   enterInterior: () =>
     set({
       currentLocation: 'ground',
-      teleportRequest: { position: FOYER_ENTRY_POINT, yaw: Math.PI, floor: 'ground' },
+      teleportRequest: { position: [FOYER_ENTRY_POINT[0], INTERIOR_EYE_HEIGHT, FOYER_ENTRY_POINT[2]], yaw: Math.PI, floor: 'ground' },
     }),
   exitToYard: () =>
     set({
