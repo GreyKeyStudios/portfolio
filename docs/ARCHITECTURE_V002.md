@@ -34,10 +34,10 @@ for the earlier staircase preview. Control selection remains independent.
 
 ## Sources and exports
 
-Entrance source: `scripts/build-entry-door-v001.py`, with frozen dimensions and
-editable `.blend` under `portfolio-assets/stack-house/blender/entry-door-v001.*`.
+Entrance source: `scripts/build-entry-door-v002.py`, with frozen dimensions and
+editable `.blend` under `portfolio-assets/stack-house/blender/entry-door-v002.*`.
 The manifest records source/input hashes, bounds and placement. The GLB contains
-9,040 triangles in four material primitives, 476,544 bytes, and no textures.
+9,488 triangles in six material primitives, 478,996 bytes, and no textures.
 Blender was saved and closed after export to release memory.
 
 `scripts/build-shell-details-v002.py` authors a separate Blender scene. Execute
@@ -51,8 +51,8 @@ committed source assets. The manifest records source/layout hashes, placement,
 bounds, triangles and byte sizes. Source was saved and verified not dirty before
 closing Blender to release memory during the pause.
 
-- `attic-guards-v002.glb`: 12,420 triangles, two primitives, 989,628 bytes.
-- `foyer-client-details-v002.glb`: 25,272 triangles, five primitives, 1,799,636 bytes.
+- `attic-guards-v002.glb`: 12,420 triangles, two primitives, 989,616 bytes.
+- `foyer-client-details-v002.glb`: 24,516 triangles, five primitives, 1,761,704 bytes.
 - Both embed their oak texture; no external runtime image dependency.
 - Candidate shell generation: transpile the layout as for v001, then run
   `node scripts/build-interior.cjs --candidate-v002`. Stair art remains v001.
@@ -91,3 +91,9 @@ and served HTTP 200. Existing favicon 404s remain. Earlier Edge shader compiler
 warnings (precision/derivatives) are not claimed fixed. No production performance
 benchmark or deployment was performed. This is an unfurnished shell stage;
 window scenery, broader lighting optimization and the rest of the house remain.
+
+
+## Entrance shape correction
+
+The exterior reference has a rounded arch, two tall glazed panes and two lower panels. Door v002 follows that layout and narrower proportions, replacing the initial rectangular six-panel interpretation. The v002 shell and detail builder omit their square entrance trim; the door asset supplies arched ivory casing and plaster infill. Glazing is dark for the night view from inside. Exterior masonry remains unchanged. TypeScript, stair/collision checks, two-pane ray checks and an in-browser interior visual inspection pass. The old door source remains available for rollback.
+

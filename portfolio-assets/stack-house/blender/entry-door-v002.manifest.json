@@ -1,0 +1,27 @@
+{
+  "source": "entry-door-v002.blend",
+  "asset": "entry-door-v002.glb",
+  "units": "metres",
+  "placement": [
+    300,
+    0,
+    0
+  ],
+  "bounds": {
+    "min": [
+      -0.6000000238418579,
+      0.0,
+      -0.0
+    ],
+    "max": [
+      0.6000000238418579,
+      2.0759999752044678,
+      0.2240000069141388
+    ]
+  },
+  "triangles": 9488,
+  "bytes": 478996,
+  "source_sha256": "dd91fe2e0f0c7496000121f26ab538249d3528d41944049e1238a776e17e0f54",
+  "input_sha256": "f7a6dabac1c2f65473f526cc8725e69b523088049a2e5a931f05b6eeaae98d19",
+  "textures": []
+}

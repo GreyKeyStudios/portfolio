@@ -362,3 +362,7 @@ npm run build:interior   # regenerate the 4 interior floor GLBs from the plan
 npm run elevations       # redraw docs/elevations.svg — check after any window change
 npm run build            # static export
 ```
+
+### Entrance shape correction — 2026-09-05
+Interior entry-door-v002 now follows the exterior rounded arch, two tall glazed panes and two lower panels. Removed conflicting square entrance trim from v002. Blender source and manifest saved; TypeScript and architecture regression checks pass. Shell-first work continues; no furniture added.
+

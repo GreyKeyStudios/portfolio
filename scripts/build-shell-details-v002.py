@@ -139,6 +139,8 @@ for room in data['rooms']:
                     x=a+(b-a)*i/count
                     strip('Panel stile',max(a,x-.027),min(b,x+.027),.465,.49,.026,navy)
         for d in doors:
+            # The entry-door asset owns the arched front casing and jambs.
+            if room['id']=='foyer' and side=='south': continue
             a=d['center']-d['width']/2;b=d['center']+d['width']/2
             for x in [a-.075,b+.075]:
                 strip('Door plinth block',x-.075,x+.075,.105,.21,.05,paint)

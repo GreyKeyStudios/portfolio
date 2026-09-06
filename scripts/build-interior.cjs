@@ -597,6 +597,10 @@ function buildFloor(floor) {
         // missing panel.
         box(mesh[MAT.wall], a, b, DOOR_H, wallTop, s.slab[0], s.slab[1])
 
+        // The authored entrance fills this rectangular construction opening
+        // with an arched frame and plaster spandrels. Do not overlay square trim.
+        if (candidate && revision === 'v002' && room.id === 'foyer' && s.axis === 'x' && s.inner === minZ + WALL) continue
+
         // Casing: two jambs and a head, standing proud of the wall face.
         const c0 = s.inner
         const c1 = s.inner + s.dir * CASING_D

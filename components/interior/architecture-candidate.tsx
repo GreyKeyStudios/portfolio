@@ -53,5 +53,5 @@ export function AtticGuards() {
 }
 
 export function EntryDoorModel() {
-  return <group position={[ENTRY_DOOR.centerX, FLOOR_BASE_Y.ground, 0]}><CandidateAsset url="/models/entry-door-v001.glb" /></group>
+  return <group position={[ENTRY_DOOR.centerX, FLOOR_BASE_Y.ground, 0]}><CandidateAsset url="/models/entry-door-v002.glb" /></group>
 }

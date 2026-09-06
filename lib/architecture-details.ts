@@ -5,7 +5,7 @@ const frontOpening = ROOMS.find(r => r.id === 'foyer')!.doors.find(d => d.side =
 export const ENTRY_DOOR = {
   centerX: frontOpening.center,
   openingWidth: frontOpening.width,
-  leafWidth: frontOpening.width - .12,
+  leafWidth: frontOpening.width * .75,
   height: 1.98,
   bottomY: .018,
   centerZ: .10,

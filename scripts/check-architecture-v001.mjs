@@ -83,10 +83,15 @@ doorCamera.lookAt(ENTRY_DOOR.centerX, 1.7, -1)
 for (let i = 0; i < 120; i++) stepPlayer(doorCamera, 'ground', {forward:1,strafe:0,speed:2}, 1/60, false)
 assert.ok(doorCamera.position.z > ENTRY_DOOR.centerZ + ENTRY_DOOR.thickness/2 + .21, 'Walked through closed entrance')
 assert.ok(doorCamera.position.distanceTo(new Vector3(ENTRY_DOOR.centerX,1,.8)) < 1.3, 'Door blocks exit interaction reach')
-const doorArt = (await load('entry-door-v001')).scene
+const doorArt = (await load('entry-door-v002')).scene
 doorArt.updateMatrixWorld(true)
 ray.set(new Vector3(0,1,1), new Vector3(0,0,-1))
 const doorHit = ray.intersectObject(doorArt,true)[0]
+for (const x of [-.15,.15]) {
+  ray.set(new Vector3(x,1.5,1),new Vector3(0,0,-1))
+  const hit = ray.intersectObject(doorArt,true)[0]
+  assert.ok(hit && hit.object.material.name.includes('night glazing'), 'Entrance must have two tall glazed panes')
+}
 assert.ok(doorHit && Math.abs(doorHit.point.z - ENTRY_DOOR.centerZ - ENTRY_DOOR.thickness/2) < .025, 'Door art/collision mismatch')
 const { getInteriorColliders } = require('../lib/interior-colliders.ts')
 const { moveWithCollision } = require('../lib/collision.ts')
@@ -127,3 +132,4 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
   }
 }
 console.log(JSON.stringify({treadAndLandingSamples:samples, stairTraversals:traversals, basementFloor:'closed', atticOpposedFaces:opposed, stairBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}}, null, 2))
+
