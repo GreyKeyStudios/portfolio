@@ -113,6 +113,105 @@ They should not be reskins of the same interface.
 
 ---
 
+# Kitchen / Dining — LOCKED
+
+The kitchen is not another computer-based portfolio display. It is its own **recipe collection + cooking gameplay space**.
+
+## Active cookbook — LOCKED
+
+A physical cookbook/binder lives in the kitchen on a counter, stand, or other believable working surface. It should look **actively in progress**, not like a polished published book.
+
+Pages may include:
+
+- finished recipes,
+- handwritten substitutions,
+- crossed-out measurements,
+- cost-per-serving notes,
+- food photos,
+- taped-in scraps,
+- notes such as “needs more garlic,”
+- healthier/cheaper revisions,
+- partially developed recipes,
+- blank placeholders for recipes not yet discovered.
+
+Existing real recipes should be used where available. **Strawberry Lemonade Cake** is a locked early example of a real recipe that belongs in the book.
+
+The cookbook communicates the autobiographical root indirectly: wanting to save money, cook at home more, eat better, and turn that effort into something reusable.
+
+## Recipe discovery loop — LOCKED
+
+Recipes are collectible discoveries placed throughout Stack House rather than all being available from the start.
+
+A recipe may be found as:
+
+- handwritten card,
+- loose notebook page,
+- clipping,
+- note in another room,
+- family/personal artifact,
+- puzzle reward,
+- hidden Easter egg,
+- other context-appropriate object.
+
+When a recipe is found, it is added to the kitchen cookbook. This gives the kitchen its own collection/minigame progression.
+
+Some recipe discoveries may be main-path or lightly guided; deep/optional recipes can remain completely unmarked.
+
+A recurring note/quest may explicitly direct the player to recover or organize missing recipes, consistent with Stack House’s running house-chore structure.
+
+## Cooking minigame — LOCKED
+
+Discovered recipes can actually be cooked in the Stack House kitchen.
+
+Cooking should use the kitchen/pantry/stove/counter as a small interactive minigame rather than reducing the action to clicking “CRAFT.” Exact control design remains open, but the player should feel like they are preparing the recipe.
+
+Successful dishes grant **temporary gameplay effects/buffs**. Different recipes can produce different effects, creating a reason to explore for recipes beyond lore/completion.
+
+Potential buff categories remain implementation details until individually approved, but can include things such as movement, recovery, resistance, strength, focus, or other encounter-relevant effects.
+
+Cooking becomes especially useful later in the game and in postgame replay/challenge modes.
+
+Failure/comedy is welcome. Example tone:
+
+> CULINARY STATUS: TECHNICALLY FOOD
+
+Do not make failed cooking permanently punitive.
+
+## Refrigerator — LOCKED SURFACE
+
+The refrigerator is a dense personal/lore surface rather than a project screen.
+
+It may hold:
+
+- grocery lists,
+- meal plans,
+- magnets,
+- coupons,
+- photos,
+- reminders,
+- appointment cards,
+- takeout menus,
+- food/weight/fitness notes,
+- household jokes,
+- occasional gameplay clues.
+
+It should feel accumulated and personal. Some fridge artifacts can change between Day/Night or carry clue significance, but most should simply make the house feel lived in.
+
+## Restaurant concept — LOCKED DIRECTION
+
+The restaurant idea should be represented through a kitchen-native display rather than another laptop. A believable wall-mounted smart kitchen display / restaurant order screen / KDS-style interface can expose:
+
+- restaurant concept,
+- menu ideas,
+- branding,
+- dish concepts,
+- planning artifacts,
+- status as an idea/concept rather than pretending it is an operating restaurant.
+
+This display is separate from the physical cookbook: the cookbook is personal/home cooking in progress; the kitchen display represents the restaurant concept.
+
+---
+
 # Previously locked room display directions
 
 These remain governed by the Experience Bible and should continue to differ from the two computer interfaces above:
@@ -122,7 +221,7 @@ These remain governed by the Experience Bible and should continue to differ from
 - Game-room posters → game concepts without playable builds.
 - Grey Key Studios computer → GK Plugins + GK DAW/GK Studio.
 - GK DAW/GK Studio → inspect/play Grey Key catalog sessions and later boss-music preparation.
-- Kitchen → cookbook/restaurant/food work through kitchen-native objects/interfaces.
+- Kitchen → physical working cookbook + recipe collection/cooking minigame + fridge lore + restaurant kitchen display.
 - Library/Study → ReLearn, Diaspora Atlas, research/education through a study/library context.
 - Writing Room/Sunroom → blog, essays, books, drafts, manuscripts through the writing desk and surrounding artifacts.
 - Master Bedroom → Grey Key merch integrated into wardrobe, dresser, bedding, walls, and room objects rather than a storefront.
@@ -139,4 +238,9 @@ Still to design in detail:
 - which joke tabs/files are canonical,
 - whether project folders expose simulated file trees, curated snapshots, or both,
 - how much of the desktop remains functional in postgame free-roam,
-- exact Day/Night browser/desktop state changes.
+- exact Day/Night browser/desktop state changes,
+- exact kitchen cooking controls,
+- final recipe list and placement,
+- exact temporary effect assigned to each recipe,
+- whether ingredients are fully collectible resources or abstracted at the point of cooking,
+- exact restaurant-display interface.
