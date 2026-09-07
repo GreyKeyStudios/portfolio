@@ -132,3 +132,7 @@ Default window head now 2.4m (0.9m sill), preserving widths and positions. Groun
 ## Stair oak material pass
 Staircase-v002 now embeds oak-grain-v002.png, shared with the foyer/client floor. UV grain follows tread width, post height and handrail length; oak roughness is 0.47. Export is 1,293,540 bytes with unchanged geometry (14,540 triangles, three material primitives). Source manifest records the texture hash. Node geometry checks use placeholder textures because image decoding is verified separately in the browser. Live desktop close-up and all six traversal checks passed.
 
+
+## Living-room furnishing foundation
+The v002 ground candidate loads living-furniture-v002.glb at X0. Its authoring script and collision bounds share lib/living-furniture-v002.json. Mounted v002 geometry registers four solid furniture footprints; cleanup removes them so legacy previews have no invisible obstacles. The rug is walkable. Export: 8,084 triangles, seven primitives, 682,840 bytes. The TV and closed laptop are noninteractive visual props in this pass. Browser composition verified; automated checks cover the foyer-to-north-door route, furniture blocking and cleanup, and existing stair traversal.
+

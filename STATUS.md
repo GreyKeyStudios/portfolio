@@ -398,3 +398,7 @@ User delegated design choice. Raised default window heads to 2.4m while preservi
 ### Stair oak material pass — 2026-09-07
 V002 stair treads, posts and handrails now share the authored oak grain used by the foyer floor, aligned along each timber, with a satin roughness of 0.47. Texture embedded in the GLB and packed in the Blender source. Geometry remains 14,540 triangles / three material primitives. Live desktop close-up and all six stair traversal regressions passed. Preview runs on port 3017; furnishing remains deferred.
 
+
+### Living-room furnishing foundation — 2026-09-07
+User approved moving from shell work into furnishing using the restrained room concept as direction. Added an oatmeal sofa, tobacco armchair, oak coffee table, rug, media cabinet/TV and closed client laptop to v002. Blender source and shared placement JSON saved: 8,084 triangles, seven material primitives, 682,840 bytes. Desktop views checked from both ends; room route, furniture collision activation/cleanup and six stair routes pass. TV/laptop remain visual props pending portfolio interactions. Next: upholstery/rug surface detail, practical lamps and personal touches; preserve clear foyer-to-game-room route.
+

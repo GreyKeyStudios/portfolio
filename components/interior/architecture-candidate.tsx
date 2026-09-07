@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react"
 import { Mesh, MeshStandardMaterial } from "three"
 import { FLOOR_BASE_Y, X0, type FloorId } from "@/lib/interior-layout"
 import { ENTRY_DOOR } from "@/lib/architecture-details"
+import { registerLivingFurniture } from "@/lib/living-furniture"
 
 type InteriorFloor = Exclude<FloorId, "yard">
 
@@ -33,11 +34,17 @@ function CandidateAsset({ url, refined = false }: { url: string; refined?: boole
 
 /** Opt-in architecture review. Asset URLs stay paired with this checkout. */
 export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: InteriorFloor; version?: string }) {
+  useEffect(() => {
+    if (floor === 'ground' && version === 'v002') return registerLivingFurniture()
+  }, [floor, version])
   return (
     <group position={[0, FLOOR_BASE_Y[floor], 0]} name={`architecture-${version}-${floor}`}>
       <CandidateAsset url={`/models/interior-${floor}-${version}.glb`} refined={version === 'v002'} />
       {floor === 'ground' && version === 'v002' && (
-        <group position={[X0, 0, 0]}><CandidateAsset url="/models/foyer-client-details-v002.glb" /></group>
+        <group position={[X0, 0, 0]}>
+          <CandidateAsset url="/models/foyer-client-details-v002.glb" />
+          <CandidateAsset url="/models/living-furniture-v002.glb" />
+        </group>
       )}
       {floor !== "attic" && (
         <group position={[X0, 0, 0]}>

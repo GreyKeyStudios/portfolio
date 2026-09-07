@@ -89,7 +89,7 @@ const require = createRequire(import.meta.url)
 const ts = require('typescript')
 require.extensions['.ts'] = (module, filename) => {
   module._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true },
   }).outputText, filename)
 }
 const { stepPlayer } = require('../lib/player-movement.ts')
@@ -145,6 +145,28 @@ for (const x of [-.15,.15]) {
 assert.ok(doorHit && Math.abs(doorHit.point.z - ENTRY_DOOR.centerZ - ENTRY_DOOR.thickness/2) < .025, 'Door art/collision mismatch')
 const { getInteriorColliders } = require('../lib/interior-colliders.ts')
 const { moveWithCollision } = require('../lib/collision.ts')
+const { registerLivingFurniture, LIVING_FURNITURE_COLLIDERS } = require('../lib/living-furniture.ts')
+const { getActiveColliders } = require('../lib/use-player-vertical.ts')
+assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
+const removeFurniture = registerLivingFurniture()
+const furnished = getActiveColliders('ground')
+assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 4)
+const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
+assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
+// Walk from foyer into the room, around the seating group, and out the north door.
+const route = [[300,1.4],[302,1.4],[302.8,1.85],[302.8,4.9],[303.9,4.9],[303.9,5.8]]
+for (let i=1;i<route.length;i++) {
+  const [x,z]=route[i], [px,pz]=route[i-1]
+  const reached=moveWithCollision(px,pz,x,z,furnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Furniture blocks room route at ${x},${z}`)
+}
+for (const piece of LIVING_FURNITURE_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
+  assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
+}
+removeFurniture()
+assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Unmount leaves furniture collisions')
 const topGuards = getInteriorColliders('attic', 8.1).filter(c => c.label.startsWith('attic-guard-'))
 assert.equal(topGuards.length, 4)
 assert.equal(getInteriorColliders('attic', 6.7).filter(c => c.label.startsWith('attic-guard-')).length, 0)
