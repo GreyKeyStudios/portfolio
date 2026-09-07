@@ -1,19 +1,23 @@
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
 import crypto from 'node:crypto'
-import { Box3, Raycaster, Vector3, PerspectiveCamera } from 'three'
+import { Box3, Raycaster, Vector3, PerspectiveCamera, Texture } from 'three'
 import { createRequire } from 'node:module'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
 const load = async (name) => {
   const bytes = fs.readFileSync(`public/models/${name}.glb`)
-  return new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
+  // Geometry regression runs in Node without browser image decoding. Texture
+  // appearance is checked in-browser; preserve material maps with placeholders.
+  const loader = new GLTFLoader().register(() => ({ name: 'geometry-only-textures', loadTexture: () => Promise.resolve(new Texture()) }))
+  return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 }
 const layout = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/layout-v001.json'))
 const manifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/staircase-v002.manifest.json'))
 const hash = (path) => crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')
 assert.equal(hash('lib/interior-layout.ts'), manifest.layout_sha256, 'Stair layout is stale')
 assert.equal(hash('portfolio-assets/stack-house/blender/staircase-v002.blend'), manifest.source_sha256, 'Source hash differs')
+assert.equal(hash('portfolio-assets/stack-house/blender/oak-grain-v002.png'),manifest.texture_sha256,'Stair oak source texture is stale')
 const { scene } = await load('staircase-v002')
 scene.updateMatrixWorld(true)
 const bounds = new Box3().setFromObject(scene)

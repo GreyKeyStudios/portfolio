@@ -27,6 +27,14 @@ def material(name, color, roughness, metallic=0):
     return m
 
 oak = material('V001 Smoked oak', (0.22, 0.105, 0.045), .4)
+oak.name = 'V002 Satin smoked oak'
+grain_path = SOURCE / 'oak-grain-v002.png'
+grain = bpy.data.images.load(str(grain_path), check_existing=True)
+grain.pack()
+grain_node = oak.node_tree.nodes.new('ShaderNodeTexImage')
+grain_node.image = grain
+oak.node_tree.links.new(grain_node.outputs['Color'], oak.node_tree.nodes.get('Principled BSDF').inputs['Base Color'])
+oak.node_tree.nodes.get('Principled BSDF').inputs['Roughness'].default_value = .47
 plaster = material('V001 Warm painted joinery', (.64, .61, .55), .75)
 iron = material('V001 Blackened steel', (.022, .028, .035), .34, .65)
 parts = []
@@ -51,6 +59,18 @@ def box(name, center, size, mat, bevel=.003):
     obj = bpy.context.object
     obj.scale = (size[0], size[2], size[1])
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    if mat == oak:
+        # Blender axes: X across tread, Y along run, Z vertical.
+        # Tile V carries long grain: horizontal across treads, vertical on posts.
+        long_axis = 2 if 'newel' in name else 0
+        dims = (size[0], size[2], size[1])
+        uv = obj.data.uv_layers.active
+        for poly in obj.data.polygons:
+            normal_axis = max(range(3), key=lambda i: abs(poly.normal[i]))
+            transverse = next(i for i in range(3) if i != long_axis and i != normal_axis) if normal_axis != long_axis else (long_axis+1)%3
+            for li in poly.loop_indices:
+                co = obj.data.vertices[obj.data.loops[li].vertex_index].co
+                uv.data[li].uv = (co[transverse]/max(dims[transverse],.001)+.5,co[long_axis]/max(dims[long_axis],.001)+.5)
     return finish(obj, name, mat, bevel)
 
 def beam(name, a, b, width, depth, mat, bevel=.004):
@@ -59,6 +79,14 @@ def beam(name, a, b, width, depth, mat, bevel=.004):
     obj = bpy.context.object
     obj.scale = (width, depth, (bv-av).length)
     obj.rotation_euler = (bv-av).to_track_quat('Z', 'Y').to_euler()
+    if mat == oak:
+        # Map before applying rotation: local Z is always the handrail length.
+        uv = obj.data.uv_layers.active
+        for poly in obj.data.polygons:
+            across = 1 if abs(poly.normal.x) > .5 else 0
+            for li in poly.loop_indices:
+                co = obj.data.vertices[obj.data.loops[li].vertex_index].co
+                uv.data[li].uv = (co[across]+.5,co.z+.5)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     return finish(obj, name, mat, bevel)
 
@@ -146,6 +174,9 @@ if mesh.users==0: bpy.data.meshes.remove(mesh)
 bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE/'staircase-v002.blend'))
 manifest={'version':'v002','source':'staircase-v002.blend','asset':'public/models/staircase-v002.glb','units':'metres','source_axes':'Z up, -Y forward','runtime_axes':'Y up, +Z forward','runtime_placement':[layout['X0'],'FLOOR_BASE_Y',0],'layout_sha256':hashlib.sha256((ROOT/'lib/interior-layout.ts').read_bytes()).hexdigest(),'source_sha256':hashlib.sha256((SOURCE/'staircase-v002.blend').read_bytes()).hexdigest(),'triangles':triangles,'materials':[oak.name,plaster.name,iron.name],'textures':[],'note':'Architectural geometry candidate; plain PBR swatches, no baked lighting or wood textures yet.'}
 manifest['bounds']=bounds
+manifest['textures']=['oak-grain-v002.png']
+manifest['texture_sha256']=hashlib.sha256(grain_path.read_bytes()).hexdigest()
+manifest['note']='Shared authored oak grain aligned along treads, posts and handrails; embedded in GLB.'
 (SOURCE/'staircase-v002.manifest.json').write_text(json.dumps(manifest,indent=2))
 result={'asset':str(export_path),'triangles':triangles,'editable_objects':len(parts)}
 

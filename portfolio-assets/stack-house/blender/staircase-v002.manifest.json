@@ -11,15 +11,17 @@
     0
   ],
   "layout_sha256": "b069f2a820dc8693cceff4153c00901243e60028151d0b423fd0a7d5dbb87aa6",
-  "source_sha256": "c2433293c659816f3e7cf7e2480d1f600b837892d8b51c95e76f40ba29cbb760",
+  "source_sha256": "8891bb79e35b54a5f1d71a2de7833fbf0fa1912e16918794712970d88c60d940",
   "triangles": 14540,
   "materials": [
-    "V001 Smoked oak",
+    "V002 Satin smoked oak",
     "V001 Warm painted joinery",
     "V001 Blackened steel"
   ],
-  "textures": [],
-  "note": "Architectural geometry candidate; plain PBR swatches, no baked lighting or wood textures yet.",
+  "textures": [
+    "oak-grain-v002.png"
+  ],
+  "note": "Shared authored oak grain aligned along treads, posts and handrails; embedded in GLB.",
   "bounds": {
     "min": [
       -1.149999976158142,
@@ -31,5 +33,6 @@
       4.179999828338623,
       6.099999904632568
     ]
-  }
+  },
+  "texture_sha256": "740ae7675c6ffc34df4d794058d73bd5210fc8cfb7d9e54bb9da21816ebc0a02"
 }

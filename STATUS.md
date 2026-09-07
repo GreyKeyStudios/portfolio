@@ -394,3 +394,7 @@ Confirmed v002 wall tops coincided with the next floor surface. Generator now bu
 ### Living-room proportion and panelling pass — 2026-09-07
 User delegated design choice. Raised default window heads to 2.4m while preserving sills, widths and centres; regenerated v002 shells and elevations. Navy panelling now runs around all living-room walls, stops clear of door casings, and uses narrower panels with 8mm fields behind 35mm frames and a navy stepped cap below the window sill. Camera and ivory trim preserved. Desktop room view verified before the usage pause; window/stair/collision regressions and TypeScript passed.
 
+
+### Stair oak material pass — 2026-09-07
+V002 stair treads, posts and handrails now share the authored oak grain used by the foyer floor, aligned along each timber, with a satin roughness of 0.47. Texture embedded in the GLB and packed in the Blender source. Geometry remains 14,540 triangles / three material primitives. Live desktop close-up and all six stair traversal regressions passed. Preview runs on port 3017; furnishing remains deferred.
+
