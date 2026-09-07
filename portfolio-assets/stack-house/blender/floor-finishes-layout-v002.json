@@ -1,0 +1,511 @@
+{
+  "X0": 300,
+  "shaft": {
+    "minX": 298.84999999999997,
+    "maxX": 301.15,
+    "minZ": 2.6,
+    "maxZ": 6.1000000000000005
+  },
+  "rooms": [
+    {
+      "id": "half-bath",
+      "label": "Half Bath",
+      "floor": "ground",
+      "bounds": {
+        "minX": 293.4,
+        "maxX": 295.09999999999997,
+        "minZ": 0,
+        "maxZ": 3
+      },
+      "doors": [
+        {
+          "side": "east",
+          "center": 1.5,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "west",
+          "center": 1.5,
+          "width": 0.6,
+          "sill": 1.45,
+          "head": 2.4
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "mudroom",
+      "label": "Mudroom / Coats",
+      "floor": "ground",
+      "bounds": {
+        "minX": 295.09999999999997,
+        "maxX": 298.84999999999997,
+        "minZ": 0,
+        "maxZ": 3
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.5,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 297.29999999999995,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "south",
+          "center": 296.9,
+          "width": 0.8
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "kitchen",
+      "label": "Kitchen / Dining",
+      "floor": "ground",
+      "bounds": {
+        "minX": 293.4,
+        "maxX": 298.84999999999997,
+        "minZ": 3,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "south",
+          "center": 297.29999999999995,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 7.1,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 9.4,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "north",
+          "center": 296.09999999999997,
+          "width": 1.6
+        },
+        {
+          "side": "west",
+          "center": 5.5,
+          "width": 1
+        },
+        {
+          "side": "west",
+          "center": 8.5,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "foyer",
+      "label": "Foyer / Stair Hall",
+      "floor": "ground",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 0,
+        "maxZ": 6.1000000000000005
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "south",
+          "center": 300,
+          "width": 1.2
+        }
+      ],
+      "furnished": true
+    },
+    {
+      "id": "pantry",
+      "label": "Pantry",
+      "floor": "ground",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 6.1000000000000005,
+        "maxZ": 8.1
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 7.1,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "laundry",
+      "label": "Laundry",
+      "floor": "ground",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 8.1,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 9.4,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "client-room",
+      "label": "Client Room / Living",
+      "floor": "ground",
+      "bounds": {
+        "minX": 301.15,
+        "maxX": 306.59999999999997,
+        "minZ": 0,
+        "maxZ": 5.4
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 303.9,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "south",
+          "center": 302.4,
+          "width": 1.2
+        },
+        {
+          "side": "south",
+          "center": 305.2,
+          "width": 1.2
+        },
+        {
+          "side": "east",
+          "center": 2.7,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "game-room",
+      "label": "Game Room / Lounge",
+      "floor": "ground",
+      "bounds": {
+        "minX": 301.15,
+        "maxX": 306.59999999999997,
+        "minZ": 5.4,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "south",
+          "center": 303.9,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "east",
+          "center": 8.1,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 303.9,
+          "width": 1.4
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "gallery",
+      "label": "Gallery / Library",
+      "floor": "second",
+      "bounds": {
+        "minX": 293.4,
+        "maxX": 298.84999999999997,
+        "minZ": 0,
+        "maxZ": 5.4
+      },
+      "doors": [
+        {
+          "side": "east",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 296.09999999999997,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "south",
+          "center": 296.9,
+          "width": 1.2
+        },
+        {
+          "side": "west",
+          "center": 2.7,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "nook",
+      "label": "Nook / Flex Space",
+      "floor": "second",
+      "bounds": {
+        "minX": 293.4,
+        "maxX": 298.84999999999997,
+        "minZ": 5.4,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "south",
+          "center": 296.09999999999997,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 8.5,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 10.1,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "west",
+          "center": 8.5,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 296.09999999999997,
+          "width": 1.4
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "stair-landing-2",
+      "label": "Stair Landing / Hall",
+      "floor": "second",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 0,
+        "maxZ": 6.1000000000000005
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "east",
+          "center": 1.4,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "south",
+          "center": 300,
+          "width": 1
+        }
+      ],
+      "furnished": true
+    },
+    {
+      "id": "upstairs-storage",
+      "label": "Storage",
+      "floor": "second",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 6.1000000000000005,
+        "maxZ": 9.4
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 8.5,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "linen",
+      "label": "Linen",
+      "floor": "second",
+      "bounds": {
+        "minX": 298.84999999999997,
+        "maxX": 301.15,
+        "minZ": 9.4,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 10.1,
+          "width": 1
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "home-office",
+      "label": "Home Office",
+      "floor": "second",
+      "bounds": {
+        "minX": 301.15,
+        "maxX": 306.59999999999997,
+        "minZ": 0,
+        "maxZ": 5.4
+      },
+      "doors": [
+        {
+          "side": "west",
+          "center": 1.4,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 302.09999999999997,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 305.29999999999995,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "south",
+          "center": 302.4,
+          "width": 1.2
+        },
+        {
+          "side": "south",
+          "center": 305.2,
+          "width": 1.2
+        },
+        {
+          "side": "east",
+          "center": 2.7,
+          "width": 1
+        }
+      ],
+      "furnished": true
+    },
+    {
+      "id": "bathroom",
+      "label": "Bathroom",
+      "floor": "second",
+      "bounds": {
+        "minX": 301.15,
+        "maxX": 303,
+        "minZ": 5.4,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "south",
+          "center": 302.09999999999997,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "north",
+          "center": 302.09999999999997,
+          "width": 0.8,
+          "sill": 1.45,
+          "head": 2.4
+        }
+      ],
+      "furnished": false
+    },
+    {
+      "id": "guest-room",
+      "label": "Guest Room",
+      "floor": "second",
+      "bounds": {
+        "minX": 303,
+        "maxX": 306.59999999999997,
+        "minZ": 5.4,
+        "maxZ": 10.8
+      },
+      "doors": [
+        {
+          "side": "south",
+          "center": 305.29999999999995,
+          "width": 1
+        }
+      ],
+      "windows": [
+        {
+          "side": "east",
+          "center": 8.1,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 304.79999999999995,
+          "width": 1.2
+        }
+      ],
+      "furnished": false
+    }
+  ]
+}

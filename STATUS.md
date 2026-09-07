@@ -406,3 +406,8 @@ User approved moving from shell work into furnishing using the restrained room c
 ### Living-room material and reading-corner pass — 2026-09-07
 Added authored embedded linen/rug textures, a brass reading lamp with a warm light in the existing fixed light pool, and a notebook/coffee cup. Lamp geometry and collision share its placement entry. Updated furniture export is 9,080 triangles, 11 material primitives and 1,181,444 bytes. Live desktop views, TypeScript, five furniture colliders, doorway route and six stair traversals pass. TV/laptop interactions remain pending; current laptop is still a closed visual placeholder for the locked browser-session experience.
 
+
+### Whole-floor finishes — 2026-09-07
+User approved wood on the first floor except kitchen/bathroom and carpet on the second. V002 now extends smoked oak into mudroom, pantry, laundry and game room; existing foyer/living oak stays. Kitchen, half bath and upstairs bathroom use warm porcelain tile; remaining upstairs rooms and landing use warm low-pile carpet. Stairs remain oak. Floor finish surfaces clear the original doorway thresholds by 2mm; movement geometry and shaft openings stay unchanged. Finishes are generated from the authoritative room plan. Existing basement/attic treatment preserved.
+
+Validation: room-by-room floor material/height checks, shaft-clearance checks, furniture routes, six stair routes and TypeScript pass. Kitchen threshold flicker fixed and visually rechecked. Ground finish adds 500 triangles; second floor adds 16.

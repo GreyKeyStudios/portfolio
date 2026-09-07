@@ -53,6 +53,23 @@ for (const floor of ['basement', 'ground', 'second', 'attic']) {
   }
 }
 let samples = 0
+const finishManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/floor-finishes-v002.manifest.json'))
+assert.equal(hash('lib/interior-layout.ts'), finishManifest.layout_sha256, 'Floor finishes use a stale plan')
+const finishPlan = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/floor-finishes-layout-v002.json'))
+for (const floor of ['ground','second']) {
+  const finish = (await load(`floor-finishes-${floor}-v002`)).scene
+  finish.updateMatrixWorld(true)
+  ray.set(new Vector3(0,1,3.8),new Vector3(0,-1,0))
+  assert.equal(ray.intersectObject(finish,true).length,0,'Floor finish covers the stair opening')
+  for (const room of finishPlan.rooms.filter(r=>r.floor===floor && !['foyer','client-room'].includes(r.id))) {
+    const b=room.bounds
+    ray.set(new Vector3((b.minX+b.maxX)/2-finishPlan.X0+.037,1,b.minZ+.71),new Vector3(0,-1,0))
+    const hit=ray.intersectObject(finish,true)[0]
+    const expected=['kitchen','half-bath','bathroom'].includes(room.id)?'tile':floor==='ground'?'oak':'carpet'
+    assert.ok(hit && hit.object.material.name.toLowerCase().includes(expected),`${room.id}: wrong or missing floor finish`)
+    assert.ok(Math.abs(hit.point.y-.014)<.0005,`${room.id}: floor finish must clear 12mm thresholds`)
+  }
+}
 for (const s of layout.stairs.filter(s => s.floor === 'ground')) {
   const x = (s.bounds.minX + s.bounds.maxX) / 2 - layout.X0
   const rise = s.topY - s.bottomY

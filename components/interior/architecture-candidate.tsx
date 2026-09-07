@@ -40,6 +40,9 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
   return (
     <group position={[0, FLOOR_BASE_Y[floor], 0]} name={`architecture-${version}-${floor}`}>
       <CandidateAsset url={`/models/interior-${floor}-${version}.glb`} refined={version === 'v002'} />
+      {version === 'v002' && (floor === 'ground' || floor === 'second') && (
+        <group position={[X0, 0, 0]}><CandidateAsset url={`/models/floor-finishes-${floor}-v002.glb`} /></group>
+      )}
       {floor === 'ground' && version === 'v002' && (
         <group position={[X0, 0, 0]}>
           <CandidateAsset url="/models/foyer-client-details-v002.glb" />

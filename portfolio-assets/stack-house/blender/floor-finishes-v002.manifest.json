@@ -1,0 +1,33 @@
+{
+  "finishes": {
+    "half-bath": "tile",
+    "mudroom": "wood",
+    "kitchen": "tile",
+    "foyer": "wood",
+    "pantry": "wood",
+    "laundry": "wood",
+    "client-room": "wood",
+    "game-room": "wood",
+    "gallery": "carpet",
+    "nook": "carpet",
+    "stair-landing-2": "carpet",
+    "upstairs-storage": "carpet",
+    "linen": "carpet",
+    "home-office": "carpet",
+    "bathroom": "tile",
+    "guest-room": "carpet"
+  },
+  "exports": [
+    {
+      "floor": "ground",
+      "triangles": 500,
+      "bytes": 359120
+    },
+    {
+      "floor": "second",
+      "triangles": 16,
+      "bytes": 164184
+    }
+  ],
+  "layout_sha256": "b069f2a820dc8693cceff4153c00901243e60028151d0b423fd0a7d5dbb87aa6"
+}

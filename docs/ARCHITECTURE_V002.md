@@ -140,3 +140,7 @@ The v002 ground candidate loads living-furniture-v002.glb at X0. Its authoring s
 ## Living-room surface detail and reading lamp
 Embedded living-linen-v002.png (256 square) and living-rug-v002.png (512 square), both authored procedurally and packed into the Blender source. Added brass floor lamp, notebook and stoneware coffee cup. Lamp position is shared by Blender geometry, footprint collision and the refined light candidate list; the renderer retains its fixed light pool. Furniture now has five colliders, 9,080 triangles, 11 primitives and 1,181,444 bytes. TypeScript, room route, collision cleanup and six stair routes pass; both sides of the seating area visually reviewed.
 
+
+## Floor finish schedule
+User-directed schedule: ground-floor wood except kitchen/half bath tile; second-floor carpet except bathroom tile; wood stairs retained. Existing foyer/client boards remain in their original detail asset. Additional ground/second finish GLBs use X0 placement, embedded textures and room bounds exported by scripts/export-floor-finishes.cjs. The shared stair shaft is subtracted from finish faces. Faces sit at 14mm, clearing existing 12mm thresholds without altering movement geometry. Added room-by-room material rays and shaft-clearance checks.
+
