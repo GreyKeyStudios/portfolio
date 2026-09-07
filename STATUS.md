@@ -386,3 +386,7 @@ Interior camera now uses 1.62m eye height and 65-degree vertical FOV (previously
 ### Resume checkpoint — user feedback
 User reports the 1.62m / 65-degree camera is vastly better, with a slight remaining sense of odd scale. Keep this as the current baseline; do not enlarge rooms or change trim to compensate. The earlier hospital-like trim concern referred specifically to the navy lower-wall panelling; the actual ivory trim is approved. Next: review the living room at desktop aspect ratio and discuss the navy panelling before altering it. Furnishing remains deferred. No background work is scheduled during the usage pause.
 
+
+### Audit bug fixes
+Confirmed v002 wall tops coincided with the next floor surface. Generator now buries tops 6cm into the 12cm slab; regression failed before and passes after. Yard exit moved to z=-5.1, clear of the house collider; zero-input movement no longer pushes the spawn. Room geometry, camera, panelling and window proportions otherwise unchanged.
+

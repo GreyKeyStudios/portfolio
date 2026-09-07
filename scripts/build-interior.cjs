@@ -574,7 +574,9 @@ function buildFloor(floor) {
           : addBox(g, Math.min(d0, d1), Math.max(d0, d1), y0, y1, a, b)
 
       // Under a gable the wall stops at the knee and the roof takes over.
-      const wallTop = room.floor === 'attic' ? ATTIC_KNEE_H : FLOOR_TO_FLOOR
+      // Bury wall tops halfway into the next slab, never on its walking face.
+      const wallTop = room.floor === 'attic' ? ATTIC_KNEE_H
+        : candidate && revision === 'v002' ? FLOOR_TO_FLOOR - SLAB / 2 : FLOOR_TO_FLOOR
 
       // Both doors and windows cut the wall; each then puts back the parts of
       // its own opening that are solid (a door's header, a window's sill and

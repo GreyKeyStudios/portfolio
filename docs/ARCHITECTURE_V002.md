@@ -120,3 +120,7 @@ Entry now starts at [300,1.7,0.65], yaw PI, instead of beside the stair at z=2.4
 ## Camera proportion review
 Interior eye height 1.62m and vertical FOV 65 degrees are centralized in lib/player-camera.ts. Yard stays at 1.7m / 75 degrees. Entry applies the same eye height as the vertical movement resolver. This is a camera-only review: no panelling, trim or room-size edits. Stair traversal regressions pass at the new eye height.
 
+
+## Audit corrections
+V002 wall tops now end at local y=3.14 inside the next slab (3.08–3.20), removing coplanar wall caps from upstairs walking surfaces without reopening gaps. Original/v001 exports retained. Yard exit uses z=-5.1. Added wall/slab overlap and exit-position regression checks; all six stair routes still pass. Stair manifest layout hashes updated for navigation-only source changes.
+

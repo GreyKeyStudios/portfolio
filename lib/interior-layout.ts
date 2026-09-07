@@ -779,6 +779,6 @@ export function placeInRoom(
 }
 
 /** Where the player lands back in the yard after using the Foyer exit door. */
-export const YARD_EXIT_POINT: [number, number, number] = [0.72, 1.7, -3.5]
-export const YARD_EXIT_YAW = 0 // facing +Z, away from the house
+export const YARD_EXIT_POINT: [number, number, number] = [0.72, 1.7, -5.1]
+export const YARD_EXIT_YAW = 0 // facing -Z, away from the house
 

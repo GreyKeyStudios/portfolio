@@ -89,12 +89,23 @@ require.extensions['.ts'] = (module, filename) => {
   }).outputText, filename)
 }
 const { stepPlayer } = require('../lib/player-movement.ts')
+const { YARD_EXIT_POINT } = require('../lib/interior-layout.ts')
+const exitCamera = new PerspectiveCamera()
+exitCamera.position.fromArray(YARD_EXIT_POINT)
+stepPlayer(exitCamera,'yard',{forward:0,strafe:0,speed:0},1/60,false)
+assert.ok(exitCamera.position.distanceTo(new Vector3(...YARD_EXIT_POINT)) < .001,'Yard exit is pushed out by collision')
 const { INTERIOR_EYE_HEIGHT } = require('../lib/player-camera.ts')
 const { ROOMS, WINDOW_SILL, WINDOW_HEAD } = require('../lib/interior-layout.ts')
 let windowSamples = 0
 for (const floor of ['basement','ground','second','attic']) {
   const shell = (await load(`interior-${floor}-v002`)).scene
   shell.updateMatrixWorld(true)
+  if (floor !== 'attic') shell.traverse(ob => {
+    if (!ob.isMesh || ob.material.name !== 'wall') return
+    ob.geometry.computeBoundingBox()
+    assert.ok(ob.geometry.boundingBox.max.y < 3.19, `${floor}: wall tops coincide with next floor surface`)
+    assert.ok(ob.geometry.boundingBox.max.y > 3.08, `${floor}: wall must overlap slab underside`)
+  })
   for (const room of ROOMS.filter(r => r.floor === floor)) for (const w of room.windows ?? []) {
     const y = (w.sill ?? WINDOW_SILL) + ((w.head ?? WINDOW_HEAD)-(w.sill ?? WINDOW_SILL))*.3
     const b = room.bounds
