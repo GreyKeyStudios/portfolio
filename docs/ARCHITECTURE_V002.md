@@ -136,3 +136,7 @@ Staircase-v002 now embeds oak-grain-v002.png, shared with the foyer/client floor
 ## Living-room furnishing foundation
 The v002 ground candidate loads living-furniture-v002.glb at X0. Its authoring script and collision bounds share lib/living-furniture-v002.json. Mounted v002 geometry registers four solid furniture footprints; cleanup removes them so legacy previews have no invisible obstacles. The rug is walkable. Export: 8,084 triangles, seven primitives, 682,840 bytes. The TV and closed laptop are noninteractive visual props in this pass. Browser composition verified; automated checks cover the foyer-to-north-door route, furniture blocking and cleanup, and existing stair traversal.
 
+
+## Living-room surface detail and reading lamp
+Embedded living-linen-v002.png (256 square) and living-rug-v002.png (512 square), both authored procedurally and packed into the Blender source. Added brass floor lamp, notebook and stoneware coffee cup. Lamp position is shared by Blender geometry, footprint collision and the refined light candidate list; the renderer retains its fixed light pool. Furniture now has five colliders, 9,080 triangles, 11 primitives and 1,181,444 bytes. TypeScript, room route, collision cleanup and six stair routes pass; both sides of the seating area visually reviewed.
+

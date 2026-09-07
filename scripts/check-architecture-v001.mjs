@@ -150,7 +150,7 @@ const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
 const furnished = getActiveColliders('ground')
-assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 4)
+assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.

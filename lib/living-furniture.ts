@@ -2,6 +2,11 @@ import layout from './living-furniture-v002.json'
 import { X0 } from './interior-layout'
 import type { AABB } from './collision'
 
+const lamp = layout.find(piece => piece.id === 'lamp')!
+export const LIVING_READING_LIGHT = {
+  position: [X0 + lamp.x, 1.46, lamp.z] as [number, number, number],
+}
+
 export const LIVING_FURNITURE_COLLIDERS: AABB[] = layout.map(piece => {
   const c = Math.abs(Math.cos(piece.yaw)), s = Math.abs(Math.sin(piece.yaw))
   const halfX = (c * piece.width + s * piece.depth) / 2

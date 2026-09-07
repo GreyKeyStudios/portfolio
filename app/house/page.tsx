@@ -36,6 +36,7 @@ import { DoorPlaceholder } from "@/components/interior/door-placeholder"
 import { ProxyFurniture } from "@/components/interior/proxy-furniture"
 import { ArchitectureCandidate, AtticGuards, EntryDoorModel } from "@/components/interior/architecture-candidate"
 import { SHELL_PRACTICALS } from "@/lib/architecture-details"
+import { LIVING_READING_LIGHT } from "@/lib/living-furniture"
 import { useProximitySystem, triggerInteract } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
 import { FLOOR_BASE_Y, X0, ROOMS, type FloorId } from "@/lib/interior-layout"
@@ -150,6 +151,7 @@ const POINT_LIGHTS: {
 ]
 
 const REFINED_POINT_LIGHTS = [
+  { where: 'ground' as const, position: LIVING_READING_LIGHT.position, color: '#ffdda9', intensity: 1.3, distance: 4, decay: 2 },
   ...POINT_LIGHTS.filter(l => l.roomId !== 'foyer' && l.roomId !== 'client-room'),
   ...SHELL_PRACTICALS.map(p => ({
     where: 'ground' as const,

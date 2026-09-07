@@ -402,3 +402,7 @@ V002 stair treads, posts and handrails now share the authored oak grain used by 
 ### Living-room furnishing foundation — 2026-09-07
 User approved moving from shell work into furnishing using the restrained room concept as direction. Added an oatmeal sofa, tobacco armchair, oak coffee table, rug, media cabinet/TV and closed client laptop to v002. Blender source and shared placement JSON saved: 8,084 triangles, seven material primitives, 682,840 bytes. Desktop views checked from both ends; room route, furniture collision activation/cleanup and six stair routes pass. TV/laptop remain visual props pending portfolio interactions. Next: upholstery/rug surface detail, practical lamps and personal touches; preserve clear foyer-to-game-room route.
 
+
+### Living-room material and reading-corner pass — 2026-09-07
+Added authored embedded linen/rug textures, a brass reading lamp with a warm light in the existing fixed light pool, and a notebook/coffee cup. Lamp geometry and collision share its placement entry. Updated furniture export is 9,080 triangles, 11 material primitives and 1,181,444 bytes. Live desktop views, TypeScript, five furniture colliders, doorway route and six stair traversals pass. TV/laptop interactions remain pending; current laptop is still a closed visual placeholder for the locked browser-session experience.
+
