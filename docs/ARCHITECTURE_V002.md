@@ -124,3 +124,7 @@ Interior eye height 1.62m and vertical FOV 65 degrees are centralized in lib/pla
 ## Audit corrections
 V002 wall tops now end at local y=3.14 inside the next slab (3.08–3.20), removing coplanar wall caps from upstairs walking surfaces without reopening gaps. Original/v001 exports retained. Yard exit uses z=-5.1. Added wall/slab overlap and exit-position regression checks; all six stair routes still pass. Stair manifest layout hashes updated for navigation-only source changes.
 
+
+## Living-room proportion and panelling pass
+Default window head now 2.4m (0.9m sill), preserving widths and positions. Ground/second v002 assets and elevation drawing regenerated. Basement custom heights remain unchanged. Navy panelling now surrounds the living room below the sill, with approximately 0.57m panel spacing, fields recessed 27mm relative to rails/stiles, and a navy stepped cap. Fields remain in front of plaster; moving them behind the wall would hide them. Door casings have 0.13m clearance from panel runs. Current foyer/client detail export: 29,052 triangles, 2,026,716 bytes. Desktop live view and automated regressions passed before the usage pause; no furniture added.
+

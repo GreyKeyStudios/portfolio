@@ -390,3 +390,7 @@ User reports the 1.62m / 65-degree camera is vastly better, with a slight remain
 ### Audit bug fixes
 Confirmed v002 wall tops coincided with the next floor surface. Generator now buries tops 6cm into the 12cm slab; regression failed before and passes after. Yard exit moved to z=-5.1, clear of the house collider; zero-input movement no longer pushes the spawn. Room geometry, camera, panelling and window proportions otherwise unchanged.
 
+
+### Living-room proportion and panelling pass — 2026-09-07
+User delegated design choice. Raised default window heads to 2.4m while preserving sills, widths and centres; regenerated v002 shells and elevations. Navy panelling now runs around all living-room walls, stops clear of door casings, and uses narrower panels with 8mm fields behind 35mm frames and a navy stepped cap below the window sill. Camera and ivory trim preserved. Desktop room view verified before the usage pause; window/stair/collision regressions and TypeScript passed.
+

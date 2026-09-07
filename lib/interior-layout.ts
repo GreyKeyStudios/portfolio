@@ -246,13 +246,11 @@ const DOOR = 1.0
 /**
  * Default glazing heights, above the floor of whatever storey they sit on.
  *
- * 0.9 / 2.1 is an ordinary residential sill and head. The head deliberately
- * matches nothing else: doors stop at 2.05 and the ceiling is at 3.0, so a
- * window head at 2.1 sits just proud of the door line the way a real one does,
- * and still leaves 0.9 of wall above it to read as a header.
+ * The 0.9 sill and 2.4 head give the common 1.2-wide openings a taller profile
+ * closer to the exterior, leaving 0.6 of plaster below the 3.0 ceiling.
  */
 export const WINDOW_SILL = 0.9
-export const WINDOW_HEAD = 2.1
+export const WINDOW_HEAD = 2.4
 
 /**
  * Below grade. The basement floor is at -3.2, so anything at normal sill

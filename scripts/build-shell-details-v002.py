@@ -129,15 +129,21 @@ for room in data['rooms']:
             strip('Ceiling cornice upper step',lo+.2,hi-.2,2.985,.03,.07,paint)
         for a,b in segments(lo+.2,hi-.2,doors):
             strip('Skirting cap',a,b,.13,.025,.032,paint)
-            if room['id']=='client-room' and side in ['north','east']:
-                strip('Ink blue panel field',a,b,.46,.61,.012,navy)
-                strip('Panel lower rail',a,b,.19,.065,.028,navy)
-                strip('Panel top rail',a,b,.745,.065,.028,navy)
-                strip('Chair rail cap',a,b,.80,.035,.043,paint)
-                count=max(1,round((b-a)/.9))
+            if room['id']=='client-room':
+                # Stop beside the door casing, not underneath its mouldings.
+                pa=a+.13 if any(abs(a-(d['center']+d['width']/2))<.001 for d in doors) else a
+                pb=b-.13 if any(abs(b-(d['center']-d['width']/2))<.001 for d in doors) else b
+                if pb-pa<.06: continue
+                # Field stays in front of plaster, recessed relative to its frame.
+                strip('Ink blue panel field',pa,pb,.485,.64,.008,navy)
+                strip('Panel lower rail',pa,pb,.20,.07,.035,navy)
+                strip('Panel top rail',pa,pb,.77,.07,.035,navy)
+                strip('Chair rail lower moulding',pa,pb,.812,.025,.042,navy)
+                strip('Chair rail cap',pa,pb,.837,.025,.050,navy)
+                count=max(1,round((pb-pa)/.57))
                 for i in range(count+1):
-                    x=a+(b-a)*i/count
-                    strip('Panel stile',max(a,x-.027),min(b,x+.027),.465,.49,.026,navy)
+                    x=pa+(pb-pa)*i/count
+                    strip('Panel stile',max(pa,x-.027),min(pb,x+.027),.485,.57,.035,navy)
         for d in doors:
             # The entry-door asset owns the arched front casing and jambs.
             if room['id']=='foyer' and side=='south': continue

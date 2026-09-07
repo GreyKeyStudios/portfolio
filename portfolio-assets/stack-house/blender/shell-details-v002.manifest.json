@@ -24,7 +24,7 @@
     },
     {
       "asset": "foyer-client-details-v002.glb",
-      "triangles": 24516,
+      "triangles": 29052,
       "bounds": {
         "min": [
           -1.1549999713897705,
@@ -37,11 +37,11 @@
           5.900000095367432
         ]
       },
-      "bytes": 1761704
+      "bytes": 2026716
     }
   ],
-  "layout_sha256": "665a520dae82355874221811317d1c84501c8ee8ccbea4092adebe51e2605b19",
-  "source_sha256": "00a437d64e9836fd86841966f1cdcb398ccb2ac26c8e1959ca6355beda990bf1",
+  "layout_sha256": "b069f2a820dc8693cceff4153c00901243e60028151d0b423fd0a7d5dbb87aa6",
+  "source_sha256": "c6cfe27626496b309b6d314856064603b4f984926a906b7888721b0e3b932e08",
   "textures": [
     "oak-grain-v002.png"
   ],
