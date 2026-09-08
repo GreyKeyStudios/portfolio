@@ -8,6 +8,7 @@ import { ENTRY_DOOR } from "@/lib/architecture-details"
 import { registerLivingFurniture } from "@/lib/living-furniture"
 import { registerDiningFurniture } from "@/lib/dining-furniture"
 import { registerKitchenFurniture } from "@/lib/kitchen-furniture"
+import { registerPantryFurniture } from "@/lib/pantry-furniture"
 
 type InteriorFloor = Exclude<FloorId, "yard">
 
@@ -41,7 +42,8 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
       const removeLiving = registerLivingFurniture()
       const removeDining = registerDiningFurniture()
       const removeKitchen = registerKitchenFurniture()
-      return () => { removeKitchen(); removeDining(); removeLiving() }
+      const removePantry = registerPantryFurniture()
+      return () => { removePantry(); removeKitchen(); removeDining(); removeLiving() }
     }
   }, [floor, version])
   return (
@@ -56,6 +58,7 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
           <CandidateAsset url="/models/living-furniture-v002.glb" />
           <CandidateAsset url="/models/dining-furniture-v002.glb" />
           <CandidateAsset url="/models/kitchen-furniture-v002.glb" />
+          <CandidateAsset url="/models/pantry-furniture-v002.glb" />
         </group>
       )}
       {floor !== "attic" && (

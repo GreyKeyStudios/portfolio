@@ -424,6 +424,10 @@ Added a six-seat smoked-oak dining table, warm upholstered chairs, muted rug, na
 
 Added warm-ivory cabinetry and stone counters along the north wall, a sink beneath the large window, an induction island with the active in-progress cookbook, refrigerator, paired island pendants, and a four-seat breakfast table. The east service lane stays open to both pantry and laundry doors, and the mudroom route passes around the breakfast group. Matching v002 collision is mounted with the asset.
 
+### Pantry furnishing — 2026-09-08
+
+Added full-height smoked-oak shelving to both long walls of the walk-through Pantry, with labeled lower bins, dry-goods jars, preserves and upper baskets. Storage stays shallow enough to preserve a clear central Kitchen -> Pantry -> Dining aisle. Matching v002 collision is mounted only with the candidate architecture; the Blender source, shared placement JSON and export manifest are retained with the other furnishing assets.
+
 ### Gate house loading — 2026-09-08
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.
