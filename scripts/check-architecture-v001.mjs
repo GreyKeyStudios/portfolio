@@ -182,7 +182,7 @@ const removeHalfBath = registerHalfBathFurniture()
 const furnished = getActiveColliders('ground')
 assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
 assert.equal(furnished.filter(c => c.label?.startsWith('dining-')).length, 8)
-assert.equal(furnished.filter(c => c.label?.startsWith('kitchen-furniture-')).length, 11)
+assert.equal(furnished.filter(c => c.label?.startsWith('kitchen-furniture-')).length, 6)
 assert.equal(furnished.filter(c => c.label?.startsWith('pantry-furniture-')).length, 2)
 assert.equal(furnished.filter(c => c.label?.startsWith('laundry-furniture-')).length, 3)
 assert.equal(furnished.filter(c => c.label?.startsWith('mudroom-furniture-')).length, 2)
@@ -195,8 +195,8 @@ for (let i=1;i<serviceRoute.length;i++) {
   const reached=moveWithCollision(px,pz,x,z,furnished)
   assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Kitchen-pantry-dining route is blocked at ${x},${z}`)
 }
-// Walk from the mudroom around the breakfast table to the clear service lane.
-const kitchenRoute = [[296.1,3.35],[296.1,3.70],[297.35,3.70],[297.55,6.75],[298.35,7.1]]
+// Walk from the mudroom around the relocated refrigerator to the clear east service lane.
+const kitchenRoute = [[297.3,3.35],[297.3,4.0],[298.35,4.0],[298.35,7.1]]
 for (let i=1;i<kitchenRoute.length;i++) {
   const [x,z]=kitchenRoute[i], [px,pz]=kitchenRoute[i-1]
   const reached=moveWithCollision(px,pz,x,z,furnished)

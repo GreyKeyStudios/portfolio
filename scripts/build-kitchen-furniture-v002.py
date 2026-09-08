@@ -50,6 +50,7 @@ for f in layout:
  elif fid=='fridge':
   # Wide four-door smart refrigerator: large enough to carry the locked lore surface and terminal display.
   box('Double refrigerator',(0,1.08,0),(w,2.16,d),steel,.030);box('Refrigerator dark reveal',(0,1.08,d/2+.010),(w-.07,.018,.014),black,.002)
+  box('Refrigerator cabinet bridge',(0,2.46,-.02),(w+.18,.42,d+.02),paint,.014)
   box('Fridge center seam',(0,1.46,d/2+.026),(.018,1.25,.025),black,.002);box('Freezer division',(0,.63,d/2+.026),(w-.08,.020,.025),black,.002)
   for x in [-.13,.13]:box('Fridge upper handle '+str(x),(x,1.48,d/2+.060),(.025,.68,.028),brass,.006)
   for x in [-.38,.38]:box('Fridge lower handle '+str(x),(x,.42,d/2+.060),(.025,.36,.028),brass,.006)
@@ -69,8 +70,8 @@ for f in layout:
   x,y,z=o.location;c=math.cos(f['yaw']);s=math.sin(f['yaw']);o.location=(f['x']+c*x-s*y,-f['z']+s*x+c*y,z);o.rotation_euler.z+=f['yaw']
 
 # Two compact pendants make the island the working center without adding a new runtime light count.
-for x in [-4.25,-3.05]:
- cyl('Island pendant cord',(x,2.63,8.35),.008,.62,black,12);cyl('Island pendant shade',(x,2.27,8.35),.15,.22,glow,32)
+for x in [-4.48,-3.28]:
+ cyl('Island pendant cord',(x,2.63,7.05),.008,.62,black,12);cyl('Island pendant shade',(x,2.27,7.05),.15,.22,glow,32)
 
 bpy.context.view_layer.update();bpy.ops.object.select_all(action='DESELECT');copies=[];deps=bpy.context.evaluated_depsgraph_get()
 for src in parts:
@@ -80,5 +81,5 @@ bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=T
 mesh=ob.data;bpy.data.objects.remove(ob,do_unlink=True)
 if not mesh.users:bpy.data.meshes.remove(mesh)
 bpy.ops.wm.save_as_mainfile(filepath=str(SRC/'kitchen-furniture-v002.blend'))
-manifest={'triangles':triangles,'bytes':path.stat().st_size,'pieces':len(parts),'layout_sha256':hashlib.sha256((ROOT/'lib/kitchen-furniture-v002.json').read_bytes()).hexdigest(),'note':'High-end fitted kitchen with perimeter cabinetry, statement range, large island, smart double refrigerator and breakfast corner. All service routes stay clear.'}
+manifest={'triangles':triangles,'bytes':path.stat().st_size,'pieces':len(parts),'layout_sha256':hashlib.sha256((ROOT/'lib/kitchen-furniture-v002.json').read_bytes()).hexdigest(),'note':'High-end fitted kitchen with connected perimeter cabinetry, statement range, centered island and smart double refrigerator. Dining happens in the adjoining Dining Room; all service routes stay clear.'}
 (SRC/'kitchen-furniture-v002.manifest.json').write_text(json.dumps(manifest,indent=2));result=manifest

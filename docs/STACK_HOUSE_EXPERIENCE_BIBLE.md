@@ -213,7 +213,7 @@ That normality is part of what makes Stack House feel like a house.
 
 **Mudroom / Coats** — real transition/storage room.
 
-**Kitchen / Breakfast** — cookbook, restaurant concept, recipes, food/meal ideas, plus a smaller everyday eating area. Cookbook stays here rather than “Writing” because house organizes by context.
+**Kitchen** — cookbook, restaurant concept, recipes, and food/meal ideas. The adjoining Dining Room handles eating; the Kitchen uses its full floor area for a substantial center island and fitted perimeter cabinetry. Cookbook stays here rather than “Writing” because house organizes by context.
 
 **Foyer / Stair Hall** — orientation, house state, environmental storytelling.
 

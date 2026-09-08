@@ -1,7 +1,7 @@
 {
-  "triangles": 5312,
-  "bytes": 559884,
-  "pieces": 98,
-  "layout_sha256": "29694f22e0691bf4e7e0fa91f1a247156b03b9667515eea15674ec02b07fbda4",
-  "note": "High-end fitted kitchen with perimeter cabinetry, statement range, large island, smart double refrigerator and breakfast corner. All service routes stay clear."
+  "triangles": 3740,
+  "bytes": 472248,
+  "pieces": 71,
+  "layout_sha256": "cbc9f9a8a44feb0bf513f84dbd8a3517b2fd2236241a3602e2c6222af0e37a40",
+  "note": "High-end fitted kitchen with connected perimeter cabinetry, statement range, centered island and smart double refrigerator. Dining happens in the adjoining Dining Room; all service routes stay clear."
 }

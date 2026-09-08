@@ -420,11 +420,11 @@ User moved the Game Room / Man Cave from the first-floor room beside the living 
 
 Added a six-seat smoked-oak dining table, warm upholstered chairs, muted rug, navy-fronted sideboard, table settings, restrained wall art, and a compact chandelier. The east-west table orientation keeps both the living-room entrance and the Kitchen -> Pantry -> Dining service route clear. V002 mounts matching furniture collision; legacy variants remain unaffected.
 
-### Kitchen and breakfast furnishing — 2026-09-08
+### Kitchen furnishing — 2026-09-08
 
-Added warm-ivory cabinetry and stone counters along the north wall, a sink beneath the large window, an induction island with the active in-progress cookbook, refrigerator, paired island pendants, and a four-seat breakfast table. The east service lane stays open to both pantry and laundry doors, and the mudroom route passes around the breakfast group. Matching v002 collision is mounted with the asset.
+User review established that the first versions read too ordinary and fragmented for the house. The final initial pass uses continuous warm-ivory and stone perimeter cabinetry: both west-wall runs meet the statement range and the north run turns cleanly into the sink counter. The smoked-oak and stone island is centered in the full room, and the wide four-door smart refrigerator moved east along the south wall so it no longer crowds the cabinet corner. Its approved integrated terminal screen and accumulated personal notes remain; `STACK_HOUSE_WORK_DISPLAY.md` records the explicit refinement to the locked kitchen surface. The physical in-progress cookbook remains on the island.
 
-User review established that the first version read too ordinary for the house. Rebuilt it as a high-end fitted kitchen with north and west perimeter cabinetry, a larger smoked-oak and stone center island, a statement range and hood, and a wide four-door smart refrigerator. The refrigerator now carries the approved integrated terminal screen while retaining accumulated notes and personal artifacts; `STACK_HOUSE_WORK_DISPLAY.md` records this explicit refinement to the locked kitchen surface. The physical in-progress cookbook remains on the island, the smaller breakfast table remains, and the Mudroom, Pantry and Laundry routes all remain clear.
+The breakfast table and chairs were removed by explicit user direction because the adjoining Dining Room already handles eating. This gives the Kitchen enough open floor to support the centered island and makes the Mudroom entrance plus the Pantry and Laundry service routes clearer. Matching v002 collision follows the revised six-piece layout.
 
 ### Pantry furnishing — 2026-09-08
 

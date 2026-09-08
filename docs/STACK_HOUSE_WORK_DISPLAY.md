@@ -113,7 +113,7 @@ They should not be reskins of the same interface.
 
 ---
 
-# Kitchen / Breakfast — LOCKED
+# Kitchen — LOCKED
 
 The kitchen is not another computer-based portfolio display. It is its own **recipe collection + cooking gameplay space**.
 
