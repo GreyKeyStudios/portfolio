@@ -1,0 +1,5 @@
+[
+  {"id":"furnace","x":0.78,"z":7.28,"width":0.62,"depth":1.28,"yaw":0},
+  {"id":"water-heater","x":0.78,"z":9.15,"width":0.66,"depth":0.66,"yaw":0},
+  {"id":"softener","x":-0.78,"z":9.92,"width":0.58,"depth":0.64,"yaw":0}
+]

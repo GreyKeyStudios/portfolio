@@ -464,6 +464,10 @@ Completed the upstairs Home Office around its existing interactive dual-monitor 
 
 Furnished the stable `guest-room` geometry as the canonically approved Master Bedroom / Grey Key Merch room. The bedroom-first layout uses a smoked-oak bed with upholstered navy headboard, paired nightstands and lamps, a dresser, partly open wardrobe, full-length mirror, hat, weekender bag and window-conscious placement. Grey Key merch appears naturally on the comforter, a framed wall print, folded shirts and hanging apparel rather than as a storefront. Three temporary merch images live under `public/textures/merch-placeholders/`; `lib/bedroom-merch-surfaces-v002.json` records their stable filenames, aspect ratios and intended replacements so real designs can be swapped later without remodeling the room. Matching v002 collision covers the bed, wardrobe and dresser while preserving the office doorway and an east-side route through the room.
 
+### Basement mechanical furnishing — 2026-09-08
+
+Built the locked Mechanical room as a believable service plant before adding its later preparation and puzzle logic. The east wall now carries a high-efficiency furnace, return plenum, supply trunk and water heater; the north-west corner holds a softener and brine tank. A breaker panel, color-coded service pipes, shutoff valves and pressure/status controls establish the power, water, HVAC and pressure affordances required by the experience bible without fixing their eventual interaction sequence. Equipment remains on the perimeter, leaving the west doorway and center service aisle clear. Matching v002 collision covers the three floor-mounted equipment groups.
+
 ### Gate house loading — 2026-09-08
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.

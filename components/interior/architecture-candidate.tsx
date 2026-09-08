@@ -17,6 +17,7 @@ import { registerStorageFurniture } from "@/lib/storage-furniture"
 import { registerLinenFurniture } from "@/lib/linen-furniture"
 import { registerOfficeDressing } from "@/lib/office-dressing"
 import { registerBedroomFurniture } from "@/lib/bedroom-furniture"
+import { registerMechanicalFurniture } from "@/lib/mechanical-furniture"
 
 type InteriorFloor = Exclude<FloorId, "yard">
 
@@ -46,6 +47,10 @@ function CandidateAsset({ url, refined = false }: { url: string; refined?: boole
 /** Opt-in architecture review. Asset URLs stay paired with this checkout. */
 export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: InteriorFloor; version?: string }) {
   useEffect(() => {
+    if (floor === 'basement' && version === 'v002') {
+      const removeMechanical = registerMechanicalFurniture()
+      return () => { removeMechanical() }
+    }
     if (floor === 'ground' && version === 'v002') {
       const removeLiving = registerLivingFurniture()
       const removeDining = registerDiningFurniture()
@@ -90,6 +95,11 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
           <CandidateAsset url="/models/linen-furniture-v002.glb" />
           <CandidateAsset url="/models/office-dressing-v002.glb" />
           <CandidateAsset url="/models/bedroom-furniture-v002.glb" />
+        </group>
+      )}
+      {floor === 'basement' && version === 'v002' && (
+        <group position={[X0, 0, 0]}>
+          <CandidateAsset url="/models/mechanical-furniture-v002.glb" />
         </group>
       )}
       {floor !== "attic" && (
