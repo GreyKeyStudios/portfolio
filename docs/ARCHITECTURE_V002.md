@@ -11,6 +11,12 @@ for the earlier staircase preview. Control selection remains independent.
 
 ## Changes
 
+- Reprogrammed the former first-floor game room as the Dining Room and moved
+  the Game Room / Man Cave into the large basement landing. A matched doorway
+  through the pantry now gives the dining room a direct Kitchen -> Pantry ->
+  Dining service route. Stable room ids remain unchanged for integration and
+  saved-state compatibility.
+
 - Added a closed, panelled deep-blue interior front door with ivory frame, brass
   lever, deadbolt, hinge knuckles and threshold. Art dimensions and collision
   derive from `ENTRY_DOOR` in `lib/architecture-details.ts`. The existing E/USE

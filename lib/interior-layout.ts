@@ -225,7 +225,7 @@ export interface RoomDef {
 // Flights are 1.05 wide rather than the sheet's 1.2. The centre column is 3.6;
 // a 2.6 shaft left 1.0 gross to walk past it, which after a 0.15 rail, a 0.15
 // wall and the player's 0.22 radius on each side came to a ~0.4 band — the sim
-// could not get from the front of the Foyer to the Kitchen or Game Room doors
+// could not get from the front of the Foyer to the Kitchen or Dining Room doors
 // at all. 2.3 leaves 1.3 gross and a comfortable corridor. 1.05 is still a
 // legal residential flight width and the pitch is untouched.
 export const CORE_MIN_X = COL_W          // lx(5.45)
@@ -282,7 +282,10 @@ export const ROOMS: RoomDef[] = [
   // -- BASEMENT --------------------------------------------------------------
   {
     id: 'basement-landing',
-    label: 'Landing / Storage',
+    // The basement's informal destination: game room / man cave in the open
+    // center, with the existing records, crates and equipment kept as useful
+    // perimeter storage rather than consuming a first-floor entertaining room.
+    label: 'Game Room / Man Cave',
     floor: 'basement',
     bounds: { minX: lx(0), maxX: CORE_MIN_X, minZ: 0, maxZ: HOUSE_D },
     doors: [
@@ -360,7 +363,7 @@ export const ROOMS: RoomDef[] = [
   // down the centre and measured 2.19x the reference's area: circulation
   // consuming the middle of the floor while the actual rooms went short. The
   // foyer is now an entry vestibule with the stair directly behind it, and
-  // rooms open off it. Client, Game and Kitchen absorb the reclaimed space.
+  // rooms open off it. Client, Dining and Kitchen absorb the reclaimed space.
   {
     // 1.7 wide, not 2.45. At 2.45 x 3.0 this was a 7.3 m2 powder room — bigger
     // than most bedrooms get, for a toilet and a basin. The 0.75 it gives up
@@ -394,7 +397,7 @@ export const ROOMS: RoomDef[] = [
   },
   {
     id: 'kitchen',
-    label: 'Kitchen / Dining',
+    label: 'Kitchen / Breakfast',
     floor: 'ground',
     bounds: { minX: lx(0), maxX: CORE_MIN_X, minZ: pl(3.0), maxZ: HOUSE_D },
     doors: [
@@ -434,7 +437,12 @@ export const ROOMS: RoomDef[] = [
     label: 'Pantry',
     floor: 'ground',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: pl(8.1) },
-    doors: [{ side: 'west', center: pl(7.1), width: DOOR }],
+    doors: [
+      { side: 'west', center: pl(7.1), width: DOOR },
+      // A direct pantry-to-dining connection makes the service route read as
+      // Kitchen -> Pantry -> Dining without cutting through the living room.
+      { side: 'east', center: pl(7.1), width: DOOR },
+    ],
     // No window. It backs onto the stair core and its only exterior wall would
     // be north, where the Laundry now sits.
     furnished: false,
@@ -473,10 +481,15 @@ export const ROOMS: RoomDef[] = [
   },
   {
     id: 'game-room',
-    label: 'Game Room / Lounge',
+    // Stable id retained for saved state and route compatibility. This room is
+    // now the formal dining room; the game room moved to the basement landing.
+    label: 'Dining Room',
     floor: 'ground',
     bounds: { minX: CORE_MAX_X, maxX: lx(HOUSE_W), minZ: pl(5.4), maxZ: HOUSE_D },
-    doors: [{ side: 'south', center: lx(pl(10.5)), width: DOOR }],
+    doors: [
+      { side: 'south', center: lx(pl(10.5)), width: DOOR },
+      { side: 'west', center: pl(7.1), width: DOOR },
+    ],
     windows: [
       { side: 'east', center: pl(8.1), width: 1.0 },
       { side: 'north', center: lx(pl(10.5)), width: 1.4 },

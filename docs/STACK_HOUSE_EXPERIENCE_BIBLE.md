@@ -197,7 +197,7 @@ That normality is part of what makes Stack House feel like a house.
 
 ## Basement
 
-**Landing / Storage** — records, crates, equipment, inventory/history, preparation objects.
+**Game Room / Man Cave** — console/TV for game prototypes; posters/concept art for games without playable builds. Records, crates, equipment, inventory/history, and preparation objects remain as believable perimeter storage.
 
 **Stair Hall** — traversal/environmental state.
 
@@ -213,17 +213,17 @@ That normality is part of what makes Stack House feel like a house.
 
 **Mudroom / Coats** — real transition/storage room.
 
-**Kitchen / Dining** — cookbook, restaurant concept, recipes, food/meal ideas. Cookbook stays here rather than “Writing” because house organizes by context.
+**Kitchen / Breakfast** — cookbook, restaurant concept, recipes, food/meal ideas, plus a smaller everyday eating area. Cookbook stays here rather than “Writing” because house organizes by context.
 
 **Foyer / Stair Hall** — orientation, house state, environmental storytelling.
 
-**Pantry** — real pantry + possible clues/supplies.
+**Pantry** — real pantry + possible clues/supplies; also the service passage between the kitchen and dining room.
 
 **Laundry** — real laundry + possible clues/jokes.
 
 **Client Room / Living** — TV/video, weird broadcasts, client work laptop, normal living/client space. Laptop can double as terminal.
 
-**Game Room / Lounge** — console/TV for game prototypes; posters/concept art for games that do not yet have playable builds.
+**Dining Room** — the first-floor formal dining room, reached from the living room and directly from the kitchen through the pantry.
 
 ## Second
 
@@ -270,7 +270,7 @@ Use interfaces that belong in the room:
 - Office computers → websites/apps currently in development.
 - Living-room TV → videos / YouTube / strange broadcasts.
 - Client laptop → client work + terminal functionality.
-- Game-room console/TV → playable game prototypes.
+- Basement game-room console/TV → playable game prototypes.
 - Game posters → concepts with no prototype yet.
 - Studio computer → GK Plugins + GK DAW/GK Studio.
 - GK DAW → preloaded Grey Key catalog sessions the visitor can inspect/play.

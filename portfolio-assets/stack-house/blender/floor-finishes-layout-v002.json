@@ -73,7 +73,7 @@
     },
     {
       "id": "kitchen",
-      "label": "Kitchen / Dining",
+      "label": "Kitchen / Breakfast",
       "floor": "ground",
       "bounds": {
         "minX": 293.4,
@@ -161,6 +161,11 @@
           "side": "west",
           "center": 7.1,
           "width": 1
+        },
+        {
+          "side": "east",
+          "center": 7.1,
+          "width": 1
         }
       ],
       "furnished": false
@@ -227,7 +232,7 @@
     },
     {
       "id": "game-room",
-      "label": "Game Room / Lounge",
+      "label": "Dining Room",
       "floor": "ground",
       "bounds": {
         "minX": 301.15,
@@ -239,6 +244,11 @@
         {
           "side": "south",
           "center": 303.9,
+          "width": 1
+        },
+        {
+          "side": "west",
+          "center": 7.1,
           "width": 1
         }
       ],

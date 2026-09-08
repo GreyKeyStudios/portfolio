@@ -168,6 +168,14 @@ assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')
 const removeFurniture = registerLivingFurniture()
 const furnished = getActiveColliders('ground')
 assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
+// The approved dining plan depends on this service route being a real opening
+// in both faces of the shared wall, not just a visual gap in one room.
+const serviceRoute = [[298,7.1],[300,7.1],[302,7.1]]
+for (let i=1;i<serviceRoute.length;i++) {
+  const [x,z]=serviceRoute[i], [px,pz]=serviceRoute[i-1]
+  const reached=moveWithCollision(px,pz,x,z,furnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Kitchen-pantry-dining route is blocked at ${x},${z}`)
+}
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.

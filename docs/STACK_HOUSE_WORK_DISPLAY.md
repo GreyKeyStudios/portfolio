@@ -113,7 +113,7 @@ They should not be reskins of the same interface.
 
 ---
 
-# Kitchen / Dining — LOCKED
+# Kitchen / Breakfast — LOCKED
 
 The kitchen is not another computer-based portfolio display. It is its own **recipe collection + cooking gameplay space**.
 
@@ -217,8 +217,8 @@ This display is separate from the physical cookbook: the cookbook is personal/ho
 These remain governed by the Experience Bible and should continue to differ from the two computer interfaces above:
 
 - Living-room TV → video/YouTube/strange broadcasts.
-- Game-room console + TV → playable game prototypes.
-- Game-room posters → game concepts without playable builds.
+- Basement game-room console + TV → playable game prototypes.
+- Basement game-room posters → game concepts without playable builds.
 - Grey Key Studios computer → GK Plugins + GK DAW/GK Studio.
 - GK DAW/GK Studio → inspect/play Grey Key catalog sessions and later boss-music preparation.
 - Kitchen → physical working cookbook + recipe collection/cooking minigame + fridge lore + restaurant kitchen display.

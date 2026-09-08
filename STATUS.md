@@ -408,9 +408,13 @@ Added authored embedded linen/rug textures, a brass reading lamp with a warm lig
 
 
 ### Whole-floor finishes — 2026-09-07
-User approved wood on the first floor except kitchen/bathroom and carpet on the second. V002 now extends smoked oak into mudroom, pantry, laundry and game room; existing foyer/living oak stays. Kitchen, half bath and upstairs bathroom use warm porcelain tile; remaining upstairs rooms and landing use warm low-pile carpet. Stairs remain oak. Floor finish surfaces clear the original doorway thresholds by 2mm; movement geometry and shaft openings stay unchanged. Finishes are generated from the authoritative room plan. Existing basement/attic treatment preserved.
+User approved wood on the first floor except kitchen/bathroom and carpet on the second. V002 now extends smoked oak into mudroom, pantry, laundry and the room with stable id `game-room` (now Dining Room); existing foyer/living oak stays. Kitchen, half bath and upstairs bathroom use warm porcelain tile; remaining upstairs rooms and landing use warm low-pile carpet. Stairs remain oak. Floor finish surfaces clear the original doorway thresholds by 2mm; movement geometry and shaft openings stay unchanged. Finishes are generated from the authoritative room plan. Existing basement/attic treatment preserved.
 
 Validation: room-by-room floor material/height checks, shaft-clearance checks, furniture routes, six stair routes and TypeScript pass. Kitchen threshold flicker fixed and visually rechecked. Ground finish adds 500 triangles; second floor adds 16.
+
+### Dining room and basement game room — 2026-09-08
+
+User moved the Game Room / Man Cave from the first-floor room beside the living room into the large basement landing. The first-floor room is now the Dining Room, the kitchen retains a smaller breakfast area, and a new opening through the pantry creates a direct Kitchen -> Pantry -> Dining service route. Stable room ids remain unchanged for saved-state and integration compatibility.
 
 ### Living-room softening pass — 2026-09-07
 Added restrained ivory side curtains to the two front sash windows, a quiet framed landscape on the north wall, and a broad-leaf plant behind the sofa. These pieces stay against the room perimeter and add no new walking obstruction. Updated furniture export is 13,840 triangles, 16 material primitives and 1,381,004 bytes. Architecture and traversal regressions pass. The browser inspection helper was unavailable after the model switch, so this pass remains pending a live visual acceptance check before further decoration.
