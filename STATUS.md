@@ -416,6 +416,10 @@ Validation: room-by-room floor material/height checks, shaft-clearance checks, f
 
 User moved the Game Room / Man Cave from the first-floor room beside the living room into the large basement landing. The first-floor room is now the Dining Room, the kitchen retains a smaller breakfast area, and a new opening through the pantry creates a direct Kitchen -> Pantry -> Dining service route. Stable room ids remain unchanged for saved-state and integration compatibility.
 
+### Dining room furnishing — 2026-09-08
+
+Added a six-seat smoked-oak dining table, warm upholstered chairs, muted rug, navy-fronted sideboard, table settings, restrained wall art, and a compact chandelier. The east-west table orientation keeps both the living-room entrance and the Kitchen -> Pantry -> Dining service route clear. V002 mounts matching furniture collision; legacy variants remain unaffected.
+
 ### Living-room softening pass — 2026-09-07
 Added restrained ivory side curtains to the two front sash windows, a quiet framed landscape on the north wall, and a broad-leaf plant behind the sofa. These pieces stay against the room perimeter and add no new walking obstruction. Updated furniture export is 13,840 triangles, 16 material primitives and 1,381,004 bytes. Architecture and traversal regressions pass. The browser inspection helper was unavailable after the model switch, so this pass remains pending a live visual acceptance check before further decoration.
 

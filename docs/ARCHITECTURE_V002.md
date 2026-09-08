@@ -65,6 +65,12 @@ closing Blender to release memory during the pause.
 
 ## Verification and limits
 
+Dining-room furnishing adds a six-seat smoked-oak table, upholstered chairs,
+muted wool rug, navy-fronted sideboard, table settings, wall art, and a compact
+five-light chandelier. The table runs east-west so the living-room approach and
+the new pantry service route stay legible and clear. Furniture collision is
+registered only while v002 is mounted.
+
 Entrance follow-up: TypeScript and the extended architecture checks pass. The
 closed leaf blocks forward walking while leaving the exit interaction in reach;
 a raycast verifies the model face agrees with the collider. Live browser USE

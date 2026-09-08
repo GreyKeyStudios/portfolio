@@ -163,11 +163,14 @@ assert.ok(doorHit && Math.abs(doorHit.point.z - ENTRY_DOOR.centerZ - ENTRY_DOOR.
 const { getInteriorColliders } = require('../lib/interior-colliders.ts')
 const { moveWithCollision } = require('../lib/collision.ts')
 const { registerLivingFurniture, LIVING_FURNITURE_COLLIDERS } = require('../lib/living-furniture.ts')
+const { registerDiningFurniture, DINING_FURNITURE_COLLIDERS } = require('../lib/dining-furniture.ts')
 const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
+const removeDining = registerDiningFurniture()
 const furnished = getActiveColliders('ground')
 assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
+assert.equal(furnished.filter(c => c.label?.startsWith('dining-')).length, 8)
 // The approved dining plan depends on this service route being a real opening
 // in both faces of the shared wall, not just a visual gap in one room.
 const serviceRoute = [[298,7.1],[300,7.1],[302,7.1]]
@@ -190,6 +193,12 @@ for (const piece of LIVING_FURNITURE_COLLIDERS) {
   const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
   assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
 }
+for (const piece of DINING_FURNITURE_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
+  assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
+}
+removeDining()
 removeFurniture()
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Unmount leaves furniture collisions')
 const topGuards = getInteriorColliders('attic', 8.1).filter(c => c.label.startsWith('attic-guard-'))
