@@ -168,6 +168,7 @@ const { registerKitchenFurniture, KITCHEN_FURNITURE_COLLIDERS } = require('../li
 const { registerPantryFurniture, PANTRY_FURNITURE_COLLIDERS } = require('../lib/pantry-furniture.ts')
 const { registerLaundryFurniture, LAUNDRY_FURNITURE_COLLIDERS } = require('../lib/laundry-furniture.ts')
 const { registerMudroomFurniture, MUDROOM_FURNITURE_COLLIDERS } = require('../lib/mudroom-furniture.ts')
+const { registerHalfBathFurniture, HALF_BATH_FURNITURE_COLLIDERS } = require('../lib/half-bath-furniture.ts')
 const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
@@ -176,6 +177,7 @@ const removeKitchen = registerKitchenFurniture()
 const removePantry = registerPantryFurniture()
 const removeLaundry = registerLaundryFurniture()
 const removeMudroom = registerMudroomFurniture()
+const removeHalfBath = registerHalfBathFurniture()
 const furnished = getActiveColliders('ground')
 assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
 assert.equal(furnished.filter(c => c.label?.startsWith('dining-')).length, 8)
@@ -183,6 +185,7 @@ assert.equal(furnished.filter(c => c.label?.startsWith('kitchen-furniture-')).le
 assert.equal(furnished.filter(c => c.label?.startsWith('pantry-furniture-')).length, 2)
 assert.equal(furnished.filter(c => c.label?.startsWith('laundry-furniture-')).length, 3)
 assert.equal(furnished.filter(c => c.label?.startsWith('mudroom-furniture-')).length, 2)
+assert.equal(furnished.filter(c => c.label?.startsWith('half-bath-furniture-')).length, 2)
 // The approved dining plan depends on this service route being a real opening
 // in both faces of the shared wall, not just a visual gap in one room.
 const serviceRoute = [[298,7.1],[300,7.1],[302,7.1]]
@@ -206,6 +209,8 @@ const laundryManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house
 assert.equal(hash('lib/laundry-furniture-v002.json'), laundryManifest.layout_sha256, 'Laundry export layout is stale')
 const mudroomManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/mudroom-furniture-v002.manifest.json'))
 assert.equal(hash('lib/mudroom-furniture-v002.json'), mudroomManifest.layout_sha256, 'Mudroom export layout is stale')
+const halfBathManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/half-bath-furniture-v002.manifest.json'))
+assert.equal(hash('lib/half-bath-furniture-v002.json'), halfBathManifest.layout_sha256, 'Half-bath export layout is stale')
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.
@@ -261,6 +266,19 @@ for (const mudroomRoute of [
   const reached=moveWithCollision(px,pz,x,z,furnished)
   assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Mudroom circulation is blocked at ${x},${z}`)
 }
+for (const piece of HALF_BATH_FURNITURE_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.maxX+.5,z,x,z,[piece])
+  assert.ok(stopped.x > piece.maxX, `${piece.label} does not block the player`)
+}
+// Enter from the Mudroom, stand at the basin, then turn toward the toilet.
+const halfBathRoute = [[295.55,1.5],[294.72,1.5],[294.25,1.5],[294.25,.92],[294.25,1.5],[294.25,1.85]]
+for (let i=1;i<halfBathRoute.length;i++) {
+  const [x,z]=halfBathRoute[i], [px,pz]=halfBathRoute[i-1]
+  const reached=moveWithCollision(px,pz,x,z,furnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Half-bath aisle is blocked at ${x},${z}`)
+}
+removeHalfBath()
 removeMudroom()
 removeLaundry()
 removePantry()
