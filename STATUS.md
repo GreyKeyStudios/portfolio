@@ -456,6 +456,10 @@ Added blackened-steel and plywood perimeter racks, mixed labeled household bins,
 
 The compact, windowless upstairs Linen room now reads as a finished household service closet. A warm painted linen press spans the back wall with lower cupboards, open oak shelves and ordered stacks of white, oatmeal and navy linens. Shallow east-wall shelving holds woven baskets, with a floor hamper and compact warm ceiling fixture completing the room. Furnishing remains tight to the back and east walls so the west doorway and central standing space stay clear. Matching v002 collision follows the shared placement data; the room remains intentionally mundane and carries no forced portfolio display.
 
+### Home office furnishing pass — 2026-09-08
+
+Completed the upstairs Home Office around its existing interactive dual-monitor workstation. A shallow west-wall reference cabinet adds working books and files, while a smoked-oak-topped printer credenza fits between the two north doorways with a scanner/printer, paper stack and framed process sheets above. A compact plant softens the window corner. The ordinary workstation interaction remains the room's locked portfolio surface for development work and the future Bug diagnostic sequence; this pass does not canonize the still-open desktop visual language or project assignment. Matching v002 collision covers the new storage pieces, and both hall-to-bathroom and hall-to-bedroom routes remain clear.
+
 ### Gate house loading — 2026-09-08
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.

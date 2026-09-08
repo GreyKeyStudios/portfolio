@@ -172,6 +172,7 @@ const { registerHalfBathFurniture, HALF_BATH_FURNITURE_COLLIDERS } = require('..
 const { registerBathroomFurniture, BATHROOM_FURNITURE_COLLIDERS } = require('../lib/bathroom-furniture.ts')
 const { registerStorageFurniture, STORAGE_FURNITURE_COLLIDERS } = require('../lib/storage-furniture.ts')
 const { registerLinenFurniture, LINEN_FURNITURE_COLLIDERS } = require('../lib/linen-furniture.ts')
+const { registerOfficeDressing, OFFICE_DRESSING_COLLIDERS } = require('../lib/office-dressing.ts')
 const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
@@ -220,6 +221,8 @@ const storageManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house
 assert.equal(hash('lib/storage-furniture-v002.json'), storageManifest.layout_sha256, 'Storage export layout is stale')
 const linenManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/linen-furniture-v002.manifest.json'))
 assert.equal(hash('lib/linen-furniture-v002.json'), linenManifest.layout_sha256, 'Linen export layout is stale')
+const officeManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/office-dressing-v002.manifest.json'))
+assert.equal(hash('lib/office-dressing-v002.json'), officeManifest.layout_sha256, 'Office dressing export layout is stale')
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.
@@ -299,10 +302,12 @@ assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('bathroom-
 const removeBathroom = registerBathroomFurniture()
 const removeStorage = registerStorageFurniture()
 const removeLinen = registerLinenFurniture()
+const removeOffice = registerOfficeDressing()
 const secondFurnished = getActiveColliders('second')
 assert.equal(secondFurnished.filter(c => c.label?.startsWith('bathroom-furniture-')).length, 3)
 assert.equal(secondFurnished.filter(c => c.label?.startsWith('storage-furniture-')).length, 3)
 assert.equal(secondFurnished.filter(c => c.label?.startsWith('linen-furniture-')).length, 3)
+assert.equal(secondFurnished.filter(c => c.label?.startsWith('office-dressing-')).length, 2)
 for (const piece of BATHROOM_FURNITURE_COLLIDERS) {
   const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
   const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
@@ -330,6 +335,20 @@ for (const piece of LINEN_FURNITURE_COLLIDERS) {
   const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
   assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
 }
+for (const piece of OFFICE_DRESSING_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.maxX+.5,z,x,z,[piece])
+  assert.ok(stopped.x > piece.maxX, `${piece.label} does not block the player`)
+}
+// The office remains the circulation room between the hall and both north rooms.
+for (const officeRoute of [
+  [[300.75,1.4],[301.95,1.4],[302.10,3.8],[302.10,5.75]],
+  [[301.95,1.4],[303.10,2.2],[304.85,3.9],[305.30,5.75]],
+]) for (let i=1;i<officeRoute.length;i++) {
+  const [x,z]=officeRoute[i], [px,pz]=officeRoute[i-1]
+  const reached=moveWithCollision(px,pz,x,z,secondFurnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Home-office circulation is blocked at ${x},${z}`)
+}
 const linenRoute = [[298.45,10.1],[299.08,10.1],[299.55,10.1]]
 for (let i=1;i<linenRoute.length;i++) {
   const [x,z]=linenRoute[i], [px,pz]=linenRoute[i-1]
@@ -337,11 +356,13 @@ for (let i=1;i<linenRoute.length;i++) {
   assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Linen closet standing space is blocked at ${x},${z}`)
 }
 removeLinen()
+removeOffice()
 removeStorage()
 removeBathroom()
 assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('bathroom-furniture-')), 'Unmount leaves bathroom collisions')
 assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('storage-furniture-')), 'Unmount leaves storage collisions')
 assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('linen-furniture-')), 'Unmount leaves linen collisions')
+assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('office-dressing-')), 'Unmount leaves office dressing collisions')
 const topGuards = getInteriorColliders('attic', 8.1).filter(c => c.label.startsWith('attic-guard-'))
 assert.equal(topGuards.length, 4)
 assert.equal(getInteriorColliders('attic', 6.7).filter(c => c.label.startsWith('attic-guard-')).length, 0)
