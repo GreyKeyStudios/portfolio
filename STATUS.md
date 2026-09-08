@@ -428,6 +428,8 @@ Added warm-ivory cabinetry and stone counters along the north wall, a sink benea
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.
 
+The optimized asset initially exposed a cold-cache gap because the gate rendered nothing while the new file downloaded. The gate now paints an immediate low-detail house silhouette, replaces it with the approved detailed model when ready, loads that model from the site's own origin, and supplies explicit Cloudflare cache headers. This keeps the house present through variable network and CDN response times.
+
 ### Living-room softening pass — 2026-09-07
 Added restrained ivory side curtains to the two front sash windows, a quiet framed landscape on the north wall, and a broad-leaf plant behind the sofa. These pieces stay against the room perimeter and add no new walking obstruction. Updated furniture export is 13,840 triangles, 16 material primitives and 1,381,004 bytes. Architecture and traversal regressions pass. The browser inspection helper was unavailable after the model switch, so this pass remains pending a live visual acceptance check before further decoration.
 

@@ -4,11 +4,28 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useGLTF } from "@react-three/drei"
 import { Suspense, useMemo, useRef } from "react"
 import * as THREE from "three"
-import { getModelUrl } from "@/lib/model-url"
 
-// The gate renders the house as a small background hero. Loading the full
-// walkable exterior here delayed the first meaningful image by several seconds.
-const MODEL_URL = getModelUrl("house-gate-preview.glb")
+// This gate-only asset is served from the site's own static CDN. The
+// full walkable model still uses getModelUrl in HouseModel; the gate should not
+// depend on a second origin before it can paint its hero.
+const MODEL_URL = "/models/house-gate-preview.glb"
+
+function GateHouseFallback() {
+  const { viewport } = useThree()
+  const mobile = viewport.width < 7
+  return (
+    <group position={[mobile ? 0.4 : 0.1, mobile ? -0.12 : 0.18, 0]} rotation={[0, -0.28, 0]} scale={mobile ? 0.9 : 1.08}>
+      <group position={[0, -1.82, 0]}>
+        <mesh position={[0, 1.15, 0]}><boxGeometry args={[3.55, 2.25, 2.05]} /><meshStandardMaterial color="#111827" roughness={.9} /></mesh>
+        <mesh position={[0, 2.55, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[2.55, 1.25, 4]} /><meshStandardMaterial color="#090d17" roughness={.86} /></mesh>
+        <mesh position={[0, .82, 1.05]}><boxGeometry args={[.62, 1.55, .08]} /><meshStandardMaterial color="#1b2130" /></mesh>
+        {[-1.12, 1.12].flatMap((x) => [.85, 1.72].map((y) => (
+          <mesh key={`${x}-${y}`} position={[x, y, 1.06]}><boxGeometry args={[.52, .52, .04]} /><meshBasicMaterial color="#6f83be" /></mesh>
+        )))}
+      </group>
+    </group>
+  )
+}
 
 function GateHouse() {
   const group = useRef<THREE.Group>(null)
@@ -54,7 +71,7 @@ export function GateScene() {
       <ambientLight color="#0c1630" intensity={0.19} />
       <directionalLight position={[-4, 5, 5]} color="#3154a8" intensity={0.58} castShadow />
       <directionalLight position={[4, 2, -2]} color="#10182b" intensity={0.8} />
-      <Suspense fallback={null}><GateHouse /></Suspense>
+      <Suspense fallback={<GateHouseFallback />}><GateHouse /></Suspense>
     </Canvas>
   )
 }
