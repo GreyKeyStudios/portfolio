@@ -166,17 +166,20 @@ const { registerLivingFurniture, LIVING_FURNITURE_COLLIDERS } = require('../lib/
 const { registerDiningFurniture, DINING_FURNITURE_COLLIDERS } = require('../lib/dining-furniture.ts')
 const { registerKitchenFurniture, KITCHEN_FURNITURE_COLLIDERS } = require('../lib/kitchen-furniture.ts')
 const { registerPantryFurniture, PANTRY_FURNITURE_COLLIDERS } = require('../lib/pantry-furniture.ts')
+const { registerLaundryFurniture, LAUNDRY_FURNITURE_COLLIDERS } = require('../lib/laundry-furniture.ts')
 const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
 const removeDining = registerDiningFurniture()
 const removeKitchen = registerKitchenFurniture()
 const removePantry = registerPantryFurniture()
+const removeLaundry = registerLaundryFurniture()
 const furnished = getActiveColliders('ground')
 assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
 assert.equal(furnished.filter(c => c.label?.startsWith('dining-')).length, 8)
 assert.equal(furnished.filter(c => c.label?.startsWith('kitchen-furniture-')).length, 8)
 assert.equal(furnished.filter(c => c.label?.startsWith('pantry-furniture-')).length, 2)
+assert.equal(furnished.filter(c => c.label?.startsWith('laundry-furniture-')).length, 3)
 // The approved dining plan depends on this service route being a real opening
 // in both faces of the shared wall, not just a visual gap in one room.
 const serviceRoute = [[298,7.1],[300,7.1],[302,7.1]]
@@ -196,6 +199,8 @@ const kitchenManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house
 assert.equal(hash('lib/kitchen-furniture-v002.json'), kitchenManifest.layout_sha256, 'Kitchen export layout is stale')
 const pantryManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/pantry-furniture-v002.manifest.json'))
 assert.equal(hash('lib/pantry-furniture-v002.json'), pantryManifest.layout_sha256, 'Pantry export layout is stale')
+const laundryManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/laundry-furniture-v002.manifest.json'))
+assert.equal(hash('lib/laundry-furniture-v002.json'), laundryManifest.layout_sha256, 'Laundry export layout is stale')
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.
@@ -225,6 +230,19 @@ for (const piece of PANTRY_FURNITURE_COLLIDERS) {
   const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
   assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
 }
+for (const piece of LAUNDRY_FURNITURE_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
+  assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
+}
+// Enter from the Kitchen and reach the clear working aisle in front of both machines.
+const laundryRoute = [[297.9,9.4],[298.35,9.4],[299.3,9.4],[299.3,8.75]]
+for (let i=1;i<laundryRoute.length;i++) {
+  const [x,z]=laundryRoute[i], [px,pz]=laundryRoute[i-1]
+  const reached=moveWithCollision(px,pz,x,z,furnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Laundry working aisle is blocked at ${x},${z}`)
+}
+removeLaundry()
 removePantry()
 removeKitchen()
 removeDining()
