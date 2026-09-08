@@ -424,6 +424,10 @@ Added a six-seat smoked-oak dining table, warm upholstered chairs, muted rug, na
 
 Added warm-ivory cabinetry and stone counters along the north wall, a sink beneath the large window, an induction island with the active in-progress cookbook, refrigerator, paired island pendants, and a four-seat breakfast table. The east service lane stays open to both pantry and laundry doors, and the mudroom route passes around the breakfast group. Matching v002 collision is mounted with the asset.
 
+### Gate house loading — 2026-09-08
+
+The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.
+
 ### Living-room softening pass — 2026-09-07
 Added restrained ivory side curtains to the two front sash windows, a quiet framed landscape on the north wall, and a broad-leaf plant behind the sofa. These pieces stay against the room perimeter and add no new walking obstruction. Updated furniture export is 13,840 triangles, 16 material primitives and 1,381,004 bytes. Architecture and traversal regressions pass. The browser inspection helper was unavailable after the model switch, so this pass remains pending a live visual acceptance check before further decoration.
 

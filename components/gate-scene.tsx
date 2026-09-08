@@ -6,7 +6,9 @@ import { Suspense, useMemo, useRef } from "react"
 import * as THREE from "three"
 import { getModelUrl } from "@/lib/model-url"
 
-const MODEL_URL = getModelUrl("house-main-optimized.glb")
+// The gate renders the house as a small background hero. Loading the full
+// walkable exterior here delayed the first meaningful image by several seconds.
+const MODEL_URL = getModelUrl("house-gate-preview.glb")
 
 function GateHouse() {
   const group = useRef<THREE.Group>(null)
