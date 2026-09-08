@@ -442,6 +442,10 @@ Added a navy and smoked-oak built-in west of the Kitchen opening with a cushione
 
 Completed the ground-floor powder room with a navy furniture-style vanity, warm-stone top, vessel sink, brass fittings, framed round mirror, paired sconces, residential toilet, towel ring and paper holder. The vanity and toilet occupy opposite ends of the narrow room so the Mudroom doorway opens into a clear center aisle. Matching v002 collision follows the shared placement data. This completes the initial ground-floor furnishing pass.
 
+### Upstairs bathroom furnishing — 2026-09-08
+
+Started the second-floor pass with the full Bathroom. The long, narrow room now has a navy vanity and mirror near the hall entrance, a west-facing toilet farther in, and an alcove tub/shower beneath the high north window with a partial glass screen. Brass fixtures, towels and a runner supply residential scale. The fixtures stay on the perimeter and preserve a continuous hall-to-tub aisle. Matching v002 collision mounts only on the candidate second floor and follows the shared placement data.
+
 ### Gate house loading — 2026-09-08
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.

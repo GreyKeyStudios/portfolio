@@ -169,6 +169,7 @@ const { registerPantryFurniture, PANTRY_FURNITURE_COLLIDERS } = require('../lib/
 const { registerLaundryFurniture, LAUNDRY_FURNITURE_COLLIDERS } = require('../lib/laundry-furniture.ts')
 const { registerMudroomFurniture, MUDROOM_FURNITURE_COLLIDERS } = require('../lib/mudroom-furniture.ts')
 const { registerHalfBathFurniture, HALF_BATH_FURNITURE_COLLIDERS } = require('../lib/half-bath-furniture.ts')
+const { registerBathroomFurniture, BATHROOM_FURNITURE_COLLIDERS } = require('../lib/bathroom-furniture.ts')
 const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
@@ -211,6 +212,8 @@ const mudroomManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house
 assert.equal(hash('lib/mudroom-furniture-v002.json'), mudroomManifest.layout_sha256, 'Mudroom export layout is stale')
 const halfBathManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/half-bath-furniture-v002.manifest.json'))
 assert.equal(hash('lib/half-bath-furniture-v002.json'), halfBathManifest.layout_sha256, 'Half-bath export layout is stale')
+const bathroomManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/bathroom-furniture-v002.manifest.json'))
+assert.equal(hash('lib/bathroom-furniture-v002.json'), bathroomManifest.layout_sha256, 'Bathroom export layout is stale')
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.
@@ -286,6 +289,23 @@ removeKitchen()
 removeDining()
 removeFurniture()
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Unmount leaves furniture collisions')
+assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('bathroom-furniture-')), 'Legacy second floor has invisible bathroom furniture')
+const removeBathroom = registerBathroomFurniture()
+const secondFurnished = getActiveColliders('second')
+assert.equal(secondFurnished.filter(c => c.label?.startsWith('bathroom-furniture-')).length, 3)
+for (const piece of BATHROOM_FURNITURE_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
+  assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
+}
+const bathroomRoute = [[302.1,4.95],[302.1,5.75],[302.05,7.40],[301.85,7.55],[301.85,9.55]]
+for (let i=1;i<bathroomRoute.length;i++) {
+  const [x,z]=bathroomRoute[i], [px,pz]=bathroomRoute[i-1]
+  const reached=moveWithCollision(px,pz,x,z,secondFurnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Upstairs bathroom aisle is blocked at ${x},${z}`)
+}
+removeBathroom()
+assert.ok(!getActiveColliders('second').some(c => c.label?.startsWith('bathroom-furniture-')), 'Unmount leaves bathroom collisions')
 const topGuards = getInteriorColliders('attic', 8.1).filter(c => c.label.startsWith('attic-guard-'))
 assert.equal(topGuards.length, 4)
 assert.equal(getInteriorColliders('attic', 6.7).filter(c => c.label.startsWith('attic-guard-')).length, 0)

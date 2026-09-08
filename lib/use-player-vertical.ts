@@ -8,6 +8,7 @@ import { withPantryFurniture } from './pantry-furniture'
 import { withLaundryFurniture } from './laundry-furniture'
 import { withMudroomFurniture } from './mudroom-furniture'
 import { withHalfBathFurniture } from './half-bath-furniture'
+import { withBathroomFurniture } from './bathroom-furniture'
 import { FLOOR_BASE_Y, STAIRS, X0, floorAtY, type FloorId } from './interior-layout'
 
 import { INTERIOR_EYE_HEIGHT as EYE_HEIGHT, YARD_EYE_HEIGHT } from './player-camera'
@@ -15,7 +16,9 @@ import { INTERIOR_EYE_HEIGHT as EYE_HEIGHT, YARD_EYE_HEIGHT } from './player-cam
 export function getActiveColliders(location: FloorId, eyeY = Infinity): AABB[] {
   if (location === 'yard') return COLLIDERS
   const walls = getInteriorColliders(location, eyeY)
-  return location === 'ground' ? withHalfBathFurniture(withMudroomFurniture(withLaundryFurniture(withPantryFurniture(withKitchenFurniture(withDiningFurniture(withLivingFurniture(walls))))))) : walls
+  if (location === 'ground') return withHalfBathFurniture(withMudroomFurniture(withLaundryFurniture(withPantryFurniture(withKitchenFurniture(withDiningFurniture(withLivingFurniture(walls)))))))
+  if (location === 'second') return withBathroomFurniture(walls)
+  return walls
 }
 
 export function getWorldBounds(location: FloorId): { minX: number; maxX: number; minZ: number; maxZ: number } {

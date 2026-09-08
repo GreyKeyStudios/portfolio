@@ -12,6 +12,7 @@ import { registerPantryFurniture } from "@/lib/pantry-furniture"
 import { registerLaundryFurniture } from "@/lib/laundry-furniture"
 import { registerMudroomFurniture } from "@/lib/mudroom-furniture"
 import { registerHalfBathFurniture } from "@/lib/half-bath-furniture"
+import { registerBathroomFurniture } from "@/lib/bathroom-furniture"
 
 type InteriorFloor = Exclude<FloorId, "yard">
 
@@ -51,6 +52,10 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
       const removeHalfBath = registerHalfBathFurniture()
       return () => { removeHalfBath(); removeMudroom(); removeLaundry(); removePantry(); removeKitchen(); removeDining(); removeLiving() }
     }
+    if (floor === 'second' && version === 'v002') {
+      const removeBathroom = registerBathroomFurniture()
+      return () => { removeBathroom() }
+    }
   }, [floor, version])
   return (
     <group position={[0, FLOOR_BASE_Y[floor], 0]} name={`architecture-${version}-${floor}`}>
@@ -68,6 +73,11 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
           <CandidateAsset url="/models/laundry-furniture-v002.glb" />
           <CandidateAsset url="/models/mudroom-furniture-v002.glb" />
           <CandidateAsset url="/models/half-bath-furniture-v002.glb" />
+        </group>
+      )}
+      {floor === 'second' && version === 'v002' && (
+        <group position={[X0, 0, 0]}>
+          <CandidateAsset url="/models/bathroom-furniture-v002.glb" />
         </group>
       )}
       {floor !== "attic" && (
