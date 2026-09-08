@@ -1,0 +1,5 @@
+[
+  {"id":"east-shelving","x":0.91,"z":7.62,"width":0.36,"depth":2.38,"yaw":0},
+  {"id":"north-shelving","x":0.16,"z":9.18,"width":1.48,"depth":0.34,"yaw":0},
+  {"id":"box-stack","x":-0.68,"z":6.55,"width":0.54,"depth":0.58,"yaw":0}
+]
