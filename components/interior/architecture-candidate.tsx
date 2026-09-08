@@ -14,6 +14,7 @@ import { registerMudroomFurniture } from "@/lib/mudroom-furniture"
 import { registerHalfBathFurniture } from "@/lib/half-bath-furniture"
 import { registerBathroomFurniture } from "@/lib/bathroom-furniture"
 import { registerStorageFurniture } from "@/lib/storage-furniture"
+import { registerLinenFurniture } from "@/lib/linen-furniture"
 
 type InteriorFloor = Exclude<FloorId, "yard">
 
@@ -56,7 +57,8 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
     if (floor === 'second' && version === 'v002') {
       const removeBathroom = registerBathroomFurniture()
       const removeStorage = registerStorageFurniture()
-      return () => { removeStorage(); removeBathroom() }
+      const removeLinen = registerLinenFurniture()
+      return () => { removeLinen(); removeStorage(); removeBathroom() }
     }
   }, [floor, version])
   return (
@@ -81,6 +83,7 @@ export function ArchitectureCandidate({ floor, version = 'v001' }: { floor: Inte
         <group position={[X0, 0, 0]}>
           <CandidateAsset url="/models/bathroom-furniture-v002.glb" />
           <CandidateAsset url="/models/storage-furniture-v002.glb" />
+          <CandidateAsset url="/models/linen-furniture-v002.glb" />
         </group>
       )}
       {floor !== "attic" && (

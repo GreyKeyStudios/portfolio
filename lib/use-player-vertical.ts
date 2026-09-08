@@ -10,6 +10,7 @@ import { withMudroomFurniture } from './mudroom-furniture'
 import { withHalfBathFurniture } from './half-bath-furniture'
 import { withBathroomFurniture } from './bathroom-furniture'
 import { withStorageFurniture } from './storage-furniture'
+import { withLinenFurniture } from './linen-furniture'
 import { FLOOR_BASE_Y, STAIRS, X0, floorAtY, type FloorId } from './interior-layout'
 
 import { INTERIOR_EYE_HEIGHT as EYE_HEIGHT, YARD_EYE_HEIGHT } from './player-camera'
@@ -18,7 +19,7 @@ export function getActiveColliders(location: FloorId, eyeY = Infinity): AABB[] {
   if (location === 'yard') return COLLIDERS
   const walls = getInteriorColliders(location, eyeY)
   if (location === 'ground') return withHalfBathFurniture(withMudroomFurniture(withLaundryFurniture(withPantryFurniture(withKitchenFurniture(withDiningFurniture(withLivingFurniture(walls)))))))
-  if (location === 'second') return withStorageFurniture(withBathroomFurniture(walls))
+  if (location === 'second') return withLinenFurniture(withStorageFurniture(withBathroomFurniture(walls)))
   return walls
 }
 

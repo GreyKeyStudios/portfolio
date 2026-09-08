@@ -452,6 +452,10 @@ Started the second-floor pass with the full Bathroom. The long, narrow room now 
 
 Added blackened-steel and plywood perimeter racks, mixed labeled household bins, seasonal floor boxes and a small clue-ready lockbox. The deep rack stays against the east wall, the north rack turns the storage around the back corner, and the loose box stack occupies dead floor away from the west doorway. The center remains open for believable access to the stored items. Matching v002 collision follows the shared placement data.
 
+### Linen closet furnishing — 2026-09-08
+
+The compact, windowless upstairs Linen room now reads as a finished household service closet. A warm painted linen press spans the back wall with lower cupboards, open oak shelves and ordered stacks of white, oatmeal and navy linens. Shallow east-wall shelving holds woven baskets, with a floor hamper and compact warm ceiling fixture completing the room. Furnishing remains tight to the back and east walls so the west doorway and central standing space stay clear. Matching v002 collision follows the shared placement data; the room remains intentionally mundane and carries no forced portfolio display.
+
 ### Gate house loading — 2026-09-08
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.
