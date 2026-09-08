@@ -424,6 +424,8 @@ Added a six-seat smoked-oak dining table, warm upholstered chairs, muted rug, na
 
 Added warm-ivory cabinetry and stone counters along the north wall, a sink beneath the large window, an induction island with the active in-progress cookbook, refrigerator, paired island pendants, and a four-seat breakfast table. The east service lane stays open to both pantry and laundry doors, and the mudroom route passes around the breakfast group. Matching v002 collision is mounted with the asset.
 
+User review established that the first version read too ordinary for the house. Rebuilt it as a high-end fitted kitchen with north and west perimeter cabinetry, a larger smoked-oak and stone center island, a statement range and hood, and a wide four-door smart refrigerator. The refrigerator now carries the approved integrated terminal screen while retaining accumulated notes and personal artifacts; `STACK_HOUSE_WORK_DISPLAY.md` records this explicit refinement to the locked kitchen surface. The physical in-progress cookbook remains on the island, the smaller breakfast table remains, and the Mudroom, Pantry and Laundry routes all remain clear.
+
 ### Pantry furnishing — 2026-09-08
 
 Added full-height smoked-oak shelving to both long walls of the walk-through Pantry, with labeled lower bins, dry-goods jars, preserves and upper baskets. Storage stays shallow enough to preserve a clear central Kitchen -> Pantry -> Dining aisle. Matching v002 collision is mounted only with the candidate architecture; the Blender source, shared placement JSON and export manifest are retained with the other furnishing assets.

@@ -1,7 +1,10 @@
 [
-  {"id":"north-cabinets","x":-3.90,"z":11.27,"width":4.70,"depth":0.52,"yaw":0},
-  {"id":"island","x":-4.05,"z":9.25,"width":2.25,"depth":0.86,"yaw":0},
-  {"id":"fridge","x":-5.95,"z":3.42,"width":0.82,"depth":0.70,"yaw":0},
+  {"id":"north-cabinets","x":-3.90,"z":10.52,"width":4.70,"depth":0.52,"yaw":0},
+  {"id":"west-cabinets-south","x":-6.32,"z":5.05,"width":1.90,"depth":0.52,"yaw":1.5707963267948966},
+  {"id":"range","x":-6.28,"z":7.05,"width":1.18,"depth":0.66,"yaw":1.5707963267948966},
+  {"id":"west-cabinets-north","x":-6.32,"z":9.00,"width":1.75,"depth":0.52,"yaw":1.5707963267948966},
+  {"id":"island","x":-3.65,"z":8.35,"width":2.60,"depth":1.04,"yaw":0},
+  {"id":"fridge","x":-5.70,"z":3.40,"width":1.55,"depth":0.76,"yaw":0},
   {"id":"breakfast-table","x":-4.05,"z":5.25,"width":1.05,"depth":1.05,"yaw":0},
   {"id":"breakfast-north","x":-4.05,"z":6.12,"width":0.48,"depth":0.50,"yaw":3.141592653589793},
   {"id":"breakfast-south","x":-4.05,"z":4.38,"width":0.48,"depth":0.50,"yaw":0},

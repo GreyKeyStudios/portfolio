@@ -177,9 +177,9 @@ Failure/comedy is welcome. Example tone:
 
 Do not make failed cooking permanently punitive.
 
-## Refrigerator — LOCKED SURFACE
+## Refrigerator / integrated kitchen terminal — LOCKED SURFACE
 
-The refrigerator is a dense personal/lore surface rather than a project screen.
+The kitchen uses a wide, high-end smart double refrigerator with an integrated terminal-sized display. The refrigerator remains a dense personal/lore surface; its screen is a kitchen-native interface rather than a generic project browser.
 
 It may hold:
 
@@ -199,7 +199,7 @@ It should feel accumulated and personal. Some fridge artifacts can change betwee
 
 ## Restaurant concept — LOCKED DIRECTION
 
-The restaurant idea should be represented through a kitchen-native display rather than another laptop. A believable wall-mounted smart kitchen display / restaurant order screen / KDS-style interface can expose:
+The restaurant idea should be represented through a kitchen-native display rather than another laptop. A believable refrigerator-integrated smart kitchen terminal / restaurant order screen / KDS-style interface can expose:
 
 - restaurant concept,
 - menu ideas,
