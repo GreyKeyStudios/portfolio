@@ -164,13 +164,16 @@ const { getInteriorColliders } = require('../lib/interior-colliders.ts')
 const { moveWithCollision } = require('../lib/collision.ts')
 const { registerLivingFurniture, LIVING_FURNITURE_COLLIDERS } = require('../lib/living-furniture.ts')
 const { registerDiningFurniture, DINING_FURNITURE_COLLIDERS } = require('../lib/dining-furniture.ts')
+const { registerKitchenFurniture, KITCHEN_FURNITURE_COLLIDERS } = require('../lib/kitchen-furniture.ts')
 const { getActiveColliders } = require('../lib/use-player-vertical.ts')
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Legacy has invisible furniture')
 const removeFurniture = registerLivingFurniture()
 const removeDining = registerDiningFurniture()
+const removeKitchen = registerKitchenFurniture()
 const furnished = getActiveColliders('ground')
 assert.equal(furnished.filter(c => c.label?.startsWith('living-')).length, 5)
 assert.equal(furnished.filter(c => c.label?.startsWith('dining-')).length, 8)
+assert.equal(furnished.filter(c => c.label?.startsWith('kitchen-furniture-')).length, 8)
 // The approved dining plan depends on this service route being a real opening
 // in both faces of the shared wall, not just a visual gap in one room.
 const serviceRoute = [[298,7.1],[300,7.1],[302,7.1]]
@@ -179,6 +182,15 @@ for (let i=1;i<serviceRoute.length;i++) {
   const reached=moveWithCollision(px,pz,x,z,furnished)
   assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Kitchen-pantry-dining route is blocked at ${x},${z}`)
 }
+// Walk from the mudroom around the breakfast table to the clear service lane.
+const kitchenRoute = [[296.1,3.35],[296.1,3.70],[297.35,3.70],[297.55,6.75],[298.35,7.1]]
+for (let i=1;i<kitchenRoute.length;i++) {
+  const [x,z]=kitchenRoute[i], [px,pz]=kitchenRoute[i-1]
+  const reached=moveWithCollision(px,pz,x,z,furnished)
+  assert.ok(Math.hypot(reached.x-x,reached.z-z)<.01, `Kitchen circulation is blocked at ${x},${z}`)
+}
+const kitchenManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/kitchen-furniture-v002.manifest.json'))
+assert.equal(hash('lib/kitchen-furniture-v002.json'), kitchenManifest.layout_sha256, 'Kitchen export layout is stale')
 const furnitureManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/living-furniture-v002.manifest.json'))
 assert.equal(hash('lib/living-furniture-v002.json'), furnitureManifest.layout_sha256, 'Furniture export layout is stale')
 // Walk from foyer into the room, around the seating group, and out the north door.
@@ -198,6 +210,12 @@ for (const piece of DINING_FURNITURE_COLLIDERS) {
   const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
   assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
 }
+for (const piece of KITCHEN_FURNITURE_COLLIDERS) {
+  const x=(piece.minX+piece.maxX)/2,z=(piece.minZ+piece.maxZ)/2
+  const stopped=moveWithCollision(piece.minX-.5,z,x,z,[piece])
+  assert.ok(stopped.x < piece.minX, `${piece.label} does not block the player`)
+}
+removeKitchen()
 removeDining()
 removeFurniture()
 assert.ok(!getActiveColliders('ground').some(c => c.label?.startsWith('living-')), 'Unmount leaves furniture collisions')

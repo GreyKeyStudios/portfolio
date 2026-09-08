@@ -420,6 +420,10 @@ User moved the Game Room / Man Cave from the first-floor room beside the living 
 
 Added a six-seat smoked-oak dining table, warm upholstered chairs, muted rug, navy-fronted sideboard, table settings, restrained wall art, and a compact chandelier. The east-west table orientation keeps both the living-room entrance and the Kitchen -> Pantry -> Dining service route clear. V002 mounts matching furniture collision; legacy variants remain unaffected.
 
+### Kitchen and breakfast furnishing — 2026-09-08
+
+Added warm-ivory cabinetry and stone counters along the north wall, a sink beneath the large window, an induction island with the active in-progress cookbook, refrigerator, paired island pendants, and a four-seat breakfast table. The east service lane stays open to both pantry and laundry doors, and the mudroom route passes around the breakfast group. Matching v002 collision is mounted with the asset.
+
 ### Living-room softening pass — 2026-09-07
 Added restrained ivory side curtains to the two front sash windows, a quiet framed landscape on the north wall, and a broad-leaf plant behind the sofa. These pieces stay against the room perimeter and add no new walking obstruction. Updated furniture export is 13,840 triangles, 16 material primitives and 1,381,004 bytes. Architecture and traversal regressions pass. The browser inspection helper was unavailable after the model switch, so this pass remains pending a live visual acceptance check before further decoration.
 

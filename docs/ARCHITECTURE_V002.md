@@ -71,6 +71,13 @@ five-light chandelier. The table runs east-west so the living-room approach and
 the new pantry service route stay legible and clear. Furniture collision is
 registered only while v002 is mounted.
 
+Kitchen furnishing establishes a working north wall with ivory cabinetry,
+honed-stone counters, a sink beneath the large window, and flanking upper
+cabinets. A compact island holds the induction hob and the locked in-progress
+cookbook. A four-seat pedestal breakfast table occupies the front half, while
+the east-side service lane remains clear between mudroom, pantry, laundry, and
+dining circulation. Two small pendants visually anchor the island.
+
 Entrance follow-up: TypeScript and the extended architecture checks pass. The
 closed leaf blocks forward walking while leaving the exit interaction in reach;
 a raycast verifies the model face agrees with the collider. Live browser USE
