@@ -414,3 +414,6 @@ Validation: room-by-room floor material/height checks, shaft-clearance checks, f
 
 ### Living-room softening pass — 2026-09-07
 Added restrained ivory side curtains to the two front sash windows, a quiet framed landscape on the north wall, and a broad-leaf plant behind the sofa. These pieces stay against the room perimeter and add no new walking obstruction. Updated furniture export is 13,840 triangles, 16 material primitives and 1,381,004 bytes. Architecture and traversal regressions pass. The browser inspection helper was unavailable after the model switch, so this pass remains pending a live visual acceptance check before further decoration.
+
+### Exterior grounding race fix — 2026-09-07
+Production intermittently showed the exterior house missing or sunken until refresh. HouseModel previously waited two animation frames, measured the already-mounted/scaled group and mutated its height. Ground alignment now measures a detached copy of the loaded GLB and derives the scaled Y offset during render. The source model bounds require a 3.181621m world-space lift at scale 8. This is intended to make first load, refresh and hot reload use the same placement.

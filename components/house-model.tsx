@@ -1,7 +1,7 @@
 "use client"
 
 import { useGLTF } from "@react-three/drei"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo } from "react"
 import type * as THREE from "three"
 import { Box3 } from "three"
 import { getModelUrl } from "@/lib/model-url"
@@ -41,9 +41,20 @@ function PlaceholderHouse({ position }: { position: [number, number, number] }) 
 }
 
 export function HouseModel({ position = [0, 0, 0] }: { position?: [number, number, number] }) {
-  const houseRef = useRef<THREE.Group>(null)
-  const hasAligned = useRef(false)
   const { scene } = useGLTF(HOUSE_MODEL_URL)
+
+  // The model is scaled by eight below. Derive its ground offset directly from
+  // the loaded GLTF instead of measuring the mounted group a few frames later.
+  // The old two-frame measurement could race with mounting/HMR and leave the
+  // house missing or below grade until a refresh.
+  const groundY = useMemo(() => {
+    // Measure a detached clone so a previous React mount cannot leak a parent
+    // transform into the result during Strict Mode or hot reload.
+    const measurement = scene.clone(true)
+    measurement.updateMatrixWorld(true)
+    const bounds = new Box3().setFromObject(measurement)
+    return bounds.min.y === Infinity ? position[1] : position[1] - bounds.min.y * 8
+  }, [scene, position[1]])
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -54,34 +65,13 @@ export function HouseModel({ position = [0, 0, 0] }: { position?: [number, numbe
     })
   }, [scene])
 
-  useEffect(() => {
-    if (!houseRef.current || hasAligned.current) return
-
-    let f1: number, f2: number
-    f1 = requestAnimationFrame(() => {
-      f2 = requestAnimationFrame(() => {
-        if (!houseRef.current) return
-        const box = new Box3().setFromObject(houseRef.current)
-        if (box.min.y === Infinity) return
-        houseRef.current.position.y = position[1] + (-box.min.y)
-        hasAligned.current = true
-      })
-    })
-
-    return () => {
-      cancelAnimationFrame(f1)
-      cancelAnimationFrame(f2)
-    }
-  }, [scene]) // position intentionally excluded — only align once on mount
-
   if (USE_PLACEHOLDER) {
     return <PlaceholderHouse position={position} />
   }
 
   return (
     <group
-      ref={houseRef}
-      position={[position[0], position[1], position[2]]}
+      position={[position[0], groundY, position[2]]}
       name="stack-house-model"
       scale={[8, 8, 8]}
       rotation={[0, Math.PI, 0]}
