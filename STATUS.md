@@ -432,6 +432,10 @@ Added full-height smoked-oak shelving to both long walls of the walk-through Pan
 
 Added side-by-side front-loading washer and dryer units, a warm-stone utility sink and cabinet, practical shelving, folded towels, laundry supplies and an opal ceiling fixture. The appliances occupy the east wall and the utility counter stays against the north wall, preserving a clear route from the Kitchen door into the working aisle. Matching v002 collision is mounted only with the candidate architecture and follows the shared placement data.
 
+### Mudroom furnishing — 2026-09-08
+
+Added a navy and smoked-oak built-in west of the Kitchen opening with a cushioned bench, shoe cubbies, boot tray, paneled coat wall, hooks, hanging coats and upper cabinets. An umbrella stand occupies the unused southwest corner. The direct Foyer -> Mudroom -> Half Bath route and the turn north into the Kitchen remain open and visually legible. Matching v002 collision follows the shared placement data.
+
 ### Gate house loading — 2026-09-08
 
 The gate previously waited on the full 6.77 MB, 60,000-triangle exterior house before revealing its small background hero. Added a derived gate-only asset that preserves the approved silhouette and material treatment at 529 KB and 19,200 triangles. The full exterior remains unchanged for the walkable experience, and the gate still warms it after the initial page settles. Local browser verification confirmed the optimized house renders in the existing composition.
