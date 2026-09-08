@@ -70,8 +70,8 @@ for f in layout:
   x,y,z=o.location;c=math.cos(f['yaw']);s=math.sin(f['yaw']);o.location=(f['x']+c*x-s*y,-f['z']+s*x+c*y,z);o.rotation_euler.z+=f['yaw']
 
 # Two compact pendants make the island the working center without adding a new runtime light count.
-for x in [-4.48,-3.28]:
- cyl('Island pendant cord',(x,2.63,7.05),.008,.62,black,12);cyl('Island pendant shade',(x,2.27,7.05),.15,.22,glow,32)
+for x in [-4.28,-3.48]:
+ cyl('Island pendant cord',(x,2.63,6.90),.008,.62,black,12);cyl('Island pendant shade',(x,2.27,6.90),.15,.22,glow,32)
 
 bpy.context.view_layer.update();bpy.ops.object.select_all(action='DESELECT');copies=[];deps=bpy.context.evaluated_depsgraph_get()
 for src in parts:

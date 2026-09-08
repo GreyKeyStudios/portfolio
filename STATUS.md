@@ -426,6 +426,8 @@ User review established that the first versions read too ordinary and fragmented
 
 The breakfast table and chairs were removed by explicit user direction because the adjoining Dining Room already handles eating. This gives the Kitchen enough open floor to support the centered island and makes the Mudroom entrance plus the Pantry and Laundry service routes clearer. Matching v002 collision follows the revised six-piece layout.
 
+Walkthrough review showed the first centered island still read as a long commercial prep counter. Shortened it from 2.60 m to 2.05 m, deepened it from 1.04 m to 1.22 m, and placed it on the Kitchen's actual plan center. It remains intentionally rectangular while reading more like a balanced residential statement island. Pendants and cookbook placement moved with the revised footprint.
+
 ### Pantry furnishing — 2026-09-08
 
 Added full-height smoked-oak shelving to both long walls of the walk-through Pantry, with labeled lower bins, dry-goods jars, preserves and upper baskets. Storage stays shallow enough to preserve a clear central Kitchen -> Pantry -> Dining aisle. Matching v002 collision is mounted only with the candidate architecture; the Blender source, shared placement JSON and export manifest are retained with the other furnishing assets.
