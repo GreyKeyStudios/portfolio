@@ -144,3 +144,6 @@ Embedded living-linen-v002.png (256 square) and living-rug-v002.png (512 square)
 ## Floor finish schedule
 User-directed schedule: ground-floor wood except kitchen/half bath tile; second-floor carpet except bathroom tile; wood stairs retained. Existing foyer/client boards remain in their original detail asset. Additional ground/second finish GLBs use X0 placement, embedded textures and room bounds exported by scripts/export-floor-finishes.cjs. The shared stair shaft is subtracted from finish faces. Faces sit at 14mm, clearing existing 12mm thresholds without altering movement geometry. Added room-by-room material rays and shaft-clearance checks.
 
+## Living-room perimeter dressing
+Living-furniture-v002 now includes narrow ivory side curtains on both south sash windows, a single framed landscape on the north wall and a low-detail houseplant in the north-east corner. Window centres and widths come from rooms-v002.json during Blender generation. Dressing remains outside the established doorway route and does not add collision. Export: 13,840 triangles, 16 material primitives, 1,381,004 bytes. Automated architecture and traversal checks pass; live visual acceptance remains pending because the browser inspection helper was unavailable after the model switch.
+

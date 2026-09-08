@@ -32,6 +32,11 @@ bs.inputs['Emission Color'].default_value=(.8,.54,.27,1)
 bs.inputs['Emission Strength'].default_value=.3
 ceramic=mat('Ivory stoneware',(.55,.50,.41),.38)
 paper=mat('Book page edges',(.56,.49,.37),.95)
+ivory=mat('Warm ivory curtain',(.68,.63,.54),.96)
+green=mat('Living foliage',(.055,.115,.055),.88)
+soil=mat('Dark potting soil',(.035,.025,.018),1)
+terracotta=mat('Aged terracotta',(.31,.135,.065),.8)
+art=mat('Muted landscape print',(.20,.245,.22),.82)
 def image_material(material,name,pixels):
     h,w,_=pixels.shape
     image=bpy.data.images.new(name,width=w,height=h)
@@ -72,6 +77,12 @@ def cylinder(name,p,radius,depth,material,top=None):
     bpy.ops.mesh.primitive_cone_add(vertices=32,radius1=radius,radius2=radius if top is None else top,depth=depth,location=(p[0],-p[2],p[1]))
     o=bpy.context.object;o.name=name;o.data.materials.append(material)
     for face in o.data.polygons:face.use_smooth=len(face.vertices)==4
+    parts.append(o);return o
+def sphere(name,p,scale,material,segments=12,rings=8):
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments,ring_count=rings,location=(p[0],-p[2],p[1]))
+    o=bpy.context.object;o.name=name;o.scale=(scale[0],scale[2],scale[1]);bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+    o.data.materials.append(material)
+    for face in o.data.polygons:face.use_smooth=True
     parts.append(o);return o
 layout=json.loads((ROOT/'lib/living-furniture-v002.json').read_text())
 for f in layout:
@@ -120,6 +131,34 @@ for f in layout:
         o.location=(f['x']+c*x-s*y,-f['z']+s*x+c*y,z)
         o.rotation_euler.z+=f['yaw']
 box('Seating rug',(4.0,.025,3.25),(3.45,.018,3.25),rug,.007)
+
+# South-window treatment: short rods and restrained side panels preserve the
+# tall sash proportions and do not cover the glass. Positions derive from the
+# canonical room/window export rather than hand-copied world coordinates.
+rooms=json.loads((SRC/'rooms-v002.json').read_text())
+client=next(r for r in rooms['rooms'] if r['id']=='client-room')
+for i,wnd in enumerate(w for w in client['windows'] if w['side']=='south'):
+    cx=wnd['center']-rooms['X0']; width=wnd['width']
+    cylinder('South window curtain rod '+str(i),(cx,2.57,.235),.012,width+.36,brass).rotation_euler.y=math.pi/2
+    for side in [-1,1]:
+        x=cx+side*(width/2+.095)
+        panel=box('South window curtain '+str(i),(x,1.62,.255),(.17,1.82,.055),ivory,.018)
+        # Three shallow folds catch light without expensive cloth simulation.
+        for fold in [-.05,0,.05]:cylinder('Curtain fold',(x+fold,1.62,.222),.016,1.78,ivory)
+
+# One quiet framed landscape on the north wall beside the passage.
+box('Landscape frame',(5.45,1.76,5.164),(1.05,.72,.035),oak,.012)
+box('Landscape mat',(5.45,1.76,5.139),(.91,.58,.012),paper,.002)
+box('Landscape print',(5.45,1.76,5.130),(.77,.44,.006),art,.002)
+
+# A broad-leaf houseplant softens the north-east corner behind the sofa.
+cylinder('Plant pot',(6.18,.245,4.91),.18,.49,terracotta,.14)
+cylinder('Plant soil',(6.18,.497,4.91),.135,.012,soil)
+for i,(dx,dz,h,tilt) in enumerate([(-.08,0,.74,-.20),(.07,.02,.91,.15),(0,-.06,1.07,.04),(-.02,.08,.84,-.08),(.1,-.04,.69,.22)]):
+    stem=cylinder('Plant stem '+str(i),(6.18+dx/2,.49+h/2,4.91+dz/2),.009,h,green)
+    stem.rotation_euler.x=tilt
+    leaf=sphere('Plant leaf '+str(i),(6.18+dx,.50+h,4.91+dz),(.20,.055,.10),green)
+    leaf.rotation_euler.z=tilt
 # Consolidate evaluated copies for a small number of material draw calls.
 bpy.context.view_layer.update();bpy.ops.object.select_all(action='DESELECT')
 copies=[];deps=bpy.context.evaluated_depsgraph_get()
@@ -133,6 +172,6 @@ bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=T
 mesh=ob.data;bpy.data.objects.remove(ob,do_unlink=True)
 if not mesh.users:bpy.data.meshes.remove(mesh)
 bpy.ops.wm.save_as_mainfile(filepath=str(SRC/'living-furniture-v002.blend'))
-manifest={'triangles':triangles,'bytes':path.stat().st_size,'pieces':len(parts),'layout_sha256':hashlib.sha256((ROOT/'lib/living-furniture-v002.json').read_bytes()).hexdigest(),'note':'Woven upholstery and bordered rug, reading lamp and tabletop objects. TV and closed laptop remain visual props pending interactions.'}
+manifest={'triangles':triangles,'bytes':path.stat().st_size,'pieces':len(parts),'layout_sha256':hashlib.sha256((ROOT/'lib/living-furniture-v002.json').read_bytes()).hexdigest(),'note':'Woven seating group with reading lamp, restrained curtains, framed landscape, houseplant and tabletop objects. TV and closed laptop remain visual props pending interactions.'}
 (SRC/'living-furniture-v002.manifest.json').write_text(json.dumps(manifest,indent=2))
 result=manifest
