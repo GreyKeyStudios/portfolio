@@ -1,7 +1,7 @@
 {
-  "triangles": 3232,
-  "bytes": 167544,
-  "pieces": 72,
-  "layout_sha256": "38b615c78ee0ac1f4b9b8b059993938b903d0566ac1a7d77ba1f6997df47871f",
-  "note": "Office completion layer around the existing interactive workstation, with reference storage, printer credenza, process boards and clear three-door circulation."
+  "triangles": 7804,
+  "bytes": 545776,
+  "pieces": 73,
+  "layout_sha256": "42bb52ed55cbaa890b33001d0885225eb7ebab854f6d194a203783616caae082",
+  "note": "Complete v002 office with rebuilt workstation, approved printer wall, low reference console, and clear three-door circulation."
 }

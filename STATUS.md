@@ -458,7 +458,9 @@ The compact, windowless upstairs Linen room now reads as a finished household se
 
 ### Home office furnishing pass — 2026-09-08
 
-Completed the upstairs Home Office around its existing interactive dual-monitor workstation. A shallow west-wall reference cabinet adds working books and files, while a smoked-oak-topped printer credenza fits between the two north doorways with a scanner/printer, paper stack and framed process sheets above. A compact plant softens the window corner. The ordinary workstation interaction remains the room's locked portfolio surface for development work and the future Bug diagnostic sequence; this pass does not canonize the still-open desktop visual language or project assignment. Matching v002 collision covers the new storage pieces, and both hall-to-bathroom and hall-to-bedroom routes remain clear.
+Rebuilt the upstairs Home Office after confirming that its desk, computer and full-height reference cabinet were disposable placeholders. The v002 room now uses one coherent asset: a smoked-walnut executive desk facing the entrance, dual displays, a proper task chair and lamp, the approved printer on a fitted credenza, and a low reference console that keeps the room visually open. The existing Home Office interaction remains attached to the new workstation while its legacy model is hidden in v002. Matching collision covers the desk, credenza and low console, and all three doorway routes remain clear.
+
+The house Canvas now renders at one device pixel per CSS pixel. The former 1.5 ceiling multiplied every full-screen post-processing pass by 2.25 precisely in the stairwell, where three furnished floors can be visible together. This prioritizes smooth stair traversal while retaining the existing AO, lighting and material treatment.
 
 ### Master bedroom / merch furnishing — 2026-09-08
 
@@ -479,3 +481,11 @@ Added restrained ivory side curtains to the two front sash windows, a quiet fram
 
 ### Exterior grounding race fix — 2026-09-07
 Production intermittently showed the exterior house missing or sunken until refresh. HouseModel previously waited two animation frames, measured the already-mounted/scaled group and mutated its height. Ground alignment now measures a detached copy of the loaded GLB and derives the scaled Y offset during render. The source model bounds require a 3.181621m world-space lift at scale 8. This is intended to make first load, refresh and hot reload use the same placement.
+
+### Back Entry / Mudroom and basement Laundry relocation — 2026-09-08
+
+Implemented the newest locked service-room program. The stable ground-floor `laundry` id now represents the Back Entry / Mudroom and its north exterior wall has a generated 1.0m rear-door opening. A dedicated furnishing asset adds a glazed smoked-oak back door, entry mat, compact bench/cubbies, hooks, boot storage and a small household landing cabinet while preserving the Kitchen approach and the new exterior route.
+
+The washer, dryer, utility sink, supplies and practical storage moved to the small basement room with stable id `secret-room`, beside the Mechanical room. The existing concealed south opening remains intact until the secret-route entrance is deliberately relocated or re-expressed, so this layout change does not erase the locked future progression. Furniture collision now mounts with the basement rather than the ground floor. Kitchen → Pantry → Dining circulation, basement laundry access, furniture collision cleanup and all six stair traversals pass.
+
+The 2026-09-08 layout update supersedes the earlier second-floor bedroom paragraph above: `guest-room` is now the small Guest / Gag Bedroom; `nook` is the future Master Bedroom; `upstairs-storage` and `linen` are planned to merge into its Walk-in Closet / Dressing Room. Existing merch furniture remains a temporary conflicting implementation until that relocation pass.

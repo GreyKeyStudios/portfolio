@@ -350,7 +350,10 @@ export const ROOMS: RoomDef[] = [
     // exist without appearing on any floor plan. No windows, ever: there is
     // earth on every side of it.
     id: 'secret-room',
-    label: '???',
+    // The physical room now carries the basement Laundry. Keep the concealed
+    // south opening until the future secret route is re-expressed elsewhere;
+    // removing it here would silently erase a locked experience beat.
+    label: 'Laundry',
     floor: 'basement',
     bounds: { minX: lx(pl(1.2)), maxX: lx(pl(5.0)), minZ: HOUSE_D, maxZ: HOUSE_D + 4 },
     doors: [{ side: 'south', center: lx(pl(2.7)), width: DOOR }],
@@ -452,10 +455,15 @@ export const ROOMS: RoomDef[] = [
     // column's north end backs onto the kitchen with an exterior wall behind
     // it — which is exactly where a laundry goes in a real plan.
     id: 'laundry',
-    label: 'Laundry',
+    // Stable id retained for saved-state compatibility. This is now the real
+    // rear entry: a practical mudroom between the kitchen and back yard.
+    label: 'Back Entry / Mudroom',
     floor: 'ground',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: pl(8.1), maxZ: HOUSE_D },
-    doors: [{ side: 'west', center: pl(9.4), width: DOOR }],
+    doors: [
+      { side: 'west', center: pl(9.4), width: DOOR },
+      { side: 'north', center: lx(pl(6.6)), width: 1.0 },
+    ],
     furnished: false,
   },
   {
@@ -500,7 +508,7 @@ export const ROOMS: RoomDef[] = [
   // -- SECOND ----------------------------------------------------------------
   {
     id: 'gallery',
-    label: 'Gallery / Library',
+    label: 'Library / Study / Writing Room',
     floor: 'second',
     bounds: { minX: lx(0), maxX: CORE_MIN_X, minZ: 0, maxZ: pl(5.4) },
     doors: [
@@ -515,7 +523,7 @@ export const ROOMS: RoomDef[] = [
   },
   {
     id: 'nook',
-    label: 'Nook / Flex Space',
+    label: 'Master Bedroom',
     floor: 'second',
     bounds: { minX: lx(0), maxX: CORE_MIN_X, minZ: pl(5.4), maxZ: HOUSE_D },
     doors: [
@@ -551,7 +559,7 @@ export const ROOMS: RoomDef[] = [
     // Behind the stair, so the shaft sits between it and the landing — it is
     // reachable only from the Nook.
     id: 'upstairs-storage',
-    label: 'Storage',
+    label: 'Walk-in Closet / Dressing Room',
     floor: 'second',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: pl(9.4) },
     doors: [{ side: 'west', center: pl(8.5), width: DOOR }],
@@ -562,7 +570,7 @@ export const ROOMS: RoomDef[] = [
     // its own window. A linen store wants to be small, central and windowless,
     // and the tail of the core column is all three.
     id: 'linen',
-    label: 'Linen',
+    label: 'Walk-in Closet / Dressing Room',
     floor: 'second',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: pl(9.4), maxZ: HOUSE_D },
     doors: [{ side: 'west', center: pl(10.1), width: DOOR }],
@@ -607,7 +615,7 @@ export const ROOMS: RoomDef[] = [
     // is a stranger thing for a dream house to be missing than an oversized
     // linen closet. Rename it if it should carry portfolio content instead.
     id: 'guest-room',
-    label: 'Guest Room',
+    label: 'Guest / Gag Bedroom',
     floor: 'second',
     bounds: { minX: lx(pl(9.6)), maxX: lx(HOUSE_W), minZ: pl(5.4), maxZ: HOUSE_D },
     doors: [{ side: 'south', center: lx(pl(11.9)), width: DOOR }],

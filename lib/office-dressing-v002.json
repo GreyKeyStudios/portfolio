@@ -1,4 +1,5 @@
 [
-  {"id":"west-reference-cabinet","x":1.39,"z":3.72,"width":0.38,"depth":1.72,"yaw":0},
-  {"id":"north-printer-credenza","x":3.70,"z":5.15,"width":1.86,"depth":0.38,"yaw":0}
+  {"id":"executive-desk","x":4.72,"z":2.25,"width":1.82,"depth":0.82,"yaw":0},
+  {"id":"printer-credenza","x":3.70,"z":5.15,"width":1.86,"depth":0.38,"yaw":0},
+  {"id":"low-reference-console","x":1.40,"z":3.74,"width":0.34,"depth":1.48,"yaw":0}
 ]

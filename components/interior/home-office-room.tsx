@@ -14,6 +14,7 @@ const MODEL_URL = getModelUrl("home-office-furniture.glb")
 interface HomeOfficeRoomProps {
   position?: [number, number, number]
   rotation?: [number, number, number]
+  showModel?: boolean
 }
 
 /**
@@ -34,6 +35,7 @@ const DESK_FOOTPRINT: [number, number] = [1.1, 0.9]
 export function HomeOfficeRoom({
   position = placeInRoom('home-office', 0.78, 0.5, DESK_FOOTPRINT),
   rotation = [0, -Math.PI / 2, 0],
+  showModel = true,
 }: HomeOfficeRoomProps) {
   const { scene } = useGLTF(MODEL_URL)
   const [isNear, setIsNear] = useState(false)
@@ -72,7 +74,7 @@ export function HomeOfficeRoom({
 
   return (
     <group position={position} rotation={rotation} name="home-office-furniture">
-      <primitive object={scene} />
+      {showModel && <primitive object={scene} />}
       {/* Always mounted, dimmed to zero when away — see front-door.tsx for why
           conditionally mounting a light costs a full scene-wide shader recompile. */}
       <pointLight color="#00ff88" intensity={isNear ? 1.0 : 0} distance={3} decay={2} />

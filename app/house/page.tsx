@@ -571,7 +571,7 @@ function Scene() {
         </group>
         <group visible={nearFloor(currentLocation, 'second')}>
           {architectureCandidate ? <ArchitectureCandidate floor="second" version={architectureCandidate} /> : <InteriorFloorSecond />}
-          <HomeOfficeRoom />
+          <HomeOfficeRoom showModel={architectureCandidate !== 'v002'} />
         </group>
         <group visible={nearFloor(currentLocation, 'attic')}>
           {architectureCandidate ? <ArchitectureCandidate floor="attic" version={architectureCandidate} /> : <InteriorFloorAttic />}
@@ -803,10 +803,12 @@ export default function StackHouse() {
          * post pass with it. The gate scene has clamped this since it was
          * written; this Canvas never did.
          *
-         * 1.5 rather than 1: text and thin trim still resolve, and the cost is
-         * 2.25x pixels instead of 4x.
+         * Keep the walkthrough at one device pixel per CSS pixel. At 1.5 the
+         * post-processing workload is 2.25x larger exactly where the stairwell
+         * exposes three furnished storeys at once. The softer edge is minor;
+         * the steadier camera motion is much more important while walking.
          */
-        dpr={[1, 1.5]}
+        dpr={1}
         /**
          * Laptops with switchable graphics default to the integrated GPU unless
          * asked otherwise. Matches the gate scene, which already asks.

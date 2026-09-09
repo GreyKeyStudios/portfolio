@@ -42,9 +42,9 @@ for f in layout:
  place_group(parts[start:],f['x'],f['z'],f['yaw'])
 
 # A narrow wall shelf above the machines and a folded-towel stack use otherwise empty height.
-box('Machine wall shelf',(.77,1.42,9.05),(.58,.055,1.55),oak,.006)
-for i in range(3):box('Folded towel '+str(i),(.77,1.50+i*.085,8.72),(.42,.075,.27),linen,.018)
-cyl('Laundry ceiling light',(0,2.75,9.45),.24,.10,glow,32)
+box('Machine wall shelf',(-2.05,1.42,12.55),(.58,.055,1.65),oak,.006)
+for i in range(3):box('Folded towel '+str(i),(-2.05,1.50+i*.085,12.20),(.42,.075,.27),linen,.018)
+cyl('Laundry ceiling light',(-3.50,2.75,12.80),.24,.10,glow,32)
 
 bpy.context.view_layer.update();bpy.ops.object.select_all(action='DESELECT');copies=[];deps=bpy.context.evaluated_depsgraph_get()
 for src in parts:

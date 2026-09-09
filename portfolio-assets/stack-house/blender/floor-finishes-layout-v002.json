@@ -172,7 +172,7 @@
     },
     {
       "id": "laundry",
-      "label": "Laundry",
+      "label": "Back Entry / Mudroom",
       "floor": "ground",
       "bounds": {
         "minX": 298.84999999999997,
@@ -184,6 +184,11 @@
         {
           "side": "west",
           "center": 9.4,
+          "width": 1
+        },
+        {
+          "side": "north",
+          "center": 300,
           "width": 1
         }
       ],
@@ -268,7 +273,7 @@
     },
     {
       "id": "gallery",
-      "label": "Gallery / Library",
+      "label": "Library / Study / Writing Room",
       "floor": "second",
       "bounds": {
         "minX": 293.4,
@@ -304,7 +309,7 @@
     },
     {
       "id": "nook",
-      "label": "Nook / Flex Space",
+      "label": "Master Bedroom",
       "floor": "second",
       "bounds": {
         "minX": 293.4,
@@ -376,7 +381,7 @@
     },
     {
       "id": "upstairs-storage",
-      "label": "Storage",
+      "label": "Walk-in Closet / Dressing Room",
       "floor": "second",
       "bounds": {
         "minX": 298.84999999999997,
@@ -395,7 +400,7 @@
     },
     {
       "id": "linen",
-      "label": "Linen",
+      "label": "Walk-in Closet / Dressing Room",
       "floor": "second",
       "bounds": {
         "minX": 298.84999999999997,
@@ -488,7 +493,7 @@
     },
     {
       "id": "guest-room",
-      "label": "Guest Room",
+      "label": "Guest / Gag Bedroom",
       "floor": "second",
       "bounds": {
         "minX": 303,
