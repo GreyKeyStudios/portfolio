@@ -9,12 +9,13 @@ import { withLaundryFurniture } from './laundry-furniture'
 import { withMudroomFurniture } from './mudroom-furniture'
 import { withHalfBathFurniture } from './half-bath-furniture'
 import { withBathroomFurniture } from './bathroom-furniture'
-import { withStorageFurniture } from './storage-furniture'
-import { withLinenFurniture } from './linen-furniture'
+import { withMasterClosetFurniture } from './master-closet-furniture'
 import { withOfficeDressing } from './office-dressing'
+import { withGuestBedroomFurniture } from './guest-bedroom-furniture'
 import { withBedroomFurniture } from './bedroom-furniture'
 import { withMechanicalFurniture } from './mechanical-furniture'
 import { withBackEntryFurniture } from './back-entry-furniture'
+import { withGameRoomFurniture } from './game-room-furniture'
 import { FLOOR_BASE_Y, STAIRS, X0, floorAtY, type FloorId } from './interior-layout'
 
 import { INTERIOR_EYE_HEIGHT as EYE_HEIGHT, YARD_EYE_HEIGHT } from './player-camera'
@@ -23,8 +24,8 @@ export function getActiveColliders(location: FloorId, eyeY = Infinity): AABB[] {
   if (location === 'yard') return COLLIDERS
   const walls = getInteriorColliders(location, eyeY)
   if (location === 'ground') return withHalfBathFurniture(withBackEntryFurniture(withMudroomFurniture(withPantryFurniture(withKitchenFurniture(withDiningFurniture(withLivingFurniture(walls)))))))
-  if (location === 'basement') return withLaundryFurniture(withMechanicalFurniture(walls))
-  if (location === 'second') return withBedroomFurniture(withOfficeDressing(withLinenFurniture(withStorageFurniture(withBathroomFurniture(walls)))))
+  if (location === 'basement') return withGameRoomFurniture(withLaundryFurniture(withMechanicalFurniture(walls)))
+  if (location === 'second') return withGuestBedroomFurniture(withBedroomFurniture(withOfficeDressing(withMasterClosetFurniture(withBathroomFurniture(walls)))))
   return walls
 }
 

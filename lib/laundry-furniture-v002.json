@@ -1,5 +1,6 @@
 [
   {"id":"washer","x":-2.05,"z":12.10,"width":0.72,"depth":0.70,"yaw":-1.5707963267948966},
   {"id":"dryer","x":-2.05,"z":13.00,"width":0.72,"depth":0.70,"yaw":-1.5707963267948966},
-  {"id":"utility-counter","x":-3.55,"z":14.42,"width":1.48,"depth":0.46,"yaw":0}
+  {"id":"utility-counter","x":-3.55,"z":14.42,"width":1.48,"depth":0.46,"yaw":0},
+  {"id":"hamper-bank","x":-5.02,"z":12.72,"width":0.56,"depth":1.28,"yaw":0}
 ]

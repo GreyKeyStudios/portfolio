@@ -12,6 +12,7 @@ def mat(name,color,rough=.7,metal=0,emit=0):
 ivory=mat('Laundry warm ivory',(.69,.67,.61),.58);oak=mat('Laundry smoked oak',(.25,.13,.06),.48);stone=mat('Laundry warm stone',(.46,.43,.38),.44)
 steel=mat('Laundry brushed steel',(.31,.33,.34),.34,.62);black=mat('Laundry appliance glass',(.012,.018,.021),.18,.08);brass=mat('Laundry aged brass',(.29,.18,.07),.34,.7)
 linen=mat('Laundry linen',(.49,.42,.33),.95);blue=mat('Laundry detergent blue',(.10,.20,.30),.62);amber=mat('Laundry detergent amber',(.42,.20,.055),.58);glow=mat('Laundry opal light',(.88,.75,.55),.62,0,.35)
+white=mat('Laundry folded whites',(.82,.80,.74),.94);navy=mat('Laundry folded navy',(.045,.075,.10),.88);rubber=mat('Laundry dark rubber',(.035,.038,.04),.78)
 def box(name,p,s,m,bevel=.006):
  bpy.ops.mesh.primitive_cube_add(size=1,location=(p[0],-p[2],p[1]));o=bpy.context.object;o.name=name;o.scale=(s[0],s[2],s[1]);bpy.ops.object.transform_apply(location=False,rotation=False,scale=True);o.data.materials.append(m)
  if bevel:o.modifiers.new('Soft edges','BEVEL').width=bevel;o.modifiers.new('Weighted normals','WEIGHTED_NORMAL')
@@ -38,12 +39,40 @@ for f in layout:
   box('Laundry upper shelf',(0,1.66,.06),(w,.055,d-.02),oak,.006)
   for i,(x,m) in enumerate([(-.48,blue),(-.16,amber),(.18,blue),(.48,linen)]):
    box('Laundry supply '+str(i),(x,1.82,.05),(.20,.27,.19),m,.025)
+ elif fid=='hamper-bank':
+  # Two breathable sorting hampers stay tight to the west wall and leave the
+  # middle of the room open for the future concealed-route circulation.
+  for z,label,m in [(-.32,'lights',white),(.32,'darks',navy)]:
+   box('Sorting hamper '+label,(0,.39,z),(w,.72,.55),linen,.035)
+   box('Sorting hamper '+label+' rim',(0,.76,z),(w+.025,.055,.575),oak,.012)
+   for slot in [-.15,0,.15]: box('Sorting hamper '+label+' vent',(w/2+.012,.43,z+slot),(.022,.065,.07),rubber,.004)
  for o in parts[start:]: pass
  place_group(parts[start:],f['x'],f['z'],f['yaw'])
 
-# A narrow wall shelf above the machines and a folded-towel stack use otherwise empty height.
-box('Machine wall shelf',(-2.05,1.42,12.55),(.58,.055,1.65),oak,.006)
-for i in range(3):box('Folded towel '+str(i),(-2.05,1.50+i*.085,12.20),(.42,.075,.27),linen,.018)
+# A continuous stone folding top makes the washer/dryer wall read as fitted
+# millwork rather than two loose appliances.
+box('Machine folding counter',(-2.05,1.075,12.55),(.76,.055,1.72),stone,.014)
+
+# Proper overhead cabinetry, with doors facing the room, uses the otherwise
+# empty wall height without narrowing the working aisle.
+box('Machine upper cabinet',(-1.82,2.02,12.55),(.40,.62,1.72),ivory,.018)
+for z in [12.15,12.95]:
+ box('Machine upper shaker door',(-2.035,2.02,z),(.025,.49,.68),ivory,.006)
+ cyl('Machine upper pull',(-2.06,2.02,z),.012,.20,brass,16,rot=(math.pi/2,0,0))
+
+# Folded towels sit above the utility sink. A brass wall rail on the west side
+# handles drip-dry garments and an ironing board without occupying floor area.
+for i,m in enumerate([white,linen,navy]):box('Folded towel '+str(i),(-3.82,1.50+i*.085,14.34),(.42,.075,.27),m,.018)
+cyl('Drying rail',(-5.26,1.78,13.42),.018,1.32,brass,20,rot=(math.pi/2,0,0))
+for z in [13.02,13.42,13.82]:
+ cyl('Drying hanger hook',(-5.23,1.66,z),.012,.22,brass,16)
+ box('Hanging cloth '+str(z),(-5.19,1.42,z),(.055,.42,.34),white if z!=13.42 else navy,.018)
+box('Folded ironing board',(-5.22,1.16,11.55),(.11,1.14,.34),blue,.035)
+
+# Visible service hookups make the appliance wall credible at close range.
+for z,m in [(11.88,blue),(12.10,amber),(12.98,steel)]:
+ cyl('Appliance service line',(-1.68,.70,z),.018,.42,m,16)
+ cyl('Appliance shutoff',(-1.70,.90,z),.035,.035,brass,18,rot=(0,math.pi/2,0))
 cyl('Laundry ceiling light',(-3.50,2.75,12.80),.24,.10,glow,32)
 
 bpy.context.view_layer.update();bpy.ops.object.select_all(action='DESELECT');copies=[];deps=bpy.context.evaluated_depsgraph_get()
@@ -54,5 +83,5 @@ bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=T
 mesh=ob.data;bpy.data.objects.remove(ob,do_unlink=True)
 if not mesh.users:bpy.data.meshes.remove(mesh)
 bpy.ops.wm.save_as_mainfile(filepath=str(SRC/'laundry-furniture-v002.blend'))
-manifest={'triangles':triangles,'bytes':path.stat().st_size,'pieces':len(parts),'layout_sha256':hashlib.sha256((ROOT/'lib/laundry-furniture-v002.json').read_bytes()).hexdigest(),'note':'Compact washer/dryer wall, utility sink, storage and clear working aisle.'}
+manifest={'triangles':triangles,'bytes':path.stat().st_size,'pieces':len(parts),'layout_sha256':hashlib.sha256((ROOT/'lib/laundry-furniture-v002.json').read_bytes()).hexdigest(),'note':'Fitted washer/dryer wall, folding counter, utility sink, sorting hampers, drying and service details with a clear central aisle.'}
 (SRC/'laundry-furniture-v002.manifest.json').write_text(json.dumps(manifest,indent=2));result=manifest

@@ -488,4 +488,22 @@ Implemented the newest locked service-room program. The stable ground-floor `lau
 
 The washer, dryer, utility sink, supplies and practical storage moved to the small basement room with stable id `secret-room`, beside the Mechanical room. The existing concealed south opening remains intact until the secret-route entrance is deliberately relocated or re-expressed, so this layout change does not erase the locked future progression. Furniture collision now mounts with the basement rather than the ground floor. Kitchen → Pantry → Dining circulation, basement laundry access, furniture collision cleanup and all six stair traversals pass.
 
+Laundry refinement turns the appliance placement into a fitted residential service room. A continuous folding counter and overhead cabinets now unify the washer/dryer wall; paired sorting hampers, wall-mounted drying hardware, a stored ironing board, folded linens and visible appliance hookups fill the perimeter without taking over the central aisle. The hamper bank has matching collision, while the concealed south approach and the route from the arcade through the working aisle remain open.
+
 The 2026-09-08 layout update supersedes the earlier second-floor bedroom paragraph above: `guest-room` is now the small Guest / Gag Bedroom; `nook` is the future Master Bedroom; `upstairs-storage` and `linen` are planned to merge into its Walk-in Closet / Dressing Room. Existing merch furniture remains a temporary conflicting implementation until that relocation pass.
+
+### Master suite relocation and dressing room merge — 2026-09-08
+
+Resolved that temporary conflict. The bedroom furniture now occupies the west-side `nook` geometry as the Master Bedroom; the east-side `guest-room` is clear for its later Guest / Gag Bedroom treatment. The master uses a west-wall bed, upholstered navy headboard, nightstands, north-wall dresser, window chaise, dressing mirror, bench, rug and restrained replaceable Grey Key merch surfaces while preserving the south entrance and east closet route.
+
+The wall between stable ids `upstairs-storage` and `linen` is removed visually and from collision, and the redundant second bedroom doorway is closed. Both footprints now read as one connected Walk-in Closet / Dressing Room entered at z=8.5. Continuous hanging storage, drawers, shoe shelving, accessory storage, mirror and a clear center aisle replace the former utility racks and linen press. Apparel uses the existing replaceable merch material so final designs can be swapped without remodeling.
+
+### Stackhouse Arcade spatial pass — 2026-09-08
+
+Populated the basement `basement-landing` as the Stackhouse Arcade without changing its shell. The south end is a modern console/TV lounge, the middle holds five purposefully different placeholder arcade silhouettes plus pinball, a dedicated two-chair chess table, poster and game-box storage, and the north end carries a seven-foot pool table and cue rack. A dartboard and regulation throw line use the clear east-side strip. The east stair/mechanical doors and concealed north laundry/secret-route opening remain reachable.
+
+All five cabinet marquees and side-art panels, the pinball backglass, television, poster wall, box art and room sign use 15 explicitly named swap materials recorded in `lib/game-room-furniture-v002.json`. Ten stable nonfunctional interaction anchors cover the cabinets, pinball, console, pool, darts and chess so future gameplay can attach without remodeling. The environment is 19,756 triangles and 1.36 MB; collision, access routes, TypeScript and Blender inspection pass. A v002 export-axis error that initially sent cabinet side-art through the ground floor was caught during review and corrected; the complete arcade now stays below the ground slab.
+
+### Guest bedroom preservation — 2026-09-09
+
+User clarified that the existing east guest bedroom furnishing was approved and should be retained. Restored its exact previously committed furniture as a separate guest-bedroom asset and collision set, alongside the new west master suite. This remains a comfortable ordinary guest bedroom; future jokes should be subtle details within it. The studio remains deferred by request.

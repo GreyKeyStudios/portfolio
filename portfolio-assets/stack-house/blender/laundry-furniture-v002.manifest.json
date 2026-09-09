@@ -1,7 +1,7 @@
 {
-  "triangles": 1920,
-  "bytes": 115044,
-  "pieces": 28,
-  "layout_sha256": "877dd26bcd90a518d7036e0ddd7b9729eecee0128bda4ee5624c3af0492f9189",
-  "note": "Compact washer/dryer wall, utility sink, storage and clear working aisle."
+  "triangles": 3428,
+  "bytes": 202900,
+  "pieces": 57,
+  "layout_sha256": "a5b0815f47dcfd6f3c80830f320971efdbdef119a4489c0825085296c9cdec8d",
+  "note": "Fitted washer/dryer wall, folding counter, utility sink, sorting hampers, drying and service details with a clear central aisle."
 }

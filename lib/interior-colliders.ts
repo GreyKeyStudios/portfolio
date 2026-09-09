@@ -46,19 +46,19 @@ function wallsForRoom(room: RoomDef): AABB[] {
   for (const d of room.doors) bySide[d.side].push(d)
 
   let i = 0
-  for (const [x0, x1] of solidSegments(minX, maxX, bySide.north)) {
+  for (const [x0, x1] of room.omitWalls?.includes('north') ? [] : solidSegments(minX, maxX, bySide.north)) {
     walls.push({ label: `${room.id}-N-${i++}`, minX: x0, maxX: x1, minZ: maxZ - WALL_THICKNESS, maxZ })
   }
   i = 0
-  for (const [x0, x1] of solidSegments(minX, maxX, bySide.south)) {
+  for (const [x0, x1] of room.omitWalls?.includes('south') ? [] : solidSegments(minX, maxX, bySide.south)) {
     walls.push({ label: `${room.id}-S-${i++}`, minX: x0, maxX: x1, minZ, maxZ: minZ + WALL_THICKNESS })
   }
   i = 0
-  for (const [z0, z1] of solidSegments(minZ, maxZ, bySide.east)) {
+  for (const [z0, z1] of room.omitWalls?.includes('east') ? [] : solidSegments(minZ, maxZ, bySide.east)) {
     walls.push({ label: `${room.id}-E-${i++}`, minX: maxX - WALL_THICKNESS, maxX, minZ: z0, maxZ: z1 })
   }
   i = 0
-  for (const [z0, z1] of solidSegments(minZ, maxZ, bySide.west)) {
+  for (const [z0, z1] of room.omitWalls?.includes('west') ? [] : solidSegments(minZ, maxZ, bySide.west)) {
     walls.push({ label: `${room.id}-W-${i++}`, minX, maxX: minX + WALL_THICKNESS, minZ: z0, maxZ: z1 })
   }
 

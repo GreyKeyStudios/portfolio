@@ -202,6 +202,8 @@ export interface RoomDef {
   furnished: boolean
   /** True for a room with no walls of its own. */
   noWalls?: boolean
+  /** Individual sides intentionally omitted to join two stable room ids into one space. */
+  omitWalls?: DoorSide[]
   /**
    * Metres of the room's own X-span that are VISIBLE but not WALKABLE, at each
    * side. Extra colliders close the strip off; the geometry is untouched.
@@ -529,8 +531,6 @@ export const ROOMS: RoomDef[] = [
     doors: [
       { side: 'south', center: lx(pl(2.7)), width: DOOR },
       { side: 'east', center: pl(8.5), width: DOOR },
-      // The Linen room behind the stair opens off here too — see below.
-      { side: 'east', center: pl(10.1), width: DOOR },
     ],
     windows: [
       { side: 'west', center: pl(8.5), width: 1.0 },
@@ -563,6 +563,7 @@ export const ROOMS: RoomDef[] = [
     floor: 'second',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: CORE_Z1, maxZ: pl(9.4) },
     doors: [{ side: 'west', center: pl(8.5), width: DOOR }],
+    omitWalls: ['north'],
     furnished: false,
   },
   {
@@ -573,7 +574,8 @@ export const ROOMS: RoomDef[] = [
     label: 'Walk-in Closet / Dressing Room',
     floor: 'second',
     bounds: { minX: CORE_MIN_X, maxX: CORE_MAX_X, minZ: pl(9.4), maxZ: HOUSE_D },
-    doors: [{ side: 'west', center: pl(10.1), width: DOOR }],
+    doors: [],
+    omitWalls: ['south'],
     furnished: false,
   },
   {

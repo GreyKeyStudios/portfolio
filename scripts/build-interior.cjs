@@ -554,10 +554,10 @@ function buildFloor(floor) {
     // wall's own axis plus a depth offset into a world box, so the four sides
     // don't need four near-identical copies of every piece of trim.
     const sides = [
-      { doors: bySide.north, windows: winBySide.north, lo: minX, hi: maxX, slab: [maxZ - WALL, maxZ], inner: maxZ - WALL, dir: -1, axis: 'x' },
-      { doors: bySide.south, windows: winBySide.south, lo: minX, hi: maxX, slab: [minZ, minZ + WALL], inner: minZ + WALL, dir: 1, axis: 'x' },
-      { doors: bySide.east, windows: winBySide.east, lo: minZ, hi: maxZ, slab: [maxX - WALL, maxX], inner: maxX - WALL, dir: -1, axis: 'z' },
-      { doors: bySide.west, windows: winBySide.west, lo: minZ, hi: maxZ, slab: [minX, minX + WALL], inner: minX + WALL, dir: 1, axis: 'z' },
+      { side: 'north', doors: bySide.north, windows: winBySide.north, lo: minX, hi: maxX, slab: [maxZ - WALL, maxZ], inner: maxZ - WALL, dir: -1, axis: 'x' },
+      { side: 'south', doors: bySide.south, windows: winBySide.south, lo: minX, hi: maxX, slab: [minZ, minZ + WALL], inner: minZ + WALL, dir: 1, axis: 'x' },
+      { side: 'east', doors: bySide.east, windows: winBySide.east, lo: minZ, hi: maxZ, slab: [maxX - WALL, maxX], inner: maxX - WALL, dir: -1, axis: 'z' },
+      { side: 'west', doors: bySide.west, windows: winBySide.west, lo: minZ, hi: maxZ, slab: [minX, minX + WALL], inner: minX + WALL, dir: 1, axis: 'z' },
     ]
 
     // Walls run the FULL floor-to-floor height, not just to the ceiling. At
@@ -566,6 +566,7 @@ function buildFloor(floor) {
     // the navy bands in the walkthroughs, and what you pass through on every
     // floor change, since the eye travels 1.7 -> 4.9 across a storey.
     for (const s of sides) {
+      if (room.omitWalls?.includes(s.side)) continue
       // box(from, to, y0, y1, d0, d1) — `from`/`to` run along the wall,
       // `d0`/`d1` are depths measured perpendicular to it.
       const box = (g, a, b, y0, y1, d0, d1) =>
