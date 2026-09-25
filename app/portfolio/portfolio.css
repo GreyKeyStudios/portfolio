@@ -24,3 +24,4 @@
 .identity-credits__stage>.identity-credit-card{position:absolute;inset:0}
 .building-roster .building-devices{min-width:0}.building-roster .building-desktop{overflow:hidden}.building-roster .building-desktop>img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
 .building-roster .building-mobile{overflow:hidden}.building-roster .building-mobile>img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}.lab-specimen__media{overflow:hidden;background:#000}.lab-specimen__media>img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+.game-stage__screen{overflow:hidden}.game-stage__screen>img{display:block;width:100%;height:100%;object-fit:cover}
