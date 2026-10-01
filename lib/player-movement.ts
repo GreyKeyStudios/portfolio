@@ -50,8 +50,29 @@ const _right = new THREE.Vector3()
 const _up = new THREE.Vector3(0, 1, 0)
 
 /**
+ * Longest distance moved in one physics sub-step. Must stay BELOW the 0.05
+ * stair-end tolerance in resolveEyeY: a floor handoff only fires when a step
+ * lands inside that band just past a flight's end. With one step per frame, a
+ * frame that jumped the band (roughly below 40 fps walking, 90 fps sprinting)
+ * landed on the far floor's height, the step-height guard refused it, and the
+ * next frame did the same — the player was wedged at the end of the flight.
+ * Reproduced 2026-10-01 at 12 fps on all six flights.
+ */
+const MAX_SUBSTEP = 0.04
+
+/**
+ * Frames longer than this are treated as this long, so a tab switch or a long
+ * hitch cannot turn into hundreds of sub-steps (and a long slide) on the next
+ * frame. Below 4 fps movement slows rather than skipping ahead.
+ */
+const MAX_DELTA = 0.25
+
+/**
  * Advances `object` by one frame of `intent`, resolving collision, stair height
  * and floor transitions. Mutates the object's position in place.
+ *
+ * The frame is split into sub-steps of at most MAX_SUBSTEP so the outcome does
+ * not depend on frame rate; a refused sub-step ends the frame where it is.
  *
  * `justTeleported` bypasses the step limit for exactly one frame: a teleport is
  * a legitimate discontinuity, and without this the guard compares the
@@ -59,6 +80,26 @@ const _up = new THREE.Vector3(0, 1, 0)
  * and silently puts the player back where they came from.
  */
 export function stepPlayer(
+  object: THREE.Object3D,
+  location: FloorId,
+  intent: MoveIntent,
+  delta: number,
+  justTeleported: boolean
+): StepResult {
+  const dt = Math.min(delta, MAX_DELTA)
+  const reach = Math.abs(intent.speed) * dt * Math.max(1, Math.hypot(intent.forward, intent.strafe))
+  const steps = Math.max(1, Math.ceil(reach / MAX_SUBSTEP))
+  let floor = location
+  let crossedTo: FloorId | null = null
+  for (let i = 0; i < steps; i++) {
+    const r = subStep(object, floor, intent, dt / steps, justTeleported && i === 0)
+    if (r.crossedTo) floor = crossedTo = r.crossedTo
+    if (r.refused) return { refused: true, crossedTo }
+  }
+  return { refused: false, crossedTo }
+}
+
+function subStep(
   object: THREE.Object3D,
   location: FloorId,
   intent: MoveIntent,

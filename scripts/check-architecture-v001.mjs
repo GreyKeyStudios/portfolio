@@ -480,6 +480,32 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
     traversals++
   }
 }
+// The traversals above slow down near each waypoint, which always lands a frame
+// inside the 5 cm stair-end band. Real input does not: at constant walking or
+// sprinting speed on a slow machine one frame jumped the band and the player
+// was wedged at the end of every flight. Walk them at full speed, low fps.
+let lowFpsTraversals = 0
+for (const fps of [12, 5]) for (const speed of [2, 4.5]) {
+  for (const [from, to, down] of [['basement','ground',false],['ground','second',false],['second','attic',false],['ground','basement',true],['second','ground',true],['attic','second',true]]) {
+    const points = [[299.375, 1.5], [299.375, 5.45], [300.625, 5.45], [300.625, 1.5]]
+    if (down) points.reverse()
+    let floor = from
+    const camera = new PerspectiveCamera()
+    camera.rotation.order = 'YXZ'
+    camera.position.set(points[0][0], layout.bases[from] + INTERIOR_EYE_HEIGHT, points[0][1])
+    for (const [x, z] of points.slice(1)) {
+      let frames = 0
+      while (Math.hypot(camera.position.x - x, camera.position.z - z) > speed / fps && frames++ < 400) {
+        camera.rotation.set(0, Math.atan2(camera.position.x - x, camera.position.z - z), 0)
+        const r = stepPlayer(camera, floor, {forward:1,strafe:0,speed}, 1/fps, false)
+        if (r.crossedTo) floor = r.crossedTo
+      }
+      assert.ok(frames < 400, `${from}->${to} wedged at ${x},${z} (${fps} fps, ${speed} m/s)`)
+    }
+    assert.equal(floor, to, `${from}->${to} at ${fps} fps, ${speed} m/s ended on ${floor}`)
+    lowFpsTraversals++
+  }
+}
 // The shower screen is authored with transmission; the loader must strip it
 // (second full-scene render pass) while keeping the authored glass opacity.
 const { stripTransmission } = require('../lib/interior-materials.ts')
@@ -491,4 +517,4 @@ let stripped = 0
   assert.ok(ob.material.transparent && Math.abs(ob.material.opacity - .24) < .01, 'Shower glass lost its authored opacity')
 })
 assert.equal(stripped, 1, 'Expected exactly one transmissive material (the bathroom shower screen)')
-console.log(JSON.stringify({treadAndLandingSamples:samples, stairTraversals:traversals, basementFloor:'closed', atticOpposedFaces:opposed, stairBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}}, null, 2))
+console.log(JSON.stringify({treadAndLandingSamples:samples, stairTraversals:traversals, lowFpsTraversals, basementFloor:'closed', atticOpposedFaces:opposed, stairBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}}, null, 2))
