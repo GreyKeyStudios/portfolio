@@ -11,10 +11,12 @@ const GateScene = dynamic(() => import("@/components/gate-scene").then((module) 
 const HOUSE_ASSETS = [
   "/models/tree-main-optimized.glb",
   "/models/house-main-optimized.glb",
-  "/models/interior-ground.glb",
-  "/models/interior-second.glb",
-  "/models/interior-basement.glb",
-  "/models/interior-attic.glb",
+  // The v002 shells are what plain /house shows; the legacy interior-*.glb
+  // shells are opt-in (?architecture=legacy) and are not worth warming.
+  "/models/interior-ground-v002.glb",
+  "/models/interior-second-v002.glb",
+  "/models/interior-basement-v002.glb",
+  "/models/interior-attic-v002.glb",
 ]
 
 function warmHouse() {

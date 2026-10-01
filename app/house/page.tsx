@@ -534,7 +534,12 @@ function YardScene() {
 function Scene() {
   const currentLocation = usePlayerStore((s) => s.currentLocation)
   const isYard = currentLocation === 'yard'
-  const [architectureCandidate, setArchitectureCandidate] = useState<string | null>(null)
+  // Start on the default shell, not null. A null first render mounted the
+  // legacy floors (fetching their GLBs) plus the DoorPlaceholder and ExitDoor
+  // glow lights, then unmounted them when this effect picked v002 — changing
+  // the light count on every load, which recompiles every material (see
+  // POOL_SIZE). Only the opt-in ?architecture=legacy|v001 paths switch now.
+  const [architectureCandidate, setArchitectureCandidate] = useState<string | null>('v002')
   useEffect(() => {
     const version = new URLSearchParams(window.location.search).get('architecture')
     // The approved shell is the branch default; explicit legacy remains available.

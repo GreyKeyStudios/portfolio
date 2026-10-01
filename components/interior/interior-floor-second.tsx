@@ -27,4 +27,5 @@ export function InteriorFloorSecond() {
   )
 }
 
-useGLTF.preload(MODEL_URL)
+// No module-level useGLTF.preload: this legacy shell is only shown with
+// ?architecture=legacy, and preloading at import fetched it for every visitor.

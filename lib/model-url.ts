@@ -1,17 +1,14 @@
-const GITHUB_BASE =
-  "https://raw.githubusercontent.com/GreyKeyStudios/portfolio/main/public/models"
-
 /**
- * Returns the correct URL for a GLB model file based on the environment.
+ * URL for a GLB under public/models/.
  *
- * - Development: loads from /public/models/ locally (no GitHub dependency,
- *   no 100MB file size limit — oversized files like grass-1.glb work fine)
- * - Production: loads from GitHub raw CDN (same as before for committed files;
- *   local-only oversized files will gracefully 404 until hosted elsewhere)
+ * Always the site's own origin. Production used to fetch these from
+ * raw.githubusercontent.com on `main`, a workaround for files over Cloudflare
+ * Pages' 25 MiB per-file limit. Nothing in use is that large any more
+ * (scripts/validate-static.cjs enforces it), and the workaround had become the
+ * bug: preview deploys rendered main's models instead of their own, GitHub raw
+ * is not a CDN, and the gate's same-origin warm-up never matched the URL the
+ * scene then requested, so the exterior downloaded twice.
  */
 export function getModelUrl(filename: string): string {
-  if (process.env.NODE_ENV === "development") {
-    return `/models/${filename}`
-  }
-  return `${GITHUB_BASE}/${encodeURIComponent(filename)}`
+  return `/models/${encodeURIComponent(filename)}`
 }

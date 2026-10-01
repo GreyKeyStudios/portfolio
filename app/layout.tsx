@@ -10,23 +10,9 @@ export const metadata: Metadata = {
   title: 'The Stack House — Grey Key Studios',
   description: 'An interactive 3D portfolio by Michael Walton.',
   generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  // No `icons`: the v0 template pointed at /icon.svg, /apple-icon.png and two
+  // 32px PNGs that never existed, so every page made four 404 requests. Add a
+  // real square Grey Key mark under public/ before declaring icons again.
 }
 
 export default function RootLayout({
