@@ -13,7 +13,7 @@
     "validate": "node scripts/validate-layout.cjs && node scripts/validate-portfolio.cjs && node scripts/validate-invariants.cjs",
     "validate:static": "node scripts/validate-static.cjs",
     "check:generated": "npm run build:interior && npm run elevations && git diff --exit-code -- public/models/interior-basement.glb public/models/interior-ground.glb public/models/interior-second.glb public/models/interior-attic.glb docs/elevations.svg docs/stair-socket.md",
-    "check:architecture": "node scripts/check-architecture-v001.mjs",
+    "check:architecture": "node scripts/check-architecture-v001.mjs && node scripts/check-circulation.mjs",
     "check": "npm run typecheck && npm run lint && npm run validate"
   },
   "dependencies": {
