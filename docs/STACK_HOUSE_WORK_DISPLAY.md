@@ -223,8 +223,8 @@ These remain governed by the Experience Bible and should continue to differ from
 - GK DAW/GK Studio → inspect/play Grey Key catalog sessions and later boss-music preparation.
 - Kitchen → physical working cookbook + recipe collection/cooking minigame + fridge lore + restaurant kitchen display.
 - Library/Study → ReLearn, Diaspora Atlas, research/education through a study/library context.
-- Writing Room/Sunroom → blog, essays, books, drafts, manuscripts through the writing desk and surrounding artifacts.
-- Master Bedroom → Grey Key merch integrated into wardrobe, dresser, bedding, walls, and room objects rather than a storefront.
+- Writing desk (inside the combined Library / Study / Writing room since the 2026-09-08 layout update — no standalone Writing Room/Sunroom) → blog, essays, notes and a small number of real drafts. Do not fabricate manuscripts.
+- Master Bedroom + Walk-in Closet / Dressing Room → Grey Key merch integrated into wardrobe, dresser, bedding, walls, and room objects rather than a storefront.
 - Attic/Archive → project archaeology: old machines, drives, folders, clippings, physical artifacts, abandoned/evolved ideas.
 
 ---
