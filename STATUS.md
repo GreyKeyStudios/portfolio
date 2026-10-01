@@ -1,6 +1,6 @@
 # Stack House — Status
 
-_Last updated: 2026-09-05_
+_Last updated: 2026-10-01 (cloud repository audit — see the end of this file for the LOCAL worker handoff)_
 
 **Canonical design alignment:** Read and incorporated the new experience bible
 and `AGENTS.md`. The entrance pass is architectural, not the locked arrival
@@ -53,9 +53,15 @@ neighbour street, skyline plate, sky dome, stars. FPS controls on desktop,
 joystick + drag-look on mobile. Boot sequence, HUD, proximity prompts, front
 door → interior transition all working.
 
-**The interior is a shell in progress.** Four floors, 22 rooms, correct plan,
-correct collision, working vertical movement, trim, door openings and windows
-resolved. Untextured and unfurnished. This is the current work front.
+**The interior is the v002 shell, mostly furnished.** Four floors, 22 stable
+room ids, plan-derived collision, working vertical movement. Plain `/house`
+shows v002 (Blender-authored shell details, floor finishes, staircase-v002 and
+per-room furniture GLBs with matching collision); `?architecture=legacy` shows
+the procedural shell. Ground floor, upstairs bathroom/office/master suite/
+closet/guest room, basement arcade, mechanical and laundry are furnished; Grey
+Key Studios, the Library/Study/Writing room and the Archive are not. The
+2026-09-08 entries below are the current detail; the sections immediately
+following describe the shell phase and are kept as history.
 
 ---
 
@@ -69,7 +75,7 @@ resolved. Untextured and unfurnished. This is the current work front.
 | Stairs | Switchback core, modelled into the GLB of the floor *below* |
 | Lighting | Per-room fills derived from `ROOMS` centres + `ROOM_TINT` identity colours |
 | Windows | 28 openings (5 basement / 10 ground / 11 second / 2 attic gable) — see docs/elevations.svg |
-| Rooms furnished | 5 of 22 flagged `furnished`, but only the home office has real geometry (`components/interior/home-office-room.tsx`); the other four are circulation |
+| Rooms furnished | Superseded — see the 2026-09-07…09 furnishing entries; v002 furniture lives in `public/models/*-furniture-v002.glb` with collision from `lib/*-furniture-v002.json` |
 | Everything else | `DoorPlaceholder` markers, now DERIVED from unfurnished rooms + `ProxyFurniture` scale boxes |
 
 Interior GLBs are 51–299 KB each — pure procedural geometry, no textures, no
@@ -77,8 +83,10 @@ props. That number is the honest measure of how much room there is to grow.
 
 ### Load-bearing constraints (do not relearn these the hard way)
 
-- **X0 = 300.** Interior lives 300 units off in world space; yard clamps the
-  player to x∈[-25,25]. Both scenes stay mounted, visibility-toggled — no
+- **X0 = 300.** Interior lives 300 units off in world space; the yard play
+  area is `getWorldBounds('yard')` in `lib/use-player-vertical.ts`, currently
+  x∈[-16,16] (the old [-25,25] clamp in fps-controls no longer exists).
+  `scripts/validate-layout.cjs` fails if the two areas ever touch. Both scenes stay mounted, visibility-toggled — no
   mount/unmount on teleport, so no pop-in.
 - **Fixed light pool of 7.** `POOL_SIZE` in `app/house/page.tsx`. Changing the
   *number* of active lights recompiles every material in the scene (measured:
@@ -101,7 +109,8 @@ props. That number is the honest measure of how much room there is to grow.
   inside the page.
 - **Deploy is Cloudflare Pages, static export.** Asset weight is a hard budget,
   not a nice-to-have.
-- **Render resolution is capped at dpr 1.5** on the house Canvas (2026-09-04).
+- **Render resolution is capped** on the house Canvas: dpr 1.5 from 2026-09-04,
+  lowered to **dpr 1** on 2026-09-08 for stair traversal (see Home office entry).
   It was unset, and r3f defaults to [1, 2] — so a devicePixelRatio-2 display
   rendered 4x the pixels, post passes included. The gate scene had always
   clamped; this one never did. `powerPreference: high-performance` added at the
@@ -262,8 +271,8 @@ shell renders black. Check the drawing after any window change.
 
 ### Two validators worth keeping
 
-Both are one-liners against the transpiled layout in `.interior-build/`, and both
-caught real breakage during the re-cut:
+Both are now automated in `scripts/validate-layout.cjs` (`npm run validate`,
+run in CI), and both caught real breakage during the re-cut:
 
 - **Door pairing.** Every interior door must have a matching entry on the room
   the other side; the front door is the only legitimate unmatched one.
@@ -274,9 +283,8 @@ caught real breakage during the re-cut:
 
 75° is wide. Arch-viz walkthroughs sit at 50–60. An A/B at 60 from the same spot
 made rooms read noticeably more like photographs — less edge distortion, windows
-at their true size — at the cost of peripheral vision while walking. **Left at 75
-pending a call**; it is one number in the `<Canvas camera>` prop in
-`app/house/page.tsx`.
+at their true size — at the cost of peripheral vision while walking. **Resolved 2026-09-06:** interior 65° at 1.62 m eye height,
+yard stays 75° / 1.7 m (`lib/player-camera.ts`; see Camera proportion review).
 
 It interacts with two things already decided: the ceiling went 2.8 → 3.0 because
 it "read as low", which is the wide FOV talking, and rooms feeling cramped at a
@@ -361,7 +369,15 @@ npm run dev              # Next dev server
 npm run build:interior   # regenerate the 4 interior floor GLBs from the plan
 npm run elevations       # redraw docs/elevations.svg — check after any window change
 npm run build            # static export
+npm run typecheck        # the build skips type errors (ignoreBuildErrors) — this does not
+npm run validate         # plan, portfolio-truth and render/deploy invariant validators
+npm run validate:static  # after build: routes, links, asset refs, 25 MiB limit, weight
+npm run check:generated  # regenerated shells + elevations must equal what is committed
+npm run check:architecture  # GLB geometry, stair traversal, routes, Blender provenance
+npm run check            # typecheck + lint + validate
 ```
+
+`.github/workflows/validate.yml` runs all of these on pull requests.
 
 ### Entrance shape correction — 2026-09-05
 Interior entry-door-v002 now follows the exterior rounded arch, two tall glazed panes and two lower panels. Removed conflicting square entrance trim from v002. Blender source and manifest saved; TypeScript and architecture regression checks pass. Shell-first work continues; no furniture added.
@@ -507,3 +523,39 @@ All five cabinet marquees and side-art panels, the pinball backglass, television
 ### Guest bedroom preservation — 2026-09-09
 
 User clarified that the existing east guest bedroom furnishing was approved and should be retained. Restored its exact previously committed furniture as a separate guest-bedroom asset and collision set, alongside the new west master suite. This remains a comfortable ordinary guest bedroom; future jokes should be subtle details within it. The studio remains deferred by request.
+
+### Cloud repository audit — 2026-10-01
+
+Repository-only pass (no browser, no GPU, no Blender). Nothing visual, collision-feel or performance-related was physically verified; that is listed in the handoff below. All of `typecheck`, `lint` (0 errors), `validate`, `check:generated`, `build` and `validate:static` pass. `check:architecture` passes every geometry, traversal and route assertion but **fails on two real provenance gaps** (see handoff 1–2).
+
+Portfolio truth fixes: lab previews no longer claim to be "live site captures" (Citizen Science is a concept interface, the others prototype captures); stale "media pending" copy removed from LifeOS/CareerOS/Diaspora Atlas/Baseka; ReLearn records its intended role as Bridge Academy's learning engine; game ids/slugs/artwork renamed to `kids-at-the-mall` / `floor-is-negotiable`; the Home Office list no longer calls ReLearn a concept or Grey Key Studios "Michael's music production alias".
+
+Engineering fixes: `/house` initialised the architecture choice to `null`, so every load mounted legacy floors plus the DoorPlaceholder/ExitDoor lights and unmounted them a frame later — a light-count change (full material recompile) on load; it now starts on `v002`. Production loaded GLBs from GitHub raw `main` (version skew on previews, ~17 MB exterior could download twice after the gate's same-origin warm-up); models are now same-origin and the deploy fails instead of silently deleting >25 MB files. Legacy shells are no longer preloaded at import, and the gate warms v002. Removed four never-existing favicon references (four 404s per page), 18 never-imported components, the superseded storage/linen furniture modules and GLBs, and a duplicate grass GLB. Regenerated the stale legacy `interior-{ground,second}.glb` and the elevation drawing (back door was missing). Portfolio nav links got a real focus ring.
+
+Stale-hash note: `scripts/check-architecture-v001.mjs` stamped freshness with `sha256(lib/interior-layout.ts)`, a value that matched no committed revision, so the regression had been red since 2026-09-07. It now compares the JSON each Blender script actually consumed with what the current plan derives.
+
+Open questions for the owner (not changed): "Chart Colleseum" spelling (record says "retained until confirmed"; the image file is `chart-colosseum.png`); `1899-waltz.png` artwork ships but is not wired to anything; "App Triage" and "Prompt Pilot" appear only in the Home Office list; GK World has no portfolio record at all; no real favicon exists; `@vercel/analytics` is mounted on a Cloudflare deploy where its script cannot load; the Geist fonts are instantiated but never applied.
+
+Asset weight (export): portfolio images 50.7 MiB, models 34.5 MiB. The game/Bridge concept PNGs are opaque 1672×941 images at 2.3–3.0 MB each; re-encoding them (WebP/AVIF or q≈85 JPEG) would likely cut the images by more than 80 %, but needs a visual sign-off.
+
+## LOCAL Stack House worker — handoff (2026-10-01)
+
+Do these on a machine with a browser, GPU and Blender. Run `npm ci --legacy-peer-deps && npm run check` first; it should be clean.
+
+**1. Floor finishes are stale (Blender).** `floor-finishes-layout-v002.json` predates the walk-in-closet merge (`nook`, `upstairs-storage`, `linen` changed: the nook→linen doorway and the storage/linen wall were removed). Run `node scripts/export-floor-finishes.cjs`, rebuild with `scripts/build-floor-finishes-v002.py` in Blender, then in the browser check the closet floor for a carpet seam or threshold cut along the old wall line (z≈9.4) and at the old doorway (x≈298.85, z≈10.1). Commit the JSON, manifest, `.blend` and both GLBs together.
+
+**2. Commit the back-entry Blender source.** `portfolio-assets/stack-house/blender/back-entry-furniture-v002.blend` and `.manifest.json` were never committed, although the GLB was. Commit them from the machine that built `public/models/back-entry-furniture-v002.glb` (re-export only if the GLB must change). After 1 and 2, `npm run check:architecture` must pass; it runs in CI.
+
+**3. First-load hitch (browser, `/house?stats`).** The architecture choice now starts on v002. Confirm: no frame freeze when the house first appears, no legacy `interior-*.glb` requests in the network tab, no red DoorPlaceholder orbs or green exit glow in the default view, and that `?architecture=legacy` and `?architecture=v001` still switch and work.
+
+**4. Same-origin models on a deployed preview.** On a Cloudflare preview deploy of this branch: exterior house, willow, lamps, bushes, fence and grass load from the site's own `/models/` (no `raw.githubusercontent.com` requests), the gate→house transition does not re-download the house/tree, and Cloudflare serves the 11 MB tree without error. Note load times compared with production.
+
+**5. Legacy view geometry.** `?architecture=legacy`: the regenerated ground/second shells should show the back-entry exterior door and an open walk-in closet (no wall between storage and linen, no second doorway). Collision already followed the plan.
+
+**6. Gate warm-up.** Open `/`, wait ~3 s, then enter the house: the four `interior-*-v002.glb` shells should come from cache.
+
+**7. Desktop/touch regression sweep** (nothing here changed them, but this pass touched the house page): `?controls=desktop` and `?controls=touch`, post-processing on desktop only, six stair traversals, foyer entry/exit, back door route, Kitchen → Pantry → Dining, basement laundry access.
+
+**8. Portfolio page visual check** (`/portfolio`): Lab cards and game cards render with renamed `kids-at-the-mall.png`; nav links show a focus ring with Tab; no console 404s for icons.
+
+**9. Decisions to bring to the user** (do not decide them yourself): the open questions above, whether to re-encode the concept PNGs, and whether the 14 remaining lint warnings (hook dependency arrays in R3F code) are worth a pass — each needs runtime testing, so they were left alone.
