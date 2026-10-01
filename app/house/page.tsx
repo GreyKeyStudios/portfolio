@@ -870,6 +870,9 @@ export default function StackHouse() {
           play area eats gestures, so an in-app way back is the reliable one —
           and it doubles as the reload the browser makes awkward here. */}
       {booted && (
+        // A full document navigation on purpose: leaving tears down the WebGL
+        // context instead of keeping the 3D scene alive behind a client route.
+        // eslint-disable-next-line @next/next/no-html-link-for-pages
         <a
           href="/"
           style={{

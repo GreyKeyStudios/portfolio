@@ -89,7 +89,7 @@ export function NowWall({ position }: { position: [number, number, number] }) {
       {/* Wall Label */}
       <Html position={[0, -1.3, 0]} center>
         <div className="text-white text-sm font-bold bg-black bg-opacity-50 px-2 py-1 rounded">
-          NOW WALL - What I'm Building
+          NOW WALL - What I&apos;m Building
         </div>
       </Html>
     </group>
