@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react"
 import { Mesh, MeshStandardMaterial } from "three"
 import { FLOOR_BASE_Y, X0, type FloorId } from "@/lib/interior-layout"
 import { ENTRY_DOOR } from "@/lib/architecture-details"
+import { stripTransmission } from "@/lib/interior-materials"
 import { registerLivingFurniture } from "@/lib/living-furniture"
 import { registerDiningFurniture } from "@/lib/dining-furniture"
 import { registerKitchenFurniture } from "@/lib/kitchen-furniture"
@@ -33,6 +34,7 @@ function CandidateAsset({ url, refined = false }: { url: string; refined?: boole
       if (child instanceof Mesh) {
         child.castShadow = true
         child.receiveShadow = true
+        stripTransmission(child.material)
         if (refined && child.material instanceof MeshStandardMaterial) {
           child.material = child.material.clone()
           ownedMaterials.push(child.material)

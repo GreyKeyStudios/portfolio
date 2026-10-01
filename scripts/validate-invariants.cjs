@@ -57,6 +57,21 @@ const dpr = house.match(/\bdpr=\{([^}]+)\}/)
 check(dpr && (dpr[1].trim() === '1' || /^\[\s*1\s*,\s*1(\.\d+)?\s*\]$/.test(dpr[1].trim())), `house Canvas dpr is ${dpr ? dpr[1] : 'unset'}; r3f defaults to [1,2] — keep it capped (currently 1)`)
 check(/powerPreference: 'high-performance'/.test(house), "house Canvas must request powerPreference: 'high-performance'")
 
+// glTF transmission makes three.js re-render every opaque object into a second
+// target whenever the material is on screen; one shower screen halved the
+// interior frame rate (STATUS 2026-10-01). Interior assets go through
+// stripTransmission; any other GLB that ships transmission fails here.
+const candidate = read('components/interior/architecture-candidate.tsx')
+check(/stripTransmission\(child\.material\)/.test(candidate), 'CandidateAsset must call stripTransmission on every interior mesh')
+for (const f of fs.readdirSync(path.join(ROOT, 'public/models')).filter(f => f.endsWith('.glb'))) {
+  const bytes = fs.readFileSync(path.join(ROOT, 'public/models', f))
+  const json = bytes.subarray(20, 20 + bytes.readUInt32LE(12)).toString('utf8')
+  if (!json.includes('KHR_materials_transmission')) continue
+  // Interior shells/furniture are loaded by CandidateAsset, by literal or templated URL.
+  const viaCandidate = candidate.includes(`/models/${f}`) || /-v00\d\.glb$/.test(f) && /^(interior|floor-finishes|staircase)-/.test(f)
+  check(viaCandidate, `public/models/${f} uses KHR_materials_transmission but is not loaded through CandidateAsset (stripTransmission)`)
+}
+
 // Cloudflare Pages static export.
 check(/output:\s*'export'/.test(nextConfig), "next.config.mjs must keep output: 'export' (Cloudflare Pages)")
 check(/unoptimized:\s*true/.test(nextConfig), 'static export requires images.unoptimized')

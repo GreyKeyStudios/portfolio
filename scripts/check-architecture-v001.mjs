@@ -480,4 +480,15 @@ for (const [lower, upper] of [['basement', 'ground'], ['ground', 'second'], ['se
     traversals++
   }
 }
+// The shower screen is authored with transmission; the loader must strip it
+// (second full-scene render pass) while keeping the authored glass opacity.
+const { stripTransmission } = require('../lib/interior-materials.ts')
+let stripped = 0
+;(await load('bathroom-furniture-v002')).scene.traverse(ob => {
+  if (!ob.isMesh || !stripTransmission(ob.material)) return
+  stripped++
+  assert.equal(ob.material.transmission, 0)
+  assert.ok(ob.material.transparent && Math.abs(ob.material.opacity - .24) < .01, 'Shower glass lost its authored opacity')
+})
+assert.equal(stripped, 1, 'Expected exactly one transmissive material (the bathroom shower screen)')
 console.log(JSON.stringify({treadAndLandingSamples:samples, stairTraversals:traversals, basementFloor:'closed', atticOpposedFaces:opposed, stairBounds:{min:bounds.min.toArray(),max:bounds.max.toArray()}}, null, 2))

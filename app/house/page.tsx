@@ -204,8 +204,14 @@ const PLACEHOLDER_ROOMS: { id: string; label: string; floor: InteriorFloor; posi
  * mounted inside the Canvas so it can reach them at all.
  */
 function Stats() {
-  const { gl } = useThree()
+  const { gl, scene, camera } = useThree()
   const [text, setText] = useState('')
+  // ?stats only: lets a profiling script reach the renderer and scene graph to
+  // split frame cost (shadow pass, post, per-floor) without editing code.
+  useEffect(() => {
+    ;(window as any).__three = { gl, scene, camera }
+    return () => { delete (window as any).__three }
+  }, [gl, scene, camera])
   const frames = useRef<number[]>([])
   const last = useRef(performance.now())
   const since = useRef(0)
