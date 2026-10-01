@@ -15,7 +15,16 @@ const load = async (name) => {
 const layout = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/layout-v001.json'))
 const manifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/staircase-v002.manifest.json'))
 const hash = (path) => crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')
-assert.equal(hash('lib/interior-layout.ts'), manifest.layout_sha256, 'Stair layout is stale')
+// Freshness is judged on what Blender actually CONSUMED, not on a hash of the
+// whole plan file. The manifests stamp sha256(lib/interior-layout.ts), which
+// changes on any edit — a room label, the spawn point — and had gone red on
+// every commit since 2026-09-07 while the stair input was byte-identical.
+// The stamp is kept in the manifest as provenance; the assertion below is the
+// gate: the exported Blender input must equal what the current plan derives.
+const plan = createRequire(import.meta.url)('./lib/load-ts.cjs').load('lib/interior-layout.ts')
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+assert.ok(layout.X0 === plan.X0 && same(layout.bases, plan.FLOOR_BASE_Y) && same(layout.stairs, plan.STAIRS),
+  'Stair input layout-v001.json no longer matches lib/interior-layout.ts STAIRS — re-export it and rebuild staircase-v00x in Blender')
 assert.equal(hash('portfolio-assets/stack-house/blender/staircase-v002.blend'), manifest.source_sha256, 'Source hash differs')
 assert.equal(hash('portfolio-assets/stack-house/blender/oak-grain-v002.png'),manifest.texture_sha256,'Stair oak source texture is stale')
 const { scene } = await load('staircase-v002')
@@ -54,8 +63,13 @@ for (const floor of ['basement', 'ground', 'second', 'attic']) {
 }
 let samples = 0
 const finishManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/floor-finishes-v002.manifest.json'))
-assert.equal(hash('lib/interior-layout.ts'), finishManifest.layout_sha256, 'Floor finishes use a stale plan')
 const finishPlan = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/floor-finishes-layout-v002.json'))
+// Same derivation as scripts/export-floor-finishes.cjs.
+const expectedFinishPlan = { X0: plan.X0, shaft: { minX: plan.CORE_MIN_X, maxX: plan.CORE_MAX_X, minZ: plan.CORE_Z0, maxZ: plan.CORE_Z1 }, rooms: plan.ROOMS.filter(r => ['ground', 'second'].includes(r.floor)) }
+{
+  const changed = expectedFinishPlan.rooms.filter(r => !same(r, finishPlan.rooms.find(o => o.id === r.id))).map(r => r.id)
+  assert.ok(same(finishPlan, expectedFinishPlan), `Floor finishes were exported from a stale plan (rooms changed since: ${changed.join(', ') || 'shaft/X0'}) — run node scripts/export-floor-finishes.cjs, rebuild with build-floor-finishes-v002.py in Blender, and recheck the floor visually`)
+}
 for (const floor of ['ground','second']) {
   const finish = (await load(`floor-finishes-${floor}-v002`)).scene
   finish.updateMatrixWorld(true)
@@ -216,6 +230,7 @@ const pantryManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/
 assert.equal(hash('lib/pantry-furniture-v002.json'), pantryManifest.layout_sha256, 'Pantry export layout is stale')
 const laundryManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/laundry-furniture-v002.manifest.json'))
 assert.equal(hash('lib/laundry-furniture-v002.json'), laundryManifest.layout_sha256, 'Laundry export layout is stale')
+assert.ok(fs.existsSync('portfolio-assets/stack-house/blender/back-entry-furniture-v002.manifest.json'), 'back-entry-furniture-v002.manifest.json (and its .blend) were never committed — export them from the machine that built public/models/back-entry-furniture-v002.glb')
 const backEntryManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/back-entry-furniture-v002.manifest.json'))
 assert.equal(hash('lib/back-entry-furniture-v002.json'), backEntryManifest.layout_sha256, 'Back-entry export layout is stale')
 const mudroomManifest = JSON.parse(fs.readFileSync('portfolio-assets/stack-house/blender/mudroom-furniture-v002.manifest.json'))
