@@ -644,3 +644,15 @@ desktop/touch sweep ✔ · 8 portfolio check ✔ · 9 still Michael's.
 - Grey Key Studios, Library/Study and the Archive remain unfurnished by design;
   the arcade interaction anchors still say "coming soon".
 
+
+### Concept art re-encoded to WebP — 2026-10-02
+
+The ten concept-art images (eight game concepts, GK Backlot, Bridge Academy hero) are now lossy WebP at full resolution: 24 MiB → 4.3 MiB, and the exported portfolio images went from 50.7 to 30.8 MiB. Recipe: `ffmpeg -i in.png -c:v libwebp -lossless 0 -quality 92 -compression_level 6 -preset picture out.webp` (ImageMagick's `-quality` had no effect on WebP in the cloud container). Full-image SSIM is 0.91–0.97, which mostly reflects grain smoothing. 1:1 crops of the two lowest scorers (Corporate Espionage Sim, Cooley's Revenge) were visually indistinguishable, including UI text and saturated reds. The PNG masters remain in git history; screenshots, UI captures and persona portraits were left as PNG. Local worker: glance at the Game Lab and Bridge sections of `/portfolio` on a real display.
+
+Persona portraits followed (same recipe, q92): the six images in `public/portfolio/music/artists/` (all opaque) went from 10.0 MiB to 1.0 MiB, with SSIM 0.945–0.962 and PSNR 35.6–42.7 dB. 1:1 face crops of the two lowest scorers (CHNO, Adwo Nyumbani) showed no visible difference and no shadow banding. Exported portfolio images are now 21.8 MiB.
+
+Music project artwork followed, converting only where WebP actually helps: `1899-waltz` (2.1 MiB → 248 KiB; still unreferenced), `destination-terra-gaia` (1.9 MiB → 106 KiB; 1:1 crop checked, no sky banding), `abstract-waltz`, `cardboard-portraits`, `games-on-channel-3` and `plastic-horizons` (each 21–65 % smaller, SSIM ≥ 0.964). The other five stay JPEG: four were already compact lossy files, so WebP was larger or under 6 % smaller. The 637 KiB Soundtrack for an Unmade Film cover only reached 510 KiB at a visible fidelity cost. Re-encoding an already-lossy JPEG compounds loss, so it is not worth it for those savings. Exported portfolio images: 18.0 MiB (from 50.7).
+
+### 1899 Waltz wired in + music project thumbnails — 2026-10-02
+
+Owner confirmed that "1899 Waltz" is a released single (Adwo Nyumbani feat. Mr. E) that will also appear on the album Abstract Waltz. It now has its own Adwo Nyumbani project record with the `1899-waltz.webp` cover, placed before Abstract Waltz, which still lists the track. The music section's project lists now show a 36 px cover thumbnail beside each title (decorative `alt=""`, lazy-loaded; an empty frame where no art exists). That surfaces the covers that were wired in data but never displayed. Verified in headless Chromium at 1440 px and 390 px. `validate-portfolio` encodes the single + album relationship.
