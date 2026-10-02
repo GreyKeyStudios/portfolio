@@ -35,7 +35,7 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
     id: 'app-triage',
     name: 'App Triage',
     category: 'Dev Tools',
-    description: 'Internal tool for organizing and triaging in-flight app ideas.',
+    description: 'A focused support workflow that keeps the next useful action visible during a live call and turns the session into organized handoff notes.',
     tech: ['Next.js', 'TypeScript'],
     status: 'in-progress',
   },
@@ -47,14 +47,6 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
     tech: [],
     status: 'in-progress',
     url: 'https://rltest.greykeystudios.dev/',
-  },
-  {
-    id: 'prompt-pilot',
-    name: 'Prompt Pilot',
-    category: 'AI / Software',
-    description: 'Prompt engineering / agent workflow concept.',
-    tech: ['TBD'],
-    status: 'concept',
   },
   {
     id: 'grey-key-studios',
