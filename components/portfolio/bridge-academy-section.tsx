@@ -81,7 +81,7 @@ export function BridgeAcademySection({ project }: { project: PortfolioProject })
     </section>
 
     <section className="bridge-system__future" aria-labelledby="bridge-future-title">
-      <figure><img src="/portfolio/bridge-academy-hero.png" alt="Bridge Academy planning workbench with curriculum, music hardware, computing, electronics, historical material, and diagrams"/><figcaption>PLANNING ARCHIVE / CURRICULUM, MUSIC, TECHNOLOGY, CULTURE, AND CAREER PATHWAYS</figcaption></figure>
+      <figure><img src="/portfolio/bridge-academy-hero.webp" alt="Bridge Academy planning workbench with curriculum, music hardware, computing, electronics, historical material, and diagrams"/><figcaption>PLANNING ARCHIVE / CURRICULUM, MUSIC, TECHNOLOGY, CULTURE, AND CAREER PATHWAYS</figcaption></figure>
       <div><span>05 / FUTURE FLAGSHIP CAMPUS</span><h3 id="bridge-future-title">Digital first.<br/><em>Place follows proof.</em></h3><p>The physical-school vision remains part of Bridge Academy, but it is not the starting claim. A flagship creative-technology campus belongs at the end of a demonstrated path—not at the beginning of the story.</p>
         <ol><li><b>01</b><span>Digital first</span></li><li><b>02</b><span>Controlled pilots</span></li><li><b>03</b><span>Distributed programs / partners</span></li><li><b>04</b><span>Flagship campus</span></li></ol>
       </div>

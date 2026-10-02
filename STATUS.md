@@ -644,3 +644,7 @@ desktop/touch sweep ✔ · 8 portfolio check ✔ · 9 still Michael's.
 - Grey Key Studios, Library/Study and the Archive remain unfurnished by design;
   the arcade interaction anchors still say "coming soon".
 
+
+### Concept art re-encoded to WebP — 2026-10-02
+
+The ten concept-art images (eight game concepts, GK Backlot, Bridge Academy hero) are now lossy WebP at full resolution: 24 MiB → 4.3 MiB, and the exported portfolio images went from 50.7 to 30.8 MiB. Recipe: `ffmpeg -i in.png -c:v libwebp -lossless 0 -quality 92 -compression_level 6 -preset picture out.webp` (ImageMagick's `-quality` had no effect on WebP in the cloud container). Full-image SSIM is 0.91–0.97, which mostly reflects grain smoothing. 1:1 crops of the two lowest scorers (Corporate Espionage Sim, Cooley's Revenge) were visually indistinguishable, including UI text and saturated reds. The PNG masters remain in git history; screenshots, UI captures and persona portraits were left as PNG. Local worker: glance at the Game Lab and Bridge sections of `/portfolio` on a real display.
