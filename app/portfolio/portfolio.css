@@ -56,3 +56,99 @@
 .bridge-system__footer{display:flex;justify-content:space-between;align-items:flex-end;gap:50px;padding:65px 6vw;background:var(--bs-gold);color:#071029}.bridge-system__footer span,.bridge-system__footer strong{display:block}.bridge-system__footer span{font-size:8px;letter-spacing:.2em}.bridge-system__footer strong{margin-top:11px;font:italic clamp(25px,3vw,42px) Georgia,serif}.bridge-system__footer p{max-width:560px;margin:0;text-align:right;font:13px/1.55 Georgia,serif}
 @media(max-width:1050px){.bridge-system__hero{grid-template-columns:1fr;min-height:auto;padding-top:120px}.bridge-system__hero-copy{max-width:800px}.bridge-system__labs>header,.bridge-system__pathways>header,.bridge-system__method>header{grid-template-columns:1fr 1.5fr}.bridge-system__labs>header>p,.bridge-system__pathways>header>p,.bridge-system__method>header>p{grid-column:2}.bridge-system__lab-grid article{grid-column:span 6}.bridge-system__pathways>div{grid-template-columns:repeat(2,1fr)}.bridge-system__evidence>div{grid-template-columns:repeat(2,1fr)}.bridge-system__evidence-card+article{border-left:1px solid rgba(7,16,41,.25)}.bridge-system__evidence-card:last-child{grid-column:span 2}.bridge-system__future{grid-template-columns:1fr}}
 @media(max-width:640px){.bridge-system__hero,.bridge-system__method,.bridge-system__labs,.bridge-system__pathways,.bridge-system__evidence,.bridge-system__future{padding-left:20px;padding-right:20px;padding-top:100px;padding-bottom:100px}.bridge-system__hero{gap:60px}.bridge-system__hero h2{font-size:19vw}.bridge-system__eyebrow{align-items:flex-start;margin-bottom:60px}.bridge-system__eyebrow b{text-align:right}.bridge-system__pillars{gap:10px 13px}.bridge-system__pillars span:not(:last-child):after{margin-left:13px}.bridge-system__map{padding:12px}.bridge-system__map-head small{display:none}.bridge-system__layer{grid-template-columns:28px 1fr;padding:19px 8px}.bridge-system__layer>b,.bridge-system__layer>small{grid-column:2}.bridge-system__layer>b{justify-self:start}.bridge-system__layer>i{left:7px}.bridge-system__truth{grid-template-columns:1fr;padding:27px 20px}.bridge-system__method>header,.bridge-system__labs>header,.bridge-system__pathways>header,.bridge-system__evidence>header{grid-template-columns:1fr;gap:22px}.bridge-system__labs>header>p,.bridge-system__pathways>header>p,.bridge-system__method>header>p{grid-column:auto}.bridge-system h3{font-size:16vw}.bridge-system__method ol{grid-template-columns:repeat(2,1fr)}.bridge-system__method li{min-height:125px}.bridge-system__rhythm{justify-content:flex-start}.bridge-system__lab-grid{display:block;background:transparent}.bridge-system__lab-grid article+article{margin-top:1px}.bridge-system__pathways>div,.bridge-system__evidence>div{grid-template-columns:1fr}.bridge-system__evidence-card,.bridge-system__evidence-card:last-child{grid-column:auto;min-height:auto}.bridge-system__evidence-card+article{border-left:0;border-top:1px solid rgba(7,16,41,.25)}.bridge-system__future{gap:55px}.bridge-system__footer{display:block;padding:55px 20px}.bridge-system__footer p{margin-top:28px;text-align:left}}
+
+/* Portfolio rhythm pass: retain the approved baseline and remove compounded whitespace. */
+@media (min-width:761px){
+  .work-exhibition{padding-top:clamp(104px,10vw,148px);padding-bottom:clamp(96px,9vw,138px)}
+  .work-intro{margin-bottom:clamp(72px,7vw,108px)}
+  .project-exhibit{min-height:auto;padding:clamp(66px,6vw,92px) 0}
+  .section-heading{margin-bottom:clamp(64px,6vw,94px)}
+  .building-section,.lab-section,.game-section{padding-top:clamp(96px,10vw,148px);padding-bottom:clamp(96px,10vw,148px)}
+  .building-roster .building-bench{padding:clamp(34px,4vw,58px)}
+  .building-roster .building-bench--featured{padding:clamp(46px,5.5vw,78px)}
+  .lab-table{gap:clamp(52px,7vw,104px)}
+  .lab-specimen--2{margin-top:clamp(72px,10vw,140px)}
+  .game-roster .game-stage{padding:clamp(18px,2.4vw,34px)}
+  .music-section{padding-top:clamp(96px,9vw,138px);padding-bottom:clamp(96px,9vw,138px);gap:4vw}
+  .bridge-system__hero{min-height:108vh;padding-top:8vw;padding-bottom:8vw}
+  .bridge-system__method,.bridge-system__labs,.bridge-system__pathways,.bridge-system__evidence,.bridge-system__future{padding-top:8vw;padding-bottom:8vw}
+  .stack-finale{min-height:100vh;padding-top:8vw;padding-bottom:8vw}
+}
+
+@media (max-width:760px){
+  .work-exhibition{padding-top:88px;padding-bottom:84px}
+  .work-intro{margin-bottom:62px}
+  .project-exhibit,.project-exhibit:nth-child(even){padding:52px 0 66px}
+  .section-heading{margin-bottom:62px}
+  .building-section,.lab-section,.game-section,.music-section,.stack-finale{padding-top:82px;padding-bottom:82px}
+  .building-roster .building-bench,.building-roster .building-bench--featured{padding-top:44px;padding-bottom:44px}
+  .building-bench{gap:48px}
+  .lab-table{gap:72px}
+  .game-roster .game-stage{padding-top:12px;padding-bottom:12px}
+  .bridge-system__hero,.bridge-system__method,.bridge-system__labs,.bridge-system__pathways,.bridge-system__evidence,.bridge-system__future{padding-top:82px;padding-bottom:82px}
+  .bridge-system__hero{gap:48px}
+  .bridge-system__eyebrow{margin-bottom:46px}
+  .bridge-system__footer{padding-top:46px;padding-bottom:46px}
+}
+
+/* Interaction pass: one quiet motion language across the existing exhibition. */
+.portfolio-shell{--interaction-ease:cubic-bezier(.2,.7,.2,1);--interaction-fast:220ms;--interaction-slow:520ms}
+.portfolio-shell section[id]{scroll-margin-top:24px}
+.portfolio-nav nav a,.stack-finale__nav a{position:relative}
+.portfolio-nav nav a:after,.stack-finale__nav a:after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform var(--interaction-fast) var(--interaction-ease)}
+.portfolio-nav nav a:hover:after,.portfolio-nav nav a:focus-visible:after,.stack-finale__nav a:hover:after,.stack-finale__nav a:focus-visible:after{transform:scaleX(1);transform-origin:left}
+.project-exhibit__media,.building-roster .building-bench,.building-desktop,.building-mobile,.lab-specimen__media,.lab-specimen__media img,.game-stage__screen,.game-stage__screen>img,.game-stage__caption,.identity-transform,.identity-project img,.bridge-system__lab-grid article,.stack-finale__copy>a{transition:transform var(--interaction-slow) var(--interaction-ease),box-shadow var(--interaction-slow) var(--interaction-ease),background-color var(--interaction-fast) ease,border-color var(--interaction-fast) ease}
+.project-exhibit:focus-within .project-exhibit__media{box-shadow:0 38px 92px rgba(2,4,10,.3)}
+.project-exhibit:focus-within .project-exhibit__media img{transform:scale(1.025) translateY(-.5%);filter:saturate(1) contrast(1.02)}
+.building-preview span,.project-exhibit__launch span:last-child,.stack-finale__copy>a b{transition:transform var(--interaction-fast) var(--interaction-ease)}
+.building-preview:hover span,.building-preview:focus-visible span,.project-exhibit__launch:hover span:last-child,.project-exhibit__launch:focus-visible span:last-child,.stack-finale__copy>a:hover b,.stack-finale__copy>a:focus-visible b{transform:translateX(6px)}
+.building-bench:focus-within{background:#071027;outline:1px solid #86a4f6;outline-offset:-1px}
+.identity-transform{cursor:crosshair}
+.identity-panel:focus-visible .identity-transform{box-shadow:0 46px 120px rgba(0,0,0,.82),0 0 0 1px rgba(134,164,246,.42)}
+.identity-play:not(:disabled),.identity-mini button:not(:disabled),.identity-credits>footer>button:not(:disabled){cursor:pointer;transition:transform var(--interaction-fast) var(--interaction-ease),background-color var(--interaction-fast) ease,border-color var(--interaction-fast) ease}
+.identity-play:not(:disabled):hover,.identity-play:not(:disabled):focus-visible,.identity-credits>footer>button:not(:disabled):hover,.identity-credits>footer>button:not(:disabled):focus-visible{transform:translateY(-2px);border-color:#86a4f6}
+.identity-mini button:not(:disabled):hover,.identity-mini button:not(:disabled):focus-visible{transform:scale(1.06);background:#4e7cf6}
+.stack-finale__copy>a:focus-visible{outline:2px solid #86a4f6;outline-offset:5px}
+
+@media (hover:hover) and (pointer:fine){
+  .project-exhibit:hover .project-exhibit__media{transform:translateY(-5px);box-shadow:0 42px 96px rgba(2,4,10,.3)}
+  .building-roster .building-bench:hover{transform:translateY(-3px);z-index:1}
+  .building-roster .building-bench:hover .building-desktop{transform:translateY(-4px);box-shadow:0 42px 110px #000}
+  .building-roster .building-bench:hover .building-mobile{transform:translateY(-7px)}
+  .lab-specimen:hover .lab-specimen__media{transform:translate(-4px,-4px);box-shadow:20px 22px 0 rgba(7,18,43,.14)}
+  .lab-specimen:hover .lab-specimen__media img{transform:scale(1.02)}
+  .game-roster .game-stage:hover .game-stage__screen{transform:translateY(-4px);border-color:rgba(134,164,246,.58);box-shadow:0 12px 90px rgba(34,55,111,.4)}
+  .game-roster .game-stage:hover .game-stage__screen>img{transform:scale(1.025)}
+  .game-roster .game-stage:hover .game-stage__caption{background:#e3eaff}
+  .identity-panel:hover .identity-transform{transform:translateY(-5px);box-shadow:0 50px 130px rgba(0,0,0,.85)}
+  .identity-panel:hover .identity-project img{transform:scale(1.06)}
+  .bridge-system__lab-grid article:hover{background:#0a1329}
+}
+
+.identity-projects .identity-project{display:block}
+.identity-project button{width:100%;display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:11px;padding:7px;border:1px solid transparent;background:transparent;color:inherit;text-align:left;cursor:pointer;transition:background-color var(--interaction-fast) ease,border-color var(--interaction-fast) ease,transform var(--interaction-fast) var(--interaction-ease)}
+.identity-project button>span{font:13px/1.35 Georgia,serif;color:#b6b8c0}
+.identity-project button>small{font-size:7px;letter-spacing:.13em;text-transform:uppercase;color:#717788}
+.identity-project button:hover,.identity-project button:focus-visible{border-color:rgba(134,164,246,.4);background:rgba(134,164,246,.08);outline:none;transform:translateX(4px)}
+.identity-project.is-selected button{border-color:#c6a46a;background:rgba(198,164,106,.1)}
+.identity-project.is-selected button>small{color:#d8c18f}
+.identity-mini{grid-template-columns:auto minmax(0,1fr) 100px auto}
+.identity-mini__controls{display:flex;grid-template-columns:none;gap:6px}
+.identity-mini__controls button{width:34px;height:34px;border:1px solid rgba(5,6,9,.22);border-radius:50%;background:transparent;color:#050609}
+.identity-mini__controls button:nth-child(2){background:#262b36;color:#fff}
+.identity-mini__controls button:disabled{cursor:not-allowed;opacity:.38}
+.identity-mini__track{min-width:0}
+.identity-mini__track b,.identity-mini__track span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+@media (max-width:760px){
+  .identity-project button{grid-template-columns:36px minmax(0,1fr)}
+  .identity-project button>small{grid-column:2}
+  .identity-mini{grid-template-columns:auto minmax(0,1fr) auto;gap:9px;padding:10px}
+  .identity-mini>i{display:none}
+  .identity-mini__controls{gap:3px}
+  .identity-mini__controls button{width:30px;height:30px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .portfolio-nav nav a:after,.stack-finale__nav a:after,.project-exhibit__media,.building-roster .building-bench,.building-desktop,.building-mobile,.lab-specimen__media,.game-stage__screen,.game-stage__caption,.identity-transform,.identity-project img,.bridge-system__lab-grid article,.stack-finale__copy>a,.building-preview span,.project-exhibit__launch span:last-child,.stack-finale__copy>a b,.identity-play,.identity-mini button,.identity-credits>footer>button{transition:none!important;transform:none!important}
+}
