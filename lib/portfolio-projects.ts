@@ -117,12 +117,12 @@ export const MUSIC_IDENTITIES:MusicIdentity[]=[
 ]
 export const resolveMusicPreviewArtwork=(identity:MusicIdentity,preview:MusicPreview):IdentityAsset=>preview.artwork??identity.projects.find(project=>project.id===preview.projectId)?.artwork??identity.logoFallback
 export const MUSIC_CREDITS=[
- {name:"Uncle Fart",descriptor:"Filthy, anything-goes music"},
- {name:"The Bobby Backfat Band",descriptor:"Jazz-funk · fusion · deep-pocket grooves"},
- {name:"Lemon Ice",descriptor:"Trap parody · wrong subjects, right drums"},
- {name:"Samon",descriptor:"Metal · no missing L required"},
- {name:"Uncle Arctica",descriptor:"Electronic collaboration · final configuration open"},
- {name:"The Broken Shortcuts",descriptor:"Covers, rebuilt the Grey Key way"},
- {name:"Night Movers",descriptor:"Nocturnal soft psych · bedroom pop · slow glow"},
- {name:"Kief Swette",descriptor:"Raunchy R&B crooner"},
-].map(({name,descriptor},index)=>({id:`credit-${index}`,name,descriptor,artwork:{alt:`${name} identity artwork`,placeholder:`${name.toUpperCase()} / IDENTITY ART`} as IdentityAsset}))
+ {name:"Uncle Fart",descriptor:"Filthy, anything-goes music",src:"/portfolio/music/artists/uncle-fart.png"},
+ {name:"The Bobbie Backfat Band",descriptor:"Jazz-funk · fusion · deep-pocket grooves",src:"/portfolio/music/artists/the-bobbie-backfat-band.png"},
+ {name:"Lemon Ice",descriptor:"Trap parody · wrong subjects, right drums",src:"/portfolio/music/artists/lemon-ice.png"},
+ {name:"Sin Score",descriptor:"Metal · dark, cinematic weight",src:"/portfolio/music/artists/sin-score.png"},
+ {name:"Uncle Arctica",descriptor:"Electronic collaboration · final configuration open",src:"/portfolio/music/artists/uncle-arctica.png"},
+ {name:"The Broken Shortcuts",descriptor:"Covers, rebuilt the Grey Key way",src:"/portfolio/music/artists/the-broken-shortcuts.png"},
+ {name:"Night Movers",descriptor:"Nocturnal soft psych · bedroom pop · slow glow",src:"/portfolio/music/artists/night-movers.png"},
+ {name:"Kief Swette",descriptor:"Raunchy R&B crooner",src:"/portfolio/music/artists/kief-swette.png"},
+].map(({name,descriptor,src},index)=>({id:`credit-${index}`,name,descriptor,artwork:{src,alt:`${name} identity artwork`,placeholder:`${name.toUpperCase()} / IDENTITY ART`} as IdentityAsset}))
