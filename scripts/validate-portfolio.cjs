@@ -85,7 +85,11 @@ const identity = (id) => ids.find(i => i.id === id)
 const terra = ids.flatMap(i => i.projects.map(p => ({ i, p }))).filter(({ p }) => /Terra Gaia/i.test(p.title))
 check(terra.length === 1 && terra[0].i.id === 'mr-e', 'KNOWN FACT: Destination: Terra Gaia is one EP (one Mr. E project record)')
 const waltz = ids.flatMap(i => i.projects.map(p => ({ i, p }))).filter(({ p }) => p.trackCandidates.includes('1899 Waltz'))
-check(waltz.length === 1 && waltz[0].i.id === 'adwo-nyumbani' && /Mr\. E/.test(waltz[0].p.note ?? ''), 'KNOWN FACT: "1899 Waltz" is Adwo Nyumbani featuring Mr. E')
+// A released single that will also appear on the album Abstract Waltz (owner, 2026-10-02).
+const waltzSingle = waltz.find(({ p }) => p.id === '1899-waltz')
+check(waltz.every(({ i }) => i.id === 'adwo-nyumbani'), 'KNOWN FACT: "1899 Waltz" is an Adwo Nyumbani release')
+check(waltzSingle && /feat\. Mr\. E/.test(waltzSingle.p.title) && waltzSingle.p.artwork?.src, 'KNOWN FACT: "1899 Waltz" is a single, Adwo Nyumbani featuring Mr. E, with its own artwork')
+check(waltz.some(({ p }) => p.id === 'abstract-waltz'), 'KNOWN FACT: "1899 Waltz" also appears on the album Abstract Waltz')
 const ch3 = identity('mr-e')?.projects.find(p => /Channel 3/i.test(p.title))
 check(ch3 && /two-song/i.test(ch3.note ?? '') && ch3.trackCandidates.length <= 2, 'KNOWN FACT: Games On Channel 3 contains two songs')
 // Michael and the personas are related but distinct presentation identities.
