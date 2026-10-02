@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
+import { usePoolLight } from '@/lib/light-pool'
 import * as THREE from 'three'
 import { registerInteractable, unregisterInteractable } from '@/lib/use-interaction'
 import { usePlayerStore } from '@/lib/player-store'
@@ -70,14 +71,14 @@ export function FrontDoor({ position = [0.9, 1.0, -2.8], onEnterHouse }: FrontDo
   // so it was invisible before the interior existed and awful afterwards.
   //
   // Intensity is a plain uniform — changing it recompiles nothing.
-  return (
-    <group position={[position[0], position[1], position[2]]}>
-      <pointLight
-        color={frontDoorUnlocked ? '#00ff88' : '#ff3333'}
-        intensity={isNear ? 1.5 : 0}
-        distance={3}
-        decay={2}
-      />
-    </group>
-  )
+  // Drawn through the fixed light pool — see lib/light-pool.ts.
+  usePoolLight('front-door', {
+    where: 'yard',
+    position: [position[0], position[1], position[2]],
+    color: frontDoorUnlocked ? '#00ff88' : '#ff3333',
+    intensity: isNear ? 1.5 : 0,
+    distance: 3,
+    decay: 2,
+  })
+  return null
 }

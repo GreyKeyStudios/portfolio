@@ -1,0 +1,42 @@
+name: Validate
+
+# Repository-safe checks: no secrets, no deploy. Visual, collision-feel and
+# performance verification still happen in a local browser (see STATUS.md).
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: Typecheck, lint, plan/portfolio/invariant validators, static export
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      # next.config.mjs sets ignoreBuildErrors, so the build alone never
+      # reports a type error — this is the only place one surfaces.
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run validate
+      # Generated legacy shells and elevation drawing must match the plan.
+      - run: npm run check:generated
+      - run: npm run build
+      - run: npm run validate:static
+
+  architecture:
+    name: Architecture regression (GLB geometry, stair traversal, routes, asset provenance)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run check:architecture

@@ -287,7 +287,7 @@ export function TerminalUI() {
         <button
           onClick={closeTerminal}
           className="text-xs opacity-40 hover:opacity-80 transition-opacity"
-          style={{ color: '#b8c8a8' }}
+          style={{ color: '#b8c8a8', font: 'inherit', fontSize: 12, background: 'none', border: 'none' }}
         >
           [Esc] close
         </button>

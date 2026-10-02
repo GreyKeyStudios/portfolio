@@ -38,7 +38,7 @@ export function HomeOfficeUI() {
       <button
         onClick={closeHomeOffice}
         className="fixed top-3 right-4 z-30 text-xs opacity-40 hover:opacity-80 transition-opacity"
-        style={{ color: '#becdf6' }}
+        style={{ color: '#becdf6', font: 'inherit', fontSize: 12, background: 'none', border: 'none' }}
       >
         [Esc] close
       </button>
@@ -52,6 +52,10 @@ export function HomeOfficeUI() {
             onClick={() => setSelected(p)}
             className="block w-full text-left px-3 py-2 rounded mb-1 transition-colors"
             style={{
+              // Tailwind runs without Preflight, so a <button> keeps the UA's
+              // black text and system font unless told to inherit.
+              color: 'inherit',
+              font: 'inherit',
               background: selected?.id === p.id ? '#becdf615' : 'transparent',
               border: `1px solid ${selected?.id === p.id ? '#becdf644' : 'transparent'}`,
             }}

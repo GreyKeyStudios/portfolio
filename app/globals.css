@@ -60,8 +60,9 @@
 }
 
 @layer base {
+  /* No `@apply border-border` here: Tailwind never ran before 2026-10-01, and
+     the gate/portfolio CSS was built on currentColor borders. */
   * {
-    @apply border-border;
     box-sizing: border-box;
   }
   html,

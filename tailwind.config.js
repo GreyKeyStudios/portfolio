@@ -83,6 +83,10 @@ const config = {
     },
   },
   plugins: [require('tailwindcss-animate')],
+  // Utilities only. Tailwind did not run until 2026-10-01 (empty PostCSS
+  // config), and the gate/portfolio CSS was written against browser defaults;
+  // Preflight's global reset would restyle those pages.
+  corePlugins: { preflight: false },
 }
 
 module.exports = config

@@ -4,6 +4,8 @@ _Last updated: 2026-09-05_
 
 This is the canonical creative source of truth for the **Stack House interactive portfolio/game**: spatial intent, room identities, story, lore, encounters, progression, and postgame.
 
+> **Superseded in part (2026-09-08):** the room mappings in §3 and the Ground/Second lists in §4 are overridden by `docs/STACK_HOUSE_LAYOUT_UPDATES_2026-09-08.md` — ground `laundry` is the Back Entry / Mudroom, Laundry is in the basement (`secret-room` geometry, secret route preserved), `gallery` is one combined Library / Study / Writing room, `nook` is the Master Bedroom, `guest-room` is the Guest / Gag Bedroom, and `upstairs-storage` + `linen` are one Walk-in Closet / Dressing Room. Everything else here stands.
+
 Technical architecture and exact geometry remain grounded in `lib/interior-layout.ts` plus the architecture docs. If this document assigns a new room identity without changing geometry, preserve the geometry and implement the new identity unless a deliberate architectural change is required.
 
 ## Decision language

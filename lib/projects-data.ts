@@ -10,7 +10,9 @@ export interface Project {
 }
 
 // Edit freely — this is the single place Home Office content comes from.
-// Names/descriptions are placeholders pending final copy.
+// Names/descriptions are placeholders pending final copy. Facts that also appear
+// in lib/portfolio-projects.ts (status, live URL, what a project is) must agree
+// with it — scripts/validate-portfolio.mjs checks the overlap.
 export const HOME_OFFICE_PROJECTS: Project[] = [
   {
     id: 'stack-house',
@@ -24,9 +26,10 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
     id: 'sbm-inc',
     name: 'SBM Inc.',
     category: 'Client Work',
-    description: 'Client-facing marketing site and event pages.',
+    description: 'Client site for a Florida nonprofit empowering BIPOC youth.',
     tech: ['Next.js', 'Tailwind'],
     status: 'live',
+    url: 'https://sbminc.org/',
   },
   {
     id: 'app-triage',
@@ -39,10 +42,11 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
   {
     id: 'relearn',
     name: 'ReLearn',
-    category: 'AI / Software',
-    description: 'Concept for an AI-assisted relearning/study tool.',
-    tech: ['TBD'],
-    status: 'concept',
+    category: 'Learning',
+    description: 'AI-assisted relearning and study tool in development — intended to become the learning engine behind Bridge Academy.',
+    tech: [],
+    status: 'in-progress',
+    url: 'https://rltest.greykeystudios.dev/',
   },
   {
     id: 'prompt-pilot',
@@ -55,9 +59,12 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
   {
     id: 'grey-key-studios',
     name: 'Grey Key Studios',
-    category: 'Music',
-    description: "Michael's music production alias — see the basement.",
+    category: 'Creative Studio',
+    // A studio/label, not an alias: the artist personas (Mr. E, Adwo Nyumbani,
+    // Walton Grey, ...) are separate identities presented under it.
+    description: 'Independent studio home for music, artist identities, experiments and creative technology — see the basement.',
     tech: [],
     status: 'live',
+    url: 'https://www.greykeystudios.com/',
   },
 ]

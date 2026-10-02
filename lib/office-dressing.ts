@@ -1,5 +1,5 @@
 import layout from './office-dressing-v002.json'
-import { X0 } from './interior-layout'
+import { FLOOR_BASE_Y, X0 } from './interior-layout'
 import type { AABB } from './collision'
 
 export const OFFICE_DRESSING_COLLIDERS: AABB[] = layout.map(piece => {
@@ -19,3 +19,13 @@ export function withOfficeDressing(walls: AABB[]) {
   if (!result) { result = [...walls, ...OFFICE_DRESSING_COLLIDERS]; combined.set(walls, result) }
   return result
 }
+
+/**
+ * Where the Home Office interaction lives in v002: the executive desk itself,
+ * from the same placement entry as its geometry and collider, at desk height.
+ * It used to stay on the legacy desk spot at floor level, where its 2.2 m
+ * radius reached only ~1.5 m at eye height — not far enough to be triggered
+ * from the front of the new desk, the side a player walks up to.
+ */
+const desk = layout.find(piece => piece.id === 'executive-desk')!
+export const OFFICE_WORKSTATION: [number, number, number] = [X0 + desk.x, FLOOR_BASE_Y.second + 1.0, desk.z]

@@ -327,11 +327,6 @@
           "side": "east",
           "center": 8.5,
           "width": 1
-        },
-        {
-          "side": "east",
-          "center": 10.1,
-          "width": 1
         }
       ],
       "windows": [
@@ -396,6 +391,9 @@
           "width": 1
         }
       ],
+      "omitWalls": [
+        "north"
+      ],
       "furnished": false
     },
     {
@@ -408,12 +406,9 @@
         "minZ": 9.4,
         "maxZ": 10.8
       },
-      "doors": [
-        {
-          "side": "west",
-          "center": 10.1,
-          "width": 1
-        }
+      "doors": [],
+      "omitWalls": [
+        "south"
       ],
       "furnished": false
     },

@@ -49,11 +49,11 @@ jobs:
             exit 1
           fi
 
-      - name: Remove large GLB files from build output
-        run: |
-          echo "Removing large GLB files (>25MB) from build output..."
-          find out -name "*.glb" -type f -size +25M -exec rm -v {} \; || echo "No large GLB files found or already removed"
-          echo "Large model files will be loaded from GitHub raw URL instead"
+      # Models are served from this deploy (lib/model-url.ts); there is no
+      # GitHub-raw fallback any more, so an oversized or missing file must
+      # fail here instead of being silently dropped from the upload.
+      - name: Validate static export
+        run: node scripts/validate-static.cjs
 
       - name: Create Cloudflare Pages project (if needed)
         run: |

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
+import { usePoolLight } from '@/lib/light-pool'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { registerInteractable, unregisterInteractable } from '@/lib/use-interaction'
@@ -96,6 +97,16 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
 
   const [px, py, pz] = position
 
+  // Glow light, drawn through the fixed light pool — see lib/light-pool.ts.
+  usePoolLight('touch-grass', {
+    where: 'yard',
+    position: [px, py + 0.8, pz],
+    color: touched ? '#00ff88' : '#2d7a44',
+    intensity: touched ? 6 : 3,
+    distance: 8,
+    decay: 2,
+  })
+
   // Drive glow imperatively via material refs
   useFrame((_, delta) => {
     const t = touchedRef.current
@@ -177,14 +188,6 @@ export function TouchGrass({ position = [-6, 0, 5] }: TouchGrassProps) {
         <meshStandardMaterial color="#f5e6c8" roughness={0.7} />
       </mesh>
 
-      {/* Glow light */}
-      <pointLight
-        position={[0, 0.8, 0]}
-        color={touched ? '#00ff88' : '#2d7a44'}
-        intensity={touched ? 6 : 3}
-        distance={8}
-        decay={2}
-      />
 
       {/* Proximity ring */}
       {isNear && !touched && (
