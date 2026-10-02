@@ -1,6 +1,6 @@
 # Stack House — Status
 
-_Last updated: 2026-10-01 (cloud repository audit — see the end of this file for the LOCAL worker handoff)_
+_Last updated: 2026-10-01 (LOCAL interactive verification pass — see "Local verification pass" at the end; it closes most of the cloud handoff above it)_
 
 **Canonical design alignment:** Read and incorporated the new experience bible
 and `AGENTS.md`. The entrance pass is architectural, not the locked arrival
@@ -88,10 +88,29 @@ props. That number is the honest measure of how much room there is to grow.
   x∈[-16,16] (the old [-25,25] clamp in fps-controls no longer exists).
   `scripts/validate-layout.cjs` fails if the two areas ever touch. Both scenes stay mounted, visibility-toggled — no
   mount/unmount on teleport, so no pop-in.
-- **Fixed light pool of 7.** `POOL_SIZE` in `app/house/page.tsx`. Changing the
-  *number* of active lights recompiles every material in the scene (measured:
-  666 ms frozen frame). Never mount, unmount, or `visible={false}` a light —
-  reposition pool slots and dim to 0 instead.
+- **Fixed light pool of 8** (7 until 2026-10-01). `POOL_SIZE` in
+  `app/house/page.tsx`. Changing the *number* of visible lights recompiles every
+  material in the scene (measured: 666 ms, and up to 1.9 s with the house
+  furnished). Never mount, unmount, or `visible={false}` a light — and a light
+  inside the yard group or a floor group IS hidden whenever that group is.
+  Component lights (lamps, glows) register with `usePoolLight`
+  (`lib/light-pool.ts`) instead of mounting a `<pointLight>`. The count is 11
+  everywhere; check with `/house?stats` and `window.__three`.
+- **No glTF transmission.** A visible transmissive material re-renders every
+  opaque object into a second target. `stripTransmission` runs on every
+  interior asset (`lib/interior-materials.ts`); one shower screen had halved the
+  interior frame rate.
+- **The interior is warmed under the boot overlay** (`WarmInterior` in
+  `app/house/page.tsx`): drawn once, culling off, then hidden again. This only
+  works because the interior holds no lights; it is what turned a 4-5 s freeze
+  at the front door into one normal frame.
+- **Movement is sub-stepped** (`lib/player-movement.ts`, max 4 cm). Stair floor
+  handoffs need a step to land in a 5 cm band; at low frame rates single steps
+  jumped it and wedged the player at every flight end.
+- **Tailwind runs without Preflight.** `postcss.config.mjs` was EMPTY until
+  2026-10-01, so no utility class ever applied (the Home Office overlay rendered
+  off-screen). The gate/portfolio CSS assumes browser defaults, so Preflight
+  stays off; give overlay `<button>`s `color/font: inherit` explicitly.
 - **Neighbour floors stay visible.** Culling to the active floor alone shows a
   void down the stairwell.
 - **Post-processing is desktop only.** N8AO (low/halfRes) + Bloom + ACES +
@@ -116,7 +135,8 @@ props. That number is the honest measure of how much room there is to grow.
   clamped; this one never did. `powerPreference: high-performance` added at the
   same time so laptops stop using the integrated GPU.
 - **`/house?stats`** shows frame timing, draw calls, triangles and the real
-  backing-store size. Measured 2026-09-04: interior 78 draw calls / 10.3k tris,
+  backing-store size, and exposes `window.__three` (`gl`, `scene`, `camera`) for
+  profiling scripts. Measured 2026-09-04: interior 78 draw calls / 10.3k tris,
   yard 65 calls / 614k tris. The interior is geometrically trivial — anything
   slow in there is fill rate or CPU, never scene complexity. The yard is the
   heavy scene, and the 2048 shadow map re-renders all 614k every frame.
@@ -559,3 +579,68 @@ Do these on a machine with a browser, GPU and Blender. Run `npm ci --legacy-peer
 **8. Portfolio page visual check** (`/portfolio`): Lab cards and game cards render with renamed `kids-at-the-mall.png`; nav links show a focus ring with Tab; no console 404s for icons.
 
 **9. Decisions to bring to the user** (do not decide them yourself): the open questions above, whether to re-encode the concept PNGs, and whether the 14 remaining lint warnings (hook dependency arrays in R3F code) are worth a pass — each needs runtime testing, so they were left alone.
+
+## Local verification pass — 2026-10-01
+
+Run on Michael's HP ZBook 14u G6 (**Intel UHD 620, the only GPU**), Chrome +
+ANGLE/D3D11, driven by Playwright with real keyboard and CDP touch input; the
+in-app browser pane throttles rAF when hidden, so its fps numbers are useless.
+Treat this machine as the low end: a 1280x720 desktop frame here is the honest
+worst case.
+
+Reconciled first: worked from the cloud worker's branch
+`claude/adoring-carson-cg3tej` (draft PR #3, on top of `main`), new local branch
+`claude/local-verification-pass`. Nothing pushed.
+
+**Fixed (each reproduced, root-caused, retested, guarded):**
+
+| Defect | Cause | Result | Guard |
+| --- | --- | --- | --- |
+| Interior 6-7 fps on this laptop | shower glass used glTF transmission → second full scene pass, in frame from most of two floors | foyer 162 → 84 ms, landing 138 → 71 | invariant + architecture check |
+| Player wedged at the end of every stair flight below ~40 fps (walk) / any sprint phase that skipped the band | one movement step per frame jumped the 5 cm handoff band; step guard refused forever | all 6 flights pass at 60→5 fps, walk and sprint, live and headless | 24 low-fps traversals in `check:architecture` |
+| Home Office prompt could not be triggered from the front of the v002 desk | interaction still on the legacy desk spot at floor height (2.2 m radius ≈ 1.5 m at eye level) | reachable from every side; does not leak through walls | — (placement derived from `office-dressing-v002.json`) |
+| Home Office overlay invisible (in production too) | `postcss.config.mjs` empty since the first deploy; Tailwind never ran; `fixed inset-0` never applied | panel renders; gate/portfolio computed styles unchanged across ~1,000 elements | invariant + `validate:static` |
+| 1.9 s freeze on first reaching the basement, 0.2-0.4 s on every yard/house crossing | five component lights inside visibility-toggled groups → light count 14/11/10 | count 11 everywhere; pool 7 → 8 keeps interior shading identical (a permanently-mounted alternative cost 15-20 % fps and was rejected) | invariant |
+| 4-5 s freeze when walking through the front door | first use of ~40 interior programs; 97 % in `getProgramInfoLog` (driver link) | 141 ms; the ~4.8 s warm frame now runs under the boot credits | — |
+| `check:architecture` red | stale floor-finish export; back-entry `.blend` never committed | rebuilt in Blender 5.2.1 (GLBs byte-identical), source committed; green | existing |
+
+Also added `scripts/check-circulation.mjs` (in `check:architecture`): every
+interior doorway, both directions, with all v002 furniture colliders mounted
+(36 crossings; verified it catches an injected blocker).
+
+**Verified working, no change needed:** front-door entry and exit-to-yard by
+real input; Kitchen → Pantry → Dining, back-entry, closet and basement laundry
+routes (circulation sweep); touch joystick, two-finger look, no drift on
+release, USE button, joystick stair climb; post-processing off on touch;
+no stairwell voids looking up/down from every floor; all 22 rooms render with
+no missing geometry or z-fighting; no console errors or failed requests on
+`/house`; no legacy interior GLBs on the default view; `?architecture=legacy`
+and `v001` still load and render; gate warm-up serves the four v002 shells from
+cache; `/portfolio` artwork, focus ring, no 4xx. Camera/FOV and PLAN_SCALE were
+not touched.
+
+**Measured, current (Intel UHD 620, 1280x720, desktop with post):** yard
+~20 fps (788k tris, 85 calls); interior 14-27 fps depending on view (foyer
+~70 ms, kitchen ~45 ms, attic ~36 ms). Interior cost scales with resolution
+(fill-bound) and roughly halves when neighbour-floor furniture is hidden —
+neighbour floors stay visible by rule, so that is a decision, not a fix.
+
+**Cloud handoff status:** 1 floor finishes ✔ · 2 back-entry source ✔ · 3
+first-load hitch ✔ (see above) · 4 same-origin models on a Cloudflare preview —
+NOT done (needs a deploy) · 5 legacy view ✔ · 6 gate warm-up ✔ · 7
+desktop/touch sweep ✔ · 8 portfolio check ✔ · 9 still Michael's.
+
+**For Michael (not decided here):**
+- The house HUD/overlay text now uses the system sans its classes always
+  asked for; it was rendering in the browser's default Times New Roman.
+- `<Environment preset="night">` fetches its HDR from `raw.githack.com` at
+  runtime. If that third-party CDN is slow or down, the whole Canvas suspends.
+  Self-hosting the 1k HDR under `public/` is a small change but adds a file.
+- Yard is the heaviest scene on low-end GPUs (788k triangles, mostly the willow
+  and exterior house; the 2048 shadow map redraws them every frame). Reducing it
+  is asset/art direction work.
+- Legacy/v001 review views still mount DoorPlaceholder/ExitDoor lights inside
+  floor groups, so they still recompile on floor changes. Opt-in only.
+- Grey Key Studios, Library/Study and the Archive remain unfurnished by design;
+  the arcade interaction anchors still say "coming soon".
+
