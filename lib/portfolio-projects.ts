@@ -80,7 +80,7 @@ export interface MusicIdentity {
   personaPortrait:IdentityAsset;logoFallback:IdentityAsset;artwork:IdentityAsset;audioLabel:string
   credits:string;projects:MusicProject[];previews:MusicPreview[];status:"identity-study"|"archive-ready";aside?:string
 }
-const baseMichael:IdentityAsset={alt:"Michael Walton base portrait",placeholder:"BASE PORTRAIT / MICHAEL WALTON"}
+const baseMichael:IdentityAsset={src:"/portfolio/music/artists/michael-walton.png",alt:"Michael Walton portrait",placeholder:"BASE PORTRAIT / MICHAEL WALTON"}
 const artist=(src:string,alt:string,placeholder:string):IdentityAsset=>({src,alt,placeholder})
 const projectArt=(src:string,alt:string,placeholder:string):IdentityAsset=>({src,alt,placeholder})
 export const MUSIC_IDENTITIES:MusicIdentity[]=[
