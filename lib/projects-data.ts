@@ -34,8 +34,8 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
   {
     id: 'app-triage',
     name: 'App Triage',
-    category: 'Dev Tools',
-    description: 'Internal tool for organizing and triaging in-flight app ideas.',
+    category: 'Client Work',
+    description: 'In-development support tool for Miracle-Ear agents.',
     tech: ['Next.js', 'TypeScript'],
     status: 'in-progress',
     url: 'https://at-test.greykeystudios.workers.dev/',
