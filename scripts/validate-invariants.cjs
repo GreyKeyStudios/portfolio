@@ -100,6 +100,11 @@ for (const f of fs.readdirSync(path.join(ROOT, 'app'), { recursive: true }).filt
   check(!/from ['"]next\/(headers|server)['"]/.test(text), `app/${f}: next/headers and next/server need a server, not a static export`)
 }
 
+// Deploy target is Cloudflare Pages: Vercel's analytics script cannot load
+// there (/_vercel/insights/script.js 404s on every page). Removed 2026-10-02.
+const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
+check(!pkg.dependencies?.['@vercel/analytics'], '@vercel/analytics cannot load on the Cloudflare Pages deploy')
+
 if (failures.length) {
   console.error(`validate-invariants: ${failures.length} problem(s)\n` + failures.map(f => `  ✗ ${f}`).join('\n'))
   process.exit(1)

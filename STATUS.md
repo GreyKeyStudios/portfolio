@@ -656,3 +656,12 @@ Music project artwork followed, converting only where WebP actually helps: `1899
 ### 1899 Waltz wired in + music project thumbnails — 2026-10-02
 
 Owner confirmed that "1899 Waltz" is a released single (Adwo Nyumbani feat. Mr. E) that will also appear on the album Abstract Waltz. It now has its own Adwo Nyumbani project record with the `1899-waltz.webp` cover, placed before Abstract Waltz, which still lists the track. The music section's project lists now show a 36 px cover thumbnail beside each title (decorative `alt=""`, lazy-loaded; an empty frame where no art exists). That surfaces the covers that were wired in data but never displayed. Verified in headless Chromium at 1440 px and 390 px. `validate-portfolio` encodes the single + album relationship.
+
+### Owner answers to the audit's open questions — 2026-10-02
+
+- **Chart Colosseum** is the correct spelling (record, id and slug renamed from "Colleseum").
+- **App Triage** is in development with a live site at `https://at-test.greykeystudios.workers.dev/`. It is a support tool for Miracle-Ear agents (owner, 2026-10-02), filed as Client Work; the earlier "app idea triage" description was wrong. Final card wording is still the owner's call. It is now on the "building" bench and in the Home Office list. Its screenshot is still pending: the cloud container's network policy blocks the site, so the local worker should capture desktop and mobile shots into `public/portfolio/app-triage(-mobile).png`.
+- **Prompt Pilot** is defunct. It is kept as an `archived` record (attic/Archive material, never shown on the homepage) and removed from the Home Office list. The validator forbids archived work on the office machine.
+- **GK World** is a concept and now has its own Game Lab record. The "GK WORLD" poster moved from GK Backlot to GK World. GK Backlot now uses that poster's own "GK BACKLOT — reusable locations" panel, cropped from the lossless original and letterboxed to 16:9. The Game Lab header counts games by category ("8 GAMES + BACKLOT & WORLD"), and both worldbuilding cards use the wide layout.
+- **Vercel Analytics** has been removed from the layout, `package.json` and the lockfile. Its script 404'd on every Cloudflare page. A tripwire in `validate-invariants` keeps it out.
+- **Favicon:** the Stack House glyph, redrawn for small sizes. `public/icon.svg` (navy tile, ACCENT outline, ACCENT_SOFT windows), `favicon.ico` (pixel-aligned 16 px variant plus 32/48 px) and a full-bleed 180 px `apple-icon.png`. All three were rendered and checked in headless Chromium.
