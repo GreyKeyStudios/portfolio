@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The Stack House glyph (components/house-glyph.tsx), simplified to read at
+       16-32 px: heavier strokes, a door and three lit windows. Brand
+       colours only (lib/brand.ts): navy tile, ACCENT outline, ACCENT_SOFT light. -->
+  <rect width="64" height="64" rx="12" fill="#1a2952"/>
+  <g fill="none" stroke="#4e7cf6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 30 L32 13 L54 30"/>
+    <path d="M16 27 V52 H48 V27"/>
+    <path d="M28 52 V43 H36 V52"/>
+  </g>
+  <g fill="#86a4f6">
+    <rect x="20.5" y="31" width="7" height="6" rx="1"/>
+    <rect x="36.5" y="31" width="7" height="6" rx="1"/>
+    <rect x="29" y="20.5" width="6" height="5" rx="1"/>
+  </g>
+</svg>
