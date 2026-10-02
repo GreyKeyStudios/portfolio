@@ -68,6 +68,13 @@ for (const rel of sources) {
   }
 }
 
+// Tailwind must actually have run. postcss.config.mjs was empty from the first
+// deploy until 2026-10-01, so `@tailwind` shipped raw and every utility class
+// was dead — the Home Office overlay rendered off-screen in production.
+const css = files.filter(f => f.endsWith('.css')).map(f => fs.readFileSync(path.join(OUT, f), 'utf8')).join('\n')
+check(!/@tailwind\b|@apply\b/.test(css), 'exported CSS still contains raw @tailwind/@apply — PostCSS/Tailwind did not run')
+check(/\.inset-0\s*\{/.test(css), 'exported CSS has no .inset-0 utility — Tailwind utilities are missing (house overlays depend on them)')
+
 // Size limits and weight report.
 const weight = {}
 for (const f of files) {

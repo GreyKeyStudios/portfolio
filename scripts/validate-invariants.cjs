@@ -72,6 +72,11 @@ for (const f of fs.readdirSync(path.join(ROOT, 'public/models')).filter(f => f.e
   check(viaCandidate, `public/models/${f} uses KHR_materials_transmission but is not loaded through CandidateAsset (stripTransmission)`)
 }
 
+// Tailwind runs through PostCSS; an empty config silently disables every utility
+// class (it shipped that way until 2026-10-01). Preflight stays off — see tailwind.config.js.
+check(/tailwindcss/.test(read('postcss.config.mjs')), 'postcss.config.mjs must load tailwindcss')
+check(/preflight:\s*false/.test(read('tailwind.config.js')), 'tailwind.config.js must keep preflight: false (gate/portfolio CSS assumes browser defaults)')
+
 // Cloudflare Pages static export.
 check(/output:\s*'export'/.test(nextConfig), "next.config.mjs must keep output: 'export' (Cloudflare Pages)")
 check(/unoptimized:\s*true/.test(nextConfig), 'static export requires images.unoptimized')
