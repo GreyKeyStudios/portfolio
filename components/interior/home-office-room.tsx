@@ -1,6 +1,7 @@
 "use client"
 
 import { useGLTF } from "@react-three/drei"
+import { usePoolLight } from "@/lib/light-pool"
 import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 import { getModelUrl } from "@/lib/model-url"
@@ -56,6 +57,10 @@ export function HomeOfficeRoom({
     })
   }, [scene])
 
+  // Proximity glow on the interaction point, drawn through the fixed light
+  // pool (lib/light-pool.ts) so hiding the second floor never changes the count.
+  usePoolLight('home-office-desk', { where: 'second', position: [px, py, pz], color: '#00ff88', intensity: isNear ? 1.0 : 0, distance: 3, decay: 2 })
+
   useEffect(() => {
     const pos = new THREE.Vector3(px, py, pz)
     registerInteractable({
@@ -79,10 +84,6 @@ export function HomeOfficeRoom({
       <group position={position} rotation={rotation} name="home-office-furniture">
         {showModel && <primitive object={scene} />}
       </group>
-      {/* Always mounted, dimmed to zero when away — see front-door.tsx for why
-          conditionally mounting a light costs a full scene-wide shader recompile.
-          Sits on the interaction point, so it glows at whichever desk is live. */}
-      <pointLight position={[px, py, pz]} color="#00ff88" intensity={isNear ? 1.0 : 0} distance={3} decay={2} />
     </>
   )
 }

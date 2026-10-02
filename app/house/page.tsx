@@ -41,6 +41,7 @@ import { useProximitySystem, triggerInteract } from "@/lib/use-interaction"
 import { usePlayerStore } from "@/lib/player-store"
 import { FLOOR_BASE_Y, X0, ROOMS, type FloorId } from "@/lib/interior-layout"
 import { INTERIOR_FOV, YARD_FOV } from "@/lib/player-camera"
+import { getPoolLights } from "@/lib/light-pool"
 
 type InteriorFloor = Exclude<FloorId, 'yard'>
 
@@ -291,6 +292,54 @@ function CameraInit() {
   return null
 }
 
+/**
+ * Draws the hidden interior once, through the real render pipeline, while the
+ * boot overlay still covers the canvas.
+ *
+ * The interior is mounted but hidden in the yard, so its materials were first
+ * drawn on the frame you walked through the front door: measured 2026-10-01
+ * at a 4-5 s frozen frame on an Intel UHD 620, almost all of it inside
+ * getProgramInfoLog — the driver finishing shader links on first use.
+ * renderer.compile() alone is not enough: it builds programs for the
+ * screen-output state while desktop renders through the post-processing
+ * target, and it cannot know per-object variants. So: compileAsync first
+ * (parallel compile where the driver supports it), then reveal the interior
+ * with frustum culling off for exactly one real frame, then restore.
+ *
+ * Safe only because the interior holds no lights (they are pool candidates —
+ * see lib/light-pool.ts); revealing a light would change the light count and
+ * recompile everything. If one is found (legacy review shells), it is skipped.
+ */
+function WarmInterior() {
+  const { gl, scene, camera } = useThree()
+  useEffect(() => {
+    let cancelled = false
+    let raf = 0
+    const interior = scene.getObjectByName('interior')
+    if (!interior) return
+    let hasLight = false
+    interior.traverse((o) => { if ((o as THREE.Light).isLight) hasLight = true })
+    gl.compileAsync(scene, camera).catch(() => {}).then(() => {
+      if (cancelled || hasLight || usePlayerStore.getState().currentLocation !== 'yard') return
+      const revealed: THREE.Object3D[] = []
+      const unculled: THREE.Object3D[] = []
+      interior.traverse((o) => {
+        if (!o.visible) { o.visible = true; revealed.push(o) }
+        if ((o as THREE.Mesh).isMesh && o.frustumCulled) { o.frustumCulled = false; unculled.push(o) }
+      })
+      // Two frames: the next one renders it, the one after restores.
+      raf = requestAnimationFrame(() => {
+        raf = requestAnimationFrame(() => {
+          revealed.forEach((o) => { o.visible = false })
+          unculled.forEach((o) => { o.frustumCulled = true })
+        })
+      })
+    })
+    return () => { cancelled = true; cancelAnimationFrame(raf) }
+  }, [gl, scene, camera])
+  return null
+}
+
 function ProximityManager() {
   const setNearbyLabel = usePlayerStore((s) => s.setNearbyLabel)
   useProximitySystem(setNearbyLabel)
@@ -334,8 +383,14 @@ function YardSky() {
  * shaft showed an unlit floor reading as a void under the stairs. Seven covers
  * the shaft; everywhere else the extra two contribute almost nothing because
  * decay 2 has already taken them to near zero.
+ *
+ * Eight since 2026-10-01: component lights (street lamps, touch-grass and
+ * proximity glows) are pool candidates now — see lib/light-pool.ts — instead of
+ * mounting their own lights inside visibility-toggled groups. Indoors this is
+ * the same eight the interior already shaded (seven slots plus the Home Office
+ * glow); the yard drops from eleven to eight.
  */
-const POOL_SIZE = 7
+const POOL_SIZE = 8
 
 /**
  * A fixed pool of lights, repositioned as you move, rather than one light per
@@ -401,7 +456,7 @@ function SceneLights({ refined = false }: { refined?: boolean }) {
     sinceUpdate.current = 0
 
     const cam = state.camera.position
-    const candidates = refined ? REFINED_POINT_LIGHTS : POINT_LIGHTS
+    const candidates = [...(refined ? REFINED_POINT_LIGHTS : POINT_LIGHTS), ...[...getPoolLights()].filter((l) => l.intensity > 0)]
     const active = candidates
       .filter((l) => (isYard ? l.where === 'yard' : l.where !== 'yard' && nearFloor(currentLocation, l.where)))
       .map((l) => ({
@@ -569,7 +624,7 @@ function Scene() {
           within the camera's default far-clip (2000) — so scene fog (which
           only tints color, it doesn't cull) wasn't enough to hide it: it was
           rendering as a faint silhouette on the yard's horizon. */}
-      <group visible={!isYard}>
+      <group visible={!isYard} name="interior">
         <group visible={nearFloor(currentLocation, 'basement')}>
           {architectureCandidate ? <ArchitectureCandidate floor="basement" version={architectureCandidate} /> : <InteriorFloorBasement />}
         </group>
@@ -841,6 +896,9 @@ export default function StackHouse() {
           <Environment preset="night" />
 
           <Scene />
+
+          {/* After Scene, inside the same Suspense: mounts once every GLB has loaded. */}
+          <WarmInterior />
 
           {isMobile ? (
             <MobileFPSControls

@@ -1,6 +1,7 @@
 "use client"
 
 import { useGLTF } from "@react-three/drei"
+import { usePoolLight } from "@/lib/light-pool"
 import { useEffect, useMemo } from "react"
 import type * as THREE from "three"
 import { getModelUrl } from "@/lib/model-url"
@@ -20,6 +21,16 @@ interface StreetLampProps {
 
 export function StreetLamp({ position, rotation = [0, 0, 0] }: StreetLampProps) {
   const { scene } = useGLTF(LAMP_URL)
+  // Light from the lantern head, drawn through the fixed light pool — see
+  // lib/light-pool.ts. Matches the scene's cool palette.
+  usePoolLight(`street-lamp-${position.join(',')}`, {
+    where: 'yard',
+    position: [position[0], position[1] + LANTERN_Y, position[2]],
+    color: GLOW_COLOR,
+    intensity: 1.5,
+    distance: 12,
+    decay: 2,
+  })
 
   // Each lamp needs its own object graph, but geometry/materials stay shared.
   const model = useMemo(() => scene.clone(), [scene])
@@ -46,14 +57,6 @@ export function StreetLamp({ position, rotation = [0, 0, 0] }: StreetLampProps) 
     <group position={position} rotation={rotation}>
       <primitive object={model} />
 
-      {/* Cast light from the lantern head — matches the scene's cool palette */}
-      <pointLight
-        position={[0, LANTERN_Y, 0]}
-        color={GLOW_COLOR}
-        intensity={1.5}
-        distance={12}
-        decay={2}
-      />
     </group>
   )
 }

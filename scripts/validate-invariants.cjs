@@ -22,7 +22,13 @@ const effects = read('components/scene-effects.tsx')
 const nextConfig = read('next.config.mjs')
 
 // Fixed light pool: changing the NUMBER of lights recompiles every material.
-check(/const POOL_SIZE = 7\b/.test(house), 'POOL_SIZE must stay 7 (STATUS: fixed light pool)')
+check(/const POOL_SIZE = 8\b/.test(house), 'POOL_SIZE must stay 8 (STATUS: fixed light pool)')
+// Component lights go through the pool (lib/light-pool.ts). A <pointLight> inside
+// the yard or a floor group drops out of the light count whenever that group is
+// hidden — the count changed on every yard/house and basement crossing until
+// 2026-10-01, recompiling every material each time.
+const POOLED = ['front-door.tsx', 'street-lamp.tsx', 'touch-grass.tsx', 'interior/home-office-room.tsx']
+for (const f of POOLED) check(!/<pointLight\b/.test(read(path.join('components', f))), `components/${f} must register its light with usePoolLight, not mount a <pointLight>`)
 check(/Array\.from\(\{ length: POOL_SIZE \}/.test(house), 'the light pool must render exactly POOL_SIZE lights, permanently mounted')
 const lightTags = (house.match(/<pointLight\b/g) ?? []).length
 check(lightTags === 1, `app/house/page.tsx declares ${lightTags} <pointLight> elements; all point lights belong to the pool`)
@@ -41,7 +47,7 @@ check(/useState<string \| null>\('v002'\)/.test(house), "Scene must initialise a
 // Neighbour floors stay visible — culling to the active floor shows a void down the stairwell.
 check(/Math\.abs\(FLOOR_ORDER\.indexOf\(active as InteriorFloor\) - FLOOR_ORDER\.indexOf\(floor\)\) <= 1/.test(house), 'nearFloor() must keep the floors directly above and below visible')
 // Interior and yard stay mounted; visibility flips instead of mount/unmount.
-check(/<group visible=\{!isYard\}>/.test(house), 'the interior must stay mounted and be hidden with visible={!isYard}')
+check(/<group visible=\{!isYard\}[^>]*>/.test(house), 'the interior must stay mounted and be hidden with visible={!isYard}')
 
 // Post-processing: desktop only, gated by the same isMobile flag as controls.
 check(/\{!isMobile && <SceneEffects \/>\}/.test(house), 'SceneEffects must be gated by !isMobile')
