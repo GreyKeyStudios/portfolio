@@ -8,6 +8,7 @@ import { registerInteractable, unregisterInteractable } from "@/lib/use-interact
 import { usePlayerStore } from "@/lib/player-store"
 import { playSound } from "@/lib/audio"
 import { placeInRoom } from "@/lib/interior-layout"
+import { OFFICE_WORKSTATION } from "@/lib/office-dressing"
 
 const MODEL_URL = getModelUrl("home-office-furniture.glb")
 
@@ -43,7 +44,8 @@ export function HomeOfficeRoom({
   const openHomeOfficeRef = useRef(openHomeOffice)
   useEffect(() => { openHomeOfficeRef.current = openHomeOffice }, [openHomeOffice])
 
-  const [px, py, pz] = position
+  // v002 hides the legacy model; the interaction follows the new desk.
+  const [px, py, pz] = showModel ? position : OFFICE_WORKSTATION
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -73,12 +75,15 @@ export function HomeOfficeRoom({
   }, [px, py, pz])
 
   return (
-    <group position={position} rotation={rotation} name="home-office-furniture">
-      {showModel && <primitive object={scene} />}
+    <>
+      <group position={position} rotation={rotation} name="home-office-furniture">
+        {showModel && <primitive object={scene} />}
+      </group>
       {/* Always mounted, dimmed to zero when away — see front-door.tsx for why
-          conditionally mounting a light costs a full scene-wide shader recompile. */}
-      <pointLight color="#00ff88" intensity={isNear ? 1.0 : 0} distance={3} decay={2} />
-    </group>
+          conditionally mounting a light costs a full scene-wide shader recompile.
+          Sits on the interaction point, so it glows at whichever desk is live. */}
+      <pointLight position={[px, py, pz]} color="#00ff88" intensity={isNear ? 1.0 : 0} distance={3} decay={2} />
+    </>
   )
 }
 
