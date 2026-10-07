@@ -38,6 +38,7 @@ export const HOME_OFFICE_PROJECTS: Project[] = [
     description: 'A focused support workflow that keeps the next useful action visible during a live call and turns the session into organized handoff notes.',
     tech: ['Next.js', 'TypeScript'],
     status: 'in-progress',
+    url: 'https://at-test.greykeystudios.workers.dev/',
   },
   {
     id: 'relearn',

@@ -98,6 +98,11 @@ check(ids.every(i => i.basePortrait && /Michael Walton/.test(i.credits)), 'each 
 // GK Backlot and GK World are separate (related) projects — never one record.
 check(!projects.some(p => /GK World/i.test(p.name) && /Backlot/i.test(p.name)), 'KNOWN FACT: GK Backlot and GK World are separate projects')
 check(!/GK World/i.test(byId.get('gk-backlot')?.description ?? ''), 'GK Backlot\'s record must not describe itself as GK World')
+const gkWorld = byId.get('gk-world')
+check(gkWorld && gkWorld.status === 'concept' && gkWorld.homepage?.section === 'game-lab', 'KNOWN FACT: GK World is its own concept-stage record in the Game Lab (owner, 2026-10-02)')
+check(gkWorld && gkWorld.media[0]?.src !== byId.get('gk-backlot')?.media[0]?.src, 'GK World and GK Backlot must not share artwork — the GK WORLD poster belongs to GK World')
+check(byId.get('app-triage')?.status === 'in-development' && byId.get('app-triage')?.links.live, 'KNOWN FACT: App Triage is in development with a live site')
+check(byId.get('prompt-pilot')?.archived === true, 'KNOWN FACT: Prompt Pilot is defunct — archived (attic) material, not current work')
 
 // ── Home Office list must not contradict the portfolio record ────────────────
 const STATUS_MAP = { live: 'live', concept: 'concept', 'in-development': 'in-progress', 'vertical-slice': 'in-progress', prototype: 'in-progress', scaffold: 'in-progress' }
@@ -105,6 +110,7 @@ const ALIASES = { 'sbm-inc': 'sbm', 'grey-key-studios': 'grey-key' }
 for (const h of HOME_OFFICE_PROJECTS) {
   const p = byId.get(ALIASES[h.id] ?? h.id)
   if (!p) { warnings.push(`Home Office lists "${h.name}", which has no portfolio record — unverified`); continue }
+  check(!p.archived, `Home Office lists ${h.name}, which is archived — defunct work belongs in the attic, not on the office machine`)
   check(STATUS_MAP[p.status] === h.status, `Home Office says ${h.name} is "${h.status}", portfolio says "${p.status}"`)
   if (h.url && p.links.live) check(h.url.replace(/\/$/, '') === p.links.live.replace(/\/$/, ''), `Home Office URL for ${h.name} differs from the portfolio record`)
 }
