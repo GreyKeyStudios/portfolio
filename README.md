@@ -1,6 +1,14 @@
-# Portfolio - 3D First Person Experience
+# The Stack House — Portfolio
 
-A 3D interactive portfolio built with Next.js, React Three Fiber, and Three.js. Navigate through a first-person 3D environment to explore projects and information.
+Michael Walton's portfolio: a 3D entry gate (`/`), a conventional portfolio (`/portfolio`), and **The Stack House** (`/house`), a first-person 3D house that surfaces the work in-world. Built with Next.js, React Three Fiber, and Three.js.
+
+Before changing anything, read:
+
+- [`STATUS.md`](STATUS.md) — current implementation state and active work
+- [`AGENTS.md`](AGENTS.md) — canonical design sources and locked decisions for `/house`
+- [`lib/portfolio-projects.ts`](lib/portfolio-projects.ts) — the public list of Grey Key projects shown on the site
+
+This repository is `GreyKeyStudios/portfolio`; local checkouts are often named `stackhouse`. For how it relates to other Grey Key repositories, see the [Repository Catalog](https://github.com/GreyKeyStudios/Grey-Key-Operating-System/blob/main/portfolio/REPOSITORY-CATALOG.md).
 
 ## Tech Stack
 

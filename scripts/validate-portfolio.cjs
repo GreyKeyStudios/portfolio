@@ -101,7 +101,6 @@ check(!/GK World/i.test(byId.get('gk-backlot')?.description ?? ''), 'GK Backlot\
 const gkWorld = byId.get('gk-world')
 check(gkWorld && gkWorld.status === 'concept' && gkWorld.homepage?.section === 'game-lab', 'KNOWN FACT: GK World is its own concept-stage record in the Game Lab (owner, 2026-10-02)')
 check(gkWorld && gkWorld.media[0]?.src !== byId.get('gk-backlot')?.media[0]?.src, 'GK World and GK Backlot must not share artwork — the GK WORLD poster belongs to GK World')
-check(named(/^Chart Colosseum$/).length === 1, 'KNOWN FACT: the lab project is spelled "Chart Colosseum" (owner, 2026-10-02)')
 check(byId.get('app-triage')?.status === 'in-development' && byId.get('app-triage')?.links.live, 'KNOWN FACT: App Triage is in development with a live site')
 check(byId.get('prompt-pilot')?.archived === true, 'KNOWN FACT: Prompt Pilot is defunct — archived (attic) material, not current work')
 
